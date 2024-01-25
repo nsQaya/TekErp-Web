@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ADMINROUTES } from '../sidebar/sidebar.component';
 import {Location, LocationStrategy, PathLocationStrategy} from '@angular/common';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../../admin/login/services/auth.service';
+import { AuthService } from '../../admin/login/Services/Auth.service';
 import { SharedService } from 'app/core/services/shared.service';
 
 
@@ -138,19 +138,19 @@ export class NavbarComponent implements OnInit {
 
         }
     };
-	getTitle(){
-		var titlee = this.location.prepareExternalUrl(this.location.path());
-		if(titlee.charAt(0) === '#'){
-			titlee = titlee.slice( 1 );
-		}
+	// getTitle(){
+	// 	var titlee = this.location.prepareExternalUrl(this.location.path());
+	// 	if(titlee.charAt(0) === '#'){
+	// 		titlee = titlee.slice( 1 );
+	// 	}
   
-		for(var item = 0; item < this.listTitles.length; item++){
-			if(this.listTitles[item].path === titlee){
-				return this.listTitles[item].title;
-			}
-		}
-		return 'Dashboard';
-	  }
+	// 	for(var item = 0; item < this.listTitles.length; item++){
+	// 		if(this.listTitles[item].path === titlee){
+	// 			return this.listTitles[item].title;
+	// 		}
+	// 	}
+	// 	return 'Dashboard';
+	//   }
 
 	setUserName(){
 

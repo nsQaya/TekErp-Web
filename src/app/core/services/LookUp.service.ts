@@ -30,4 +30,36 @@ export class LookUpService {
     return this.httpClient.get<LookUp[]>(environment.getApiUrl + "/languages/lookups")
   }
 
+  getGrupKoduLookup():Observable<LookUp[]>{
+    return this.httpClient.get<LookUp[]>(environment.getApiUrl + "/grupkodus/lookups")
+  }
+
+  getKod1Lookup():Observable<LookUp[]>{
+    return this.httpClient.get<LookUp[]>(environment.getApiUrl + "/kod1s/lookups")
+  }
+
+  getKod2Lookup():Observable<LookUp[]>{
+    return this.httpClient.get<LookUp[]>(environment.getApiUrl + "/kod2s/lookups")
+  }
+
+  getKod3Lookup():Observable<LookUp[]>{
+    return this.httpClient.get<LookUp[]>(environment.getApiUrl + "/kod3s/lookups")
+  }
+
+  getKod4Lookup():Observable<LookUp[]>{
+    return this.httpClient.get<LookUp[]>(environment.getApiUrl + "/kod4s/lookups")
+  }
+
+  getKod5Lookup():Observable<LookUp[]>{
+    return this.httpClient.get<LookUp[]>(environment.getApiUrl + "/kod5s/lookups")
+  }
+
+  getDovizTipiLookup():Observable<LookUp[]>{
+    return this.httpClient.get<LookUp[]>(environment.getApiUrl + "/doviztipis/lookups")
+  }
+
+  getOlcuBrLookup():Observable<LookUp[]>{
+    return this.httpClient.get<LookUp[]>(environment.getApiUrl + "/olcubrs/lookups")
+  }
+
 }

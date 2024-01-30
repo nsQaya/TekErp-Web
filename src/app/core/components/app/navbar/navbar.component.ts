@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ADMINROUTES } from '../sidebar/sidebar.component';
 import {Location, LocationStrategy, PathLocationStrategy} from '@angular/common';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../../admin/login/Services/Auth.service';
+import { AuthService } from '../../admin/login/Services/auth.service';
 import { SharedService } from 'app/core/services/shared.service';
 
 
@@ -44,7 +44,7 @@ export class NavbarComponent implements OnInit {
 	help(): void{
 
 		window.open(
-			'https://www.devarchitecture.net/',
+			'mailto:erp@teknomak.com.tr',
 			'_blank' 
 		);
 	}

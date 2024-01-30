@@ -1,8 +1,8 @@
 import { Component, OnInit,AfterViewInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AlertifyService } from 'app/core/services/Alertify.service';
-import { LookUpService } from 'app/core/services/LookUp.service';
-import { AuthService } from 'app/core/components/admin/login/Services/Auth.service';
+import { AlertifyService } from 'app/core/services/alertify.service';
+import { LookUpService } from 'app/core/services/lookUp.service';
+import { AuthService } from 'app/core/components/admin/login/Services/auth.service';
 import { LogDto } from './models/logdto';
 import { LogDtoService } from './services/logdto.service';
 import { Subject } from 'rxjs/Rx';

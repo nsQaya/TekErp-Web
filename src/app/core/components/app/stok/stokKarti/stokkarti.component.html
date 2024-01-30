@@ -1,0 +1,980 @@
+﻿<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <h4 class="card-title">{{ "StokKartiList" | translate }}</h4>
+            <a
+              *ngIf="checkClaim('CreateStokKartiCommand')"
+              class="pull-right"
+              data-toggle="modal"
+              data-target="#stokkarti"
+            >
+              <i
+                style="color: white"
+                title="{{ 'Add' | translate }}"
+                class="far fa-plus-square fa-2x"
+              ></i
+            ></a>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <div class="col-md-4 pull-right">
+                <mat-form-field>
+                  <mat-label>Filter</mat-label>
+                  <input
+                    matInput
+                    (keyup)="applyFilter($event)"
+                    placeholder=""
+                    #input
+                  />
+                </mat-form-field>
+              </div>
+              <table mat-table [dataSource]="dataSource" matSort>
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Id" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="kodu">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Kodu" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">{{ element.kodu }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="adi">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Adi" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">{{ element.adi }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="ingilizceIsim">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "IngilizceIsim" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.ingilizceIsim }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="grupKoduId">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "GrupKoduId" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.grupKoduId }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="kod1Id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Kod1Id" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.kod1Id }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="kod2Id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Kod2Id" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.kod2Id }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="kod3Id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Kod3Id" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.kod3Id }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="kod4Id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Kod4Id" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.kod4Id }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="kod5Id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Kod5Id" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.kod5Id }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="olcuBr1Id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "OlcuBr1Id" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.olcuBr1Id }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="olcuBr2Id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "OlcuBr2Id" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.olcuBr2Id }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="olcuBr2Pay">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "OlcuBr2Pay" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.olcuBr2Pay }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="olcuBr2Payda">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "OlcuBr2Payda" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.olcuBr2Payda }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="olcuBr3Id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "OlcuBr3Id" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.olcuBr3Id }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="olcuBr3Pay">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "OlcuBr3Pay" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.olcuBr3Pay }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="olcuBr3Payda">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "OlcuBr3Payda" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.olcuBr3Payda }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="alisDovizTipiId">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "AlisDovizTipiId" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.alisDovizTipiId }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="satisDovizTipiId">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "SatisDovizTipiId" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.satisDovizTipiId }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="alisFiyati">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "AlisFiyati" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.alisFiyati }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="satisFiyati">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "SatisFiyati" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.satisFiyati }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="alisKDVOrani">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "AlisKDVOrani" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.alisKDVOrani }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="satisKDVOrani">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "SatisKDVOrani" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.satisKDVOrani }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="seriTakibiVarMi">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "SeriTakibiVarMi" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    <mat-checkbox
+                      [checked]="element.seriTakibiVarMi"
+                      [disabled]="true"
+                    ></mat-checkbox>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="en">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "En" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">{{ element.en }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="boy">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Boy" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">{{ element.boy }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="genislik">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Genislik" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.genislik }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="agirlik">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Agirlik" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.agirlik }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="asgariStokMiktari">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "AsgariStokMiktari" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.asgariStokMiktari }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="azamiStokMiktari">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "AzamiStokMiktari" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.azamiStokMiktari }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="minimumSiparisMiktari">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "MinimumSiparisMiktari" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.minimumSiparisMiktari }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="sapKodlari">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "SapKodlari" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.sapKodlari }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="barkodlar">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    {{ "Barkodlar" | translate }}
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.barkodlar }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="update">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td style="width: 25px" mat-cell *matCellDef="let element">
+                    <a
+                      *ngIf="checkClaim('UpdateStokKartiCommand')"
+                      data-toggle="modal"
+                      data-target="#stokkarti"
+                      (click)="getStokKartiById(element.id)"
+                    >
+                      <i
+                        title="{{ 'Update' | translate }}"
+                        style="color: #ff5722"
+                        class="far fa-edit"
+                      ></i>
+                    </a>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="delete">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td style="width: 25px" mat-cell *matCellDef="let element">
+                    <a
+                      *ngIf="checkClaim('DeleteStokKartiCommand')"
+                      (confirm)="deleteStokKarti(element.id)"
+                      [swal]="deleteSwal"
+                      ><i
+                        title="{{ 'Delete' | translate }}"
+                        style="color: #d9534e"
+                        class="fas fa-trash-alt"
+                      ></i
+                    ></a>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let row; columns: displayedColumns"
+                ></tr>
+
+                <tr class="mat-row" *matNoDataRow style="text-align: center">
+                  <td class="mat-cell" colspan="4">
+                    {{ "NoRecordsFound" | translate }} "{{ input.value }}"
+                  </td>
+                </tr>
+              </table>
+              <mat-paginator
+                [pageSizeOptions]="[10, 25, 50, 100]"
+              ></mat-paginator>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal modal-angular fade"
+  id="stokkarti"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myModalLabel"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+          (click)="clearFormGroup(stokKartiAddForm)"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="margin-top">
+          {{ "StokKartiForm" | translate }}
+        </h4>
+        <div class="separator"></div>
+        <form
+          *ngIf="stokKartiAddForm"
+          [formGroup]="stokKartiAddForm"
+          (ngSubmit)="save()"
+        >
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="kodu"
+                  type="text"
+                  id="kodu"
+                  name="kodu"
+                  formControlName="kodu"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm.get('kodu')!.hasError('kodu') &&
+                    stokKartiAddForm.get('kodu')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="adi"
+                  type="text"
+                  id="adi"
+                  name="adi"
+                  formControlName="adi"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm.get('adi')!.hasError('adi') &&
+                    stokKartiAddForm.get('adi')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="ingilizceIsim"
+                  type="text"
+                  id="ingilizceIsim"
+                  name="ingilizceIsim"
+                  formControlName="ingilizceIsim"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('ingilizceIsim')!
+                      .hasError('ingilizceIsim') &&
+                    stokKartiAddForm.get('ingilizceIsim')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <select
+                class="form-select"
+                placeholder="Seçiniz"
+                formControlName="grupKoduId"
+              >
+                <option *ngFor="let item of grupKoduslookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <select
+                class="browser-default custom-select"
+                formControlName="kod1Id"
+              >
+                <option *ngFor="let item of kod1slookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <select
+                class="browser-default custom-select"
+                formControlName="kod2Id"
+              >
+                <option *ngFor="let item of kod2slookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <select
+                class="browser-default custom-select"
+                formControlName="kod3Id"
+              >
+                <option *ngFor="let item of Kod3slookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <select
+                class="browser-default custom-select"
+                formControlName="kod4Id"
+              >
+                <option *ngFor="let item of Kod4slookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <select
+                class="browser-default custom-select"
+                formControlName="kod5Id"
+              >
+                <option *ngFor="let item of Kod5slookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <select
+                class="browser-default custom-select"
+                formControlName="olcuBr1Id"
+              >
+                <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <select
+                class="browser-default custom-select"
+                formControlName="olcuBr2Id"
+              >
+                <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="olcuBr2Pay"
+                  type="text"
+                  id="olcuBr2Pay"
+                  name="olcuBr2Pay"
+                  formControlName="olcuBr2Pay"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('olcuBr2Pay')!
+                      .hasError('olcuBr2Pay') &&
+                    stokKartiAddForm.get('olcuBr2Pay')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="olcuBr2Payda"
+                  type="text"
+                  id="olcuBr2Payda"
+                  name="olcuBr2Payda"
+                  formControlName="olcuBr2Payda"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('olcuBr2Payda')!
+                      .hasError('olcuBr2Payda') &&
+                    stokKartiAddForm.get('olcuBr2Payda')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <select
+                class="browser-default custom-select"
+                formControlName="olcuBr3Id"
+              >
+                <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="olcuBr3Pay"
+                  type="text"
+                  id="olcuBr3Pay"
+                  name="olcuBr3Pay"
+                  formControlName="olcuBr3Pay"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('olcuBr3Pay')!
+                      .hasError('olcuBr3Pay') &&
+                    stokKartiAddForm.get('olcuBr3Pay')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="olcuBr3Payda"
+                  type="text"
+                  id="olcuBr3Payda"
+                  name="olcuBr3Payda"
+                  formControlName="olcuBr3Payda"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('olcuBr3Payda')!
+                      .hasError('olcuBr3Payda') &&
+                    stokKartiAddForm.get('olcuBr3Payda')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <select
+                class="browser-default custom-select"
+                formControlName="alisDovizTipiId"
+              >
+                <option *ngFor="let item of dovizTipislookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <select
+                class="browser-default custom-select"
+                formControlName="satisDovizTipiId"
+              >
+                <option *ngFor="let item of dovizTipislookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="alisFiyati"
+                  type="text"
+                  id="alisFiyati"
+                  name="alisFiyati"
+                  formControlName="alisFiyati"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('alisFiyati')!
+                      .hasError('alisFiyati') &&
+                    stokKartiAddForm.get('alisFiyati')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="satisFiyati"
+                  type="text"
+                  id="satisFiyati"
+                  name="satisFiyati"
+                  formControlName="satisFiyati"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('satisFiyati')!
+                      .hasError('satisFiyati') &&
+                    stokKartiAddForm.get('satisFiyati')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="alisKDVOrani"
+                  type="text"
+                  id="alisKDVOrani"
+                  name="alisKDVOrani"
+                  formControlName="alisKDVOrani"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('alisKDVOrani')!
+                      .hasError('alisKDVOrani') &&
+                    stokKartiAddForm.get('alisKDVOrani')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="satisKDVOrani"
+                  type="text"
+                  id="satisKDVOrani"
+                  name="satisKDVOrani"
+                  formControlName="satisKDVOrani"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('satisKDVOrani')!
+                      .hasError('satisKDVOrani') &&
+                    stokKartiAddForm.get('satisKDVOrani')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-2">
+              <mat-checkbox
+                formControlName="seriTakibiVarMi"
+                id="seriTakibiVarMi"
+                name="seriTakibiVarMi"
+              >
+                seriTakibiVarMi
+              </mat-checkbox>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="en"
+                  type="text"
+                  id="en"
+                  name="en"
+                  formControlName="en"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm.get('en')!.hasError('en') &&
+                    stokKartiAddForm.get('en')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="boy"
+                  type="text"
+                  id="boy"
+                  name="boy"
+                  formControlName="boy"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm.get('boy')!.hasError('boy') &&
+                    stokKartiAddForm.get('boy')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="genislik"
+                  type="text"
+                  id="genislik"
+                  name="genislik"
+                  formControlName="genislik"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm.get('genislik')!.hasError('genislik') &&
+                    stokKartiAddForm.get('genislik')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="agirlik"
+                  type="text"
+                  id="agirlik"
+                  name="agirlik"
+                  formControlName="agirlik"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm.get('agirlik')!.hasError('agirlik') &&
+                    stokKartiAddForm.get('agirlik')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="asgariStokMiktari"
+                  type="text"
+                  id="asgariStokMiktari"
+                  name="asgariStokMiktari"
+                  formControlName="asgariStokMiktari"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('asgariStokMiktari')!
+                      .hasError('asgariStokMiktari') &&
+                    stokKartiAddForm.get('asgariStokMiktari')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="azamiStokMiktari"
+                  type="text"
+                  id="azamiStokMiktari"
+                  name="azamiStokMiktari"
+                  formControlName="azamiStokMiktari"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('azamiStokMiktari')!
+                      .hasError('azamiStokMiktari') &&
+                    stokKartiAddForm.get('azamiStokMiktari')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-md-12">
+              <mat-form-field class="example-full-width">
+                <input
+                  matInput
+                  placeholder="minimumSiparisMiktari"
+                  type="text"
+                  id="minimumSiparisMiktari"
+                  name="minimumSiparisMiktari"
+                  formControlName="minimumSiparisMiktari"
+                />
+                <div
+                  class="alert alert-danger"
+                  *ngIf="
+                    stokKartiAddForm
+                      .get('minimumSiparisMiktari')!
+                      .hasError('minimumSiparisMiktari') &&
+                    stokKartiAddForm.get('minimumSiparisMiktari')!.dirty
+                  "
+                ></div>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <button
+            mat-raised-button
+            type="submit"
+            class="btn btn-danger pull-right"
+          >
+            {{ "Save" | translate }}
+          </button>
+          <div class="clearfix"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<swal
+  #deleteSwal
+  title="{{ 'DeleteConfirm' | translate }}"
+  icon="error"
+  [showCancelButton]="true"
+  [confirmButtonText]="'OK'"
+  [cancelButtonText]="'Cancel'"
+>
+</swal>

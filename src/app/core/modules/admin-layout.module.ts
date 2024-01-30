@@ -28,6 +28,17 @@ import { OperationClaimComponent } from '../components/admin/operationclaim/oper
 import { LogDtoComponent } from '../components/admin/log/logDto.component';
 import { MatSortModule } from '@angular/material/sort';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { Kod1Component } from '../components/app/stok/kod1/kod1.component';
+import { Kod2Component } from '../components/app/stok/kod2/kod2.component';
+import { Kod3Component } from '../components/app/stok/kod3/kod3.component';
+import { Kod4Component } from '../components/app/stok/kod4/kod4.component';
+import { Kod5Component } from '../components/app/stok/kod5/kod5.component';
+import { BarkodComponent } from '../components/app/stok/barkod/barkod.component';
+import { DovizTipiComponent } from '../components/app/stok/dovizTipi/dovizTipi.component';
+import { GrupKoduComponent } from '../components/app/stok/grupKodu/grupKodu.component';
+import { OlcuBrComponent } from '../components/app/stok/olcuBr/olcuBr.component';
+import { StokKartiComponent } from '../components/app/stok/stokKarti/stokKarti.component';
+import { SAPKodComponent } from '../components/app/stok/sAPKod/sAPKod.component';
 
 
 // export function layoutHttpLoaderFactory(http: HttpClient) {
@@ -71,7 +82,18 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
         LanguageComponent,
         TranslateComponent,
         OperationClaimComponent,
-        LogDtoComponent
+        LogDtoComponent,
+        GrupKoduComponent,
+        Kod1Component,
+        Kod2Component,
+        Kod3Component,
+        Kod4Component,
+        Kod5Component,
+        BarkodComponent,
+        DovizTipiComponent,
+        OlcuBrComponent,
+        SAPKodComponent,
+        StokKartiComponent
 
     ]
 })

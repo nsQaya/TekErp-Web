@@ -5,7 +5,7 @@ import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import PerfectScrollbar from 'perfect-scrollbar';
 import * as $ from "jquery";
-import { AuthService } from 'app/core/components/admin/login/Services/Auth.service';
+import { AuthService } from 'app/core/components/admin/login/Services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
 
 
@@ -69,7 +69,9 @@ export class AdminLayoutComponent implements OnInit {
             });
              if (window.matchMedia(`(min-width: 960px)`).matches && !this.isMac()) {
                  let ps = new PerfectScrollbar(elemMainPanel);
+                 if(elemSidebar!=null){
                  ps = new PerfectScrollbar(elemSidebar);
+                 }
              }
 
             const window_width = $(window).width();

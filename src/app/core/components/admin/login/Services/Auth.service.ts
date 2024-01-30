@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { AlertifyService } from 'app/core/services/Alertify.service';
+import { AlertifyService } from 'app/core/services/alertify.service';
 import { LocalStorageService } from 'app/core/services/local-storage.service';
 import { environment } from 'environments/environment';
 import { LoginUser } from '../model/login-user';
@@ -102,9 +102,11 @@ export class AuthService {
     if(!this.loggedIn())
      this.router.navigate(["/login"]);
     
-    var check = this.claims.some(function (item) {
-      return item == claim;
-    })
+     if (this.claims && this.claims.length > 0) {
+      var check = this.claims.some(function (item) {
+        return item == claim;
+      });
+    }
 
     return check;
   }

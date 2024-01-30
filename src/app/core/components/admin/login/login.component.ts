@@ -3,10 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { LookUp } from 'app/core/models/LookUp';
 import { LocalStorageService } from 'app/core/services/local-storage.service';
-import { LookUpService } from 'app/core/services/LookUp.service';
+import { LookUpService } from 'app/core/services/lookUp.service';
 import { environment } from 'environments/environment';
 import { LoginUser } from './model/login-user';
-import { AuthService } from './Services/Auth.service';
+import { AuthService } from './Services/auth.service';
 
 @Component({
   selector: 'app-login',

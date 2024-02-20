@@ -26,11 +26,36 @@
               </div>
               <div class="row">
                 <div class="col-md-12">
-                  <select class="browser-default custom-select" placeholder="Seçiniz" name="lang" [(ngModel)]="loginUser.lang" (change)="changeLang($event.target.value)">
+                  <select class="selectpicker" data-live-search="true" placeholder="Seçiniz" name="lang" [(ngModel)]="loginUser.lang" (change)="changeLang($event.target.value)">
                     <option *ngFor="let item of langugelookUp" [value]="item.id"> {{item.label}}</option>
-                  </select>
+                  </select> 
                 </div>
               </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <!-- <ng-select [items]="langugelookUp"
+                   bindLabel="name"
+                   placeholder="Seçiniz"
+                   [(ngModel)]="loginUser.lang">
+                  </ng-select> -->
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+
+                  <label>Your first ng-select</label>
+        <ng-select [items]="cities"
+                   bindLabel="name"
+                   placeholder="Select city"
+                   [(ngModel)]="selectedCity">
+        </ng-select>
+
+
+                </div>
+              </div>
+              <!-- <select class="selectpicker" data-live-search="true" placeholder="Seçiniz" name="lang" [(ngModel)]="loginUser.lang" (change)="changeLang($event.target.value)">
+                <option *ngFor="let item of langugelookUp" [value]="item.id"> {{item.label}}</option>
+              </select> -->
               <button mat-raised-button type="submit" class="btn btn-danger pull-right">{{'Login'| translate}}</button>
               <div class="clearfix"></div>
             </form>

@@ -12,6 +12,7 @@ import { environment } from "environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { LookUp } from "app/core/models/LookUp";
 
+
 declare var jQuery: any;
 
 @Component({
@@ -23,6 +24,14 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
   dataSource: MatTableDataSource<any>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+    // Kullanıcının seçtiği öğelerin ID'lerini içeren dizi
+    selectedIds: number[] = [];
+
+    // Checkbox durumlarını tutan nesne
+    checkboxStatus: { [key: number]: boolean } = {};
+  
+    // Checkbox durumunu güncelleyen fonksiyon
+    
   displayedColumns: string[] = [
     "id",
     "kodu",
@@ -240,5 +249,25 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+  ExportTOExcel()
+  {
+
+  }
+  StokBarkodYazdir()
+  {
+    console.log('Selected IDs:', this.selectedIds);
+
+  }
+  updateCheckboxStatus(id: number, checked: boolean): void {
+    this.checkboxStatus[id] = checked;
+
+    // Checkbox seçildiyse, seçilenIds dizisine ekle
+    if (checked) {
+      this.selectedIds.push(id);
+    } else { // Checkbox seçilmediyse, seçilenIds dizisinden çıkar
+      this.selectedIds = this.selectedIds.filter(selectedId => selectedId !== id);
+    }
+
   }
 }

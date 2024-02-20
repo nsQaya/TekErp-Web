@@ -15,6 +15,9 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { LoginGuard } from './core/guards/login-guard';
 import { AuthInterceptorService } from './core/interceptors/auth-interceptor.service';
 import { HttpEntityRepositoryService } from './core/services/http-entity-repository.service';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { CommonModule } from '@angular/common';
+
 
 
 // i18 kullanıclak ise aşağıdaki metod aktif edilecek
@@ -32,7 +35,9 @@ export function tokenGetter() {
 
 
 @NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
+    CommonModule,
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
@@ -51,7 +56,8 @@ export function tokenGetter() {
         deps: [HttpClient]
       }
 
-    })
+    }),
+    NgSelectModule
 
   ],
   declarations: [
@@ -69,6 +75,6 @@ export function tokenGetter() {
     HttpEntityRepositoryService,
   ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  
 })
 export class AppModule { }

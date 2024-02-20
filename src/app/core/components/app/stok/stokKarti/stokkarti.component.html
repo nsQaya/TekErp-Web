@@ -5,6 +5,14 @@
         <div class="card">
           <div class="card-header card-header-danger">
             <h4 class="card-title">{{ "StokKartiList" | translate }}</h4>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="StokBarkodYazdir()"
+            >
+              {{ "BarkodYazdir" | translate }}
+            </button>
+
             <a
               *ngIf="checkClaim('CreateStokKartiCommand')"
               class="pull-right"
@@ -34,9 +42,18 @@
               <table mat-table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="id">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                    {{ "Id" | translate }}
+                    {{ "Sec" | translate }}
                   </th>
-                  <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+                  <td mat-cell *matCellDef="let element">
+                    <!-- Checkbox ile "sec" alanını değiştirebilir hale getirme -->
+                    <mat-checkbox
+                      [checked]="checkboxStatus[element.id] || false"
+                      (change)="
+                        updateCheckboxStatus(element.id, $event.checked)
+                      "
+                    ></mat-checkbox>
+                  </td>
+                  <!-- <td mat-cell *matCellDef="let element">{{ element.id }}</td> -->
                 </ng-container>
 
                 <ng-container matColumnDef="kodu">
@@ -386,7 +403,7 @@
   role="dialog"
   aria-labelledby="myModalLabel"
 >
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-body text-center">
         <button
@@ -408,7 +425,7 @@
           (ngSubmit)="save()"
         >
           <div class="row">
-            <div class="col col-md-12">
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -427,9 +444,8 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+
+            <div class="col col-md-9">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -474,7 +490,8 @@
           </div>
 
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-3">GrupKodu</div>
+            <div class="col-md-3">
               <select
                 class="form-select"
                 placeholder="Seçiniz"
@@ -485,11 +502,11 @@
                 </option>
               </select>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
+
+            <div class="col-md-2">Kod1</div>
+            <div class="col-md-3">
               <select
-                class="browser-default custom-select"
+                class="select2-drop select2-display-none select2-with-searchbox select2-drop-active" 
                 formControlName="kod1Id"
               >
                 <option *ngFor="let item of kod1slookUp" [value]="item.id">
@@ -498,10 +515,12 @@
               </select>
             </div>
           </div>
+
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-3">Kod2</div>
+            <div class="col-md-3">
               <select
-                class="browser-default custom-select"
+                class="form-select"
                 formControlName="kod2Id"
               >
                 <option *ngFor="let item of kod2slookUp" [value]="item.id">
@@ -509,11 +528,11 @@
                 </option>
               </select>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-3">Kod3</div>
+
+            <div class="col-md-3">
               <select
-                class="browser-default custom-select"
+                class="form-select"
                 formControlName="kod3Id"
               >
                 <option *ngFor="let item of Kod3slookUp" [value]="item.id">
@@ -523,9 +542,10 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-3">Kod4</div>
+            <div class="col-md-3">
               <select
-                class="browser-default custom-select"
+                class="form-select"
                 formControlName="kod4Id"
               >
                 <option *ngFor="let item of Kod4slookUp" [value]="item.id">
@@ -533,11 +553,11 @@
                 </option>
               </select>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-3">Kod5</div>
+
+            <div class="col-md-3">
               <select
-                class="browser-default custom-select"
+                class="form-select"
                 formControlName="kod5Id"
               >
                 <option *ngFor="let item of Kod5slookUp" [value]="item.id">
@@ -546,32 +566,9 @@
               </select>
             </div>
           </div>
+
           <div class="row">
-            <div class="col-md-12">
-              <select
-                class="browser-default custom-select"
-                formControlName="olcuBr1Id"
-              >
-                <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
-                  {{ item.label }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <select
-                class="browser-default custom-select"
-                formControlName="olcuBr2Id"
-              >
-                <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
-                  {{ item.label }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -592,9 +589,19 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+
+            <div class="col-md-3">
+              <select
+                class="form-select"
+                formControlName="olcuBr1Id"
+              >
+                <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -615,12 +622,11 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
+
+            <div class="col-md-3">
               <select
-                class="browser-default custom-select"
-                formControlName="olcuBr3Id"
+                class="form-select"
+                formControlName="olcuBr2Id"
               >
                 <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
                   {{ item.label }}
@@ -628,8 +634,9 @@
               </select>
             </div>
           </div>
+
           <div class="row">
-            <div class="col col-md-12">
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -650,9 +657,19 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+
+            <div class="col-md-3">
+              <select [disabled]="true"
+                class="form-select"
+                
+              >
+                <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -673,33 +690,27 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
+
+
+            <div class="col-md-3">
               <select
-                class="browser-default custom-select"
-                formControlName="alisDovizTipiId"
+                class="form-select"
+                formControlName="olcuBr3Id"
               >
-                <option *ngFor="let item of dovizTipislookUp" [value]="item.id">
+                <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
                   {{ item.label }}
                 </option>
               </select>
             </div>
+
+            
+
+            
           </div>
+
           <div class="row">
-            <div class="col-md-12">
-              <select
-                class="browser-default custom-select"
-                formControlName="satisDovizTipiId"
-              >
-                <option *ngFor="let item of dovizTipislookUp" [value]="item.id">
-                  {{ item.label }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -720,9 +731,18 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+
+            <div class="col-md-3">
+              <select
+                class="form-select"
+                formControlName="alisDovizTipiId"
+              >
+                <option *ngFor="let item of dovizTipislookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -743,6 +763,21 @@
                 ></div>
               </mat-form-field>
             </div>
+            
+            <div class="col-md-3">
+              <select
+                class="form-select"
+                formControlName="satisDovizTipiId"
+              >
+                <option *ngFor="let item of dovizTipislookUp" [value]="item.id">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+
+            
+
+            
           </div>
           <div class="row">
             <div class="col col-md-12">

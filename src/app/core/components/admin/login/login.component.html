@@ -26,33 +26,34 @@
               </div>
               <div class="row">
                 <div class="col-md-12">
-                  <select class="selectpicker" data-live-search="true" placeholder="Seçiniz" name="lang" [(ngModel)]="loginUser.lang" (change)="changeLang($event.target.value)">
+                  <select class="form-select" data-live-search="true" placeholder="Seçiniz" name="lang" [(ngModel)]="loginUser.lang" (change)="changeLang($event.target.value)">
                     <option *ngFor="let item of langugelookUp" [value]="item.id"> {{item.label}}</option>
                   </select> 
                 </div>
               </div>
-              <div class="row">
+              <!-- <div class="row">
                 <div class="col-md-12">
-                  <!-- <ng-select [items]="langugelookUp"
+                  < <ng-select [items]="langugelookUp"
                    bindLabel="name"
                    placeholder="Seçiniz"
                    [(ngModel)]="loginUser.lang">
-                  </ng-select> -->
+                  </ng-select>
                 </div>
-              </div>
-              <div class="row">
+              </div> -->
+              <!-- <div class="row">
                 <div class="col-md-12">
 
                   <label>Your first ng-select</label>
-        <ng-select [items]="cities"
-                   bindLabel="name"
+        <ng-select [items]="langugelookUp"
+                    bindValue="id"
+                   bindLabel="label"
                    placeholder="Select city"
                    [(ngModel)]="selectedCity">
         </ng-select>
 
 
                 </div>
-              </div>
+              </div> -->
               <!-- <select class="selectpicker" data-live-search="true" placeholder="Seçiniz" name="lang" [(ngModel)]="loginUser.lang" (change)="changeLang($event.target.value)">
                 <option *ngFor="let item of langugelookUp" [value]="item.id"> {{item.label}}</option>
               </select> -->

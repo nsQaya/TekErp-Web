@@ -3,6 +3,9 @@ import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 import { LookUp } from '../models/LookUp';
+import { Barkod } from '../components/app/stok/barkod/models/barkod';
+import { SAPKod } from '../components/app/stok/sAPKod/models/sapkod';
+import { DinamikDepoHucre } from '../components/app/stok/dinamikDepoHucre/models/DinamikDepoHucre';
 
 
 @Injectable({
@@ -60,6 +63,18 @@ export class LookUpService {
 
   getOlcuBrLookup():Observable<LookUp[]>{
     return this.httpClient.get<LookUp[]>(environment.getApiUrl + "/olcubrs/lookups")
+  }
+
+  getSAPKodsLookup():Observable<SAPKod[]>{
+    return this.httpClient.get<SAPKod[]>(environment.getApiUrl + "/SAPKods/lookups")
+  }
+
+  getDinamikDepoHucresLookup():Observable<DinamikDepoHucre[]>{
+    return this.httpClient.get<DinamikDepoHucre[]>(environment.getApiUrl + "/DinamikDepoHucres/lookups")
+  }
+
+  getBarkodsLookup():Observable<Barkod[]>{
+    return this.httpClient.get<Barkod[]>(environment.getApiUrl + "/Barkods/lookups")
   }
 
 }

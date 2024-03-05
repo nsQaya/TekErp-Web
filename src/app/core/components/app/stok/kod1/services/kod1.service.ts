@@ -1,7 +1,7 @@
 ﻿import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Kod1 } from '../models/Kod1';
+import { Kod1 } from '../models/kod1';
 import { environment } from 'environments/environment';
 
 

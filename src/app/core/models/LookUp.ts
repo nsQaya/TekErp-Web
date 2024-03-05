@@ -1,5 +1,6 @@
 export class LookUp
 {
-    id:any;
+    id:number;
     label:string;
+    disabled:boolean;
 }

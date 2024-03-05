@@ -22,6 +22,10 @@ export class StokKartiService {
     return this.httpClient.get<StokKarti>(environment.getApiUrl + '/stokKartis/getbyid?id='+id)
   }
 
+  getStokDtoById(id: number): Observable<StokKarti> {
+    return this.httpClient.get<StokKarti>(environment.getApiUrl + '/stokKartis/getstokdtobyid?id='+id)
+  }
+
   addStokKarti(stokKarti: StokKarti): Observable<any> {
 
     return this.httpClient.post(environment.getApiUrl + '/stokKartis/', stokKarti, { responseType: 'text' });

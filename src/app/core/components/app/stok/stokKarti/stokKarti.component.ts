@@ -1,5 +1,10 @@
 import { Component, AfterViewInit, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
@@ -9,9 +14,14 @@ import { AuthService } from "app/core/components/admin/login/Services/auth.servi
 import { StokKarti } from "./models/stokkarti";
 import { StokKartiService } from "./services/stokkarti.service";
 import { environment } from "environments/environment";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { LookUp } from "app/core/models/LookUp";
-
+import { CommonModule } from "@angular/common";
+import { Subscription } from "rxjs";
+import { SAPKodService } from "../sAPKod/services/sapkod.service";
+import { SAPKod } from "../sAPKod/models/sapkod";
+import { Barkod } from "../barkod/models/barkod";
+import { DinamikDepoHucre } from "../dinamikDepoHucre/models/DinamikDepoHucre";
 
 declare var jQuery: any;
 
@@ -24,68 +34,76 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
   dataSource: MatTableDataSource<any>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-    // Kullanıcının seçtiği öğelerin ID'lerini içeren dizi
-    selectedIds: number[] = [];
 
-    // Checkbox durumlarını tutan nesne
-    checkboxStatus: { [key: number]: boolean } = {};
-  
-    // Checkbox durumunu güncelleyen fonksiyon
-    
+  // Kullanıcının seçtiği öğelerin ID'lerini içeren dizi
+  selectedIds: number[] = [];
+  hata: HttpErrorResponse;
+
+  // Checkbox durumlarını tutan nesne
+  checkboxStatus: { [key: number]: boolean } = {};
+
+  // Checkbox durumunu güncelleyen fonksiyon
+
   displayedColumns: string[] = [
     "id",
     "kodu",
     "adi",
     "ingilizceIsim",
     "grupKoduId",
-    "kod1Id",
-    "kod2Id",
-    "kod3Id",
-    "kod4Id",
-    "kod5Id",
+    // "kod1Id",
+    // "kod2Id",
+    // "kod3Id",
+    // "kod4Id",
+    // "kod5Id",
     "olcuBr1Id",
-    "olcuBr2Id",
-    "olcuBr2Pay",
-    "olcuBr2Payda",
-    "olcuBr3Id",
-    "olcuBr3Pay",
-    "olcuBr3Payda",
-    "alisDovizTipiId",
-    "satisDovizTipiId",
-    "alisFiyati",
-    "satisFiyati",
-    "alisKDVOrani",
-    "satisKDVOrani",
-    "seriTakibiVarMi",
-    "en",
-    "boy",
-    "genislik",
-    "agirlik",
-    "asgariStokMiktari",
-    "azamiStokMiktari",
-    "minimumSiparisMiktari",
+    // "olcuBr2Id",
+    // "olcuBr2Pay",
+    // "olcuBr2Payda",
+    // "olcuBr3Id",
+    // "olcuBr3Pay",
+    // "olcuBr3Payda",
+    // "alisDovizTipiId",
+    // "satisDovizTipiId",
+    // "alisFiyati",
+    // "satisFiyati",
+    // "alisKDVOrani",
+    // "satisKDVOrani",
+    // "seriTakibiVarMi",
+    // "en",
+    // "boy",
+    // "genislik",
+    // "agirlik",
+    // "asgariStokMiktari",
+    // "azamiStokMiktari",
+    // "minimumSiparisMiktari",
+    "sapKodlari",
     "update",
     "delete",
   ];
 
   stokKartiList: StokKarti[];
   stokKarti: StokKarti = new StokKarti();
+  sAPKodList: any;
 
   stokKartiAddForm: FormGroup;
 
   grupKoduslookUp: LookUp[];
   kod1slookUp: LookUp[];
   kod2slookUp: LookUp[];
-  Kod3slookUp: LookUp[];
-  Kod4slookUp: LookUp[];
-  Kod5slookUp: LookUp[];
+  kod3slookUp: LookUp[];
+  kod4slookUp: LookUp[];
+  kod5slookUp: LookUp[];
   dovizTipislookUp: LookUp[];
-  OlcuBrslookUp: LookUp[];
+  olcuBrslookUp: LookUp[];
+  sAPKodslookUp: SAPKod[];
+  barkodslookUp: Barkod[];
+  dinamikDepoHucreslookUp: DinamikDepoHucre[];
 
   stokKartiId: number;
 
   constructor(
     private stokKartiService: StokKartiService,
+    private sAPKodService: SAPKodService,
     private lookupService: LookUpService,
     private alertifyService: AlertifyService,
     private formBuilder: FormBuilder,
@@ -108,22 +126,38 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
       this.kod2slookUp = data;
     });
     this.lookupService.getKod3Lookup().subscribe((data) => {
-      this.Kod3slookUp = data;
+      this.kod3slookUp = data;
     });
     this.lookupService.getKod4Lookup().subscribe((data) => {
-      this.Kod4slookUp = data;
+      this.kod4slookUp = data;
     });
     this.lookupService.getKod5Lookup().subscribe((data) => {
-      this.Kod5slookUp = data;
+      this.kod5slookUp = data;
     });
     this.lookupService.getDovizTipiLookup().subscribe((data) => {
       this.dovizTipislookUp = data;
     });
     this.lookupService.getOlcuBrLookup().subscribe((data) => {
-      this.OlcuBrslookUp = data;
+      this.olcuBrslookUp = data;
+    });
+    this.lookupService.getDinamikDepoHucresLookup().subscribe((data) => {
+      this.dinamikDepoHucreslookUp = data;
+    });
+    this.lookupService.getSAPKodsLookup().subscribe((data) => {
+      this.sAPKodslookUp = data;
+    });
+    this.lookupService.getBarkodsLookup().subscribe((data) => {
+      this.barkodslookUp = data;
     });
 
     this.createStokKartiAddForm();
+
+    this.stokKartiAddForm
+      .get("olcuBr1Id")
+      ?.valueChanges.subscribe((selectedValue) => {
+        this.stokKartiAddForm.get("olcuBr1IdBilgi")?.setValue(selectedValue);
+        this.stokKartiAddForm.get("olcuBr1IdBilgi").disable(); // veya enable() metodunu kullanarak enable edebilirsiniz
+      });
   }
 
   getStokKartiList() {
@@ -150,22 +184,32 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
       jQuery("#stokkarti").modal("hide");
       this.alertifyService.success(data);
       this.clearFormGroup(this.stokKartiAddForm);
+    },
+    (error) => {
+      // this.hata=error.error;
+      this.alertifyService.error(error.error);
     });
   }
 
   updateStokKarti() {
-    this.stokKartiService.updateStokKarti(this.stokKarti).subscribe((data) => {
-      var index = this.stokKartiList.findIndex(
-        (x) => x.id == this.stokKarti.id
-      );
-      this.stokKartiList[index] = this.stokKarti;
-      this.dataSource = new MatTableDataSource(this.stokKartiList);
-      this.configDataTable();
-      this.stokKarti = new StokKarti();
-      jQuery("#stokkarti").modal("hide");
-      this.alertifyService.success(data);
-      this.clearFormGroup(this.stokKartiAddForm);
-    });
+    this.stokKartiService.updateStokKarti(this.stokKarti).subscribe(
+      (data) => {
+        var index = this.stokKartiList.findIndex(
+          (x) => x.id == this.stokKarti.id
+        );
+        this.stokKartiList[index] = this.stokKarti;
+        this.dataSource = new MatTableDataSource(this.stokKartiList);
+        this.configDataTable();
+        this.stokKarti = new StokKarti();
+        jQuery("#stokkarti").modal("hide");
+        this.alertifyService.success(data);
+        this.clearFormGroup(this.stokKartiAddForm);
+      },
+      (error) => {
+        // this.hata=error.error;
+        this.alertifyService.error(error.error);
+      }
+    );
   }
 
   createStokKartiAddForm() {
@@ -175,32 +219,36 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
       adi: ["", Validators.required],
       ingilizceIsim: ["", Validators.required],
       grupKoduId: [0, Validators.required],
-      kod1Id: [0, Validators.required],
-      kod2Id: [0, Validators.required],
-      kod3Id: [0, Validators.required],
-      kod4Id: [0, Validators.required],
-      kod5Id: [0, Validators.required],
+      kod1Id: [],
+      kod2Id: [],
+      kod3Id: [],
+      kod4Id: [],
+      kod5Id: [],
       olcuBr1Id: [0, Validators.required],
-      olcuBr2Id: [0, Validators.required],
-      olcuBr2Pay: [0, Validators.required],
-      olcuBr2Payda: [0, Validators.required],
-      olcuBr3Id: [0, Validators.required],
-      olcuBr3Pay: [0, Validators.required],
-      olcuBr3Payda: [0, Validators.required],
-      alisDovizTipiId: [0, Validators.required],
-      satisDovizTipiId: [0, Validators.required],
-      alisFiyati: [0, Validators.required],
-      satisFiyati: [0, Validators.required],
+      olcuBr1IdBilgi: [{ value: 0, disabled: true }, Validators.required],
+      olcuBr2Id: [],
+      olcuBr2Pay: [1],
+      olcuBr2Payda: [1],
+      olcuBr3Id: [],
+      olcuBr3Pay: [1],
+      olcuBr3Payda: [1],
+      alisDovizTipiId: [],
+      satisDovizTipiId: [],
+      alisFiyati: [0],
+      satisFiyati: [0],
       alisKDVOrani: [0, Validators.required],
       satisKDVOrani: [0, Validators.required],
-      seriTakibiVarMi: [false, Validators.required],
-      en: [0, Validators.required],
-      boy: [0, Validators.required],
-      genislik: [0, Validators.required],
-      agirlik: [0, Validators.required],
-      asgariStokMiktari: [0, Validators.required],
-      azamiStokMiktari: [0, Validators.required],
-      minimumSiparisMiktari: [0, Validators.required],
+      seriTakibiVarMi: [false],
+      en: [0],
+      boy: [0],
+      genislik: [0,],
+      agirlik: [0,],
+      asgariStokMiktari: [0,],
+      azamiStokMiktari: [0,],
+      minimumSiparisMiktari: [0,],
+      sapKodlari: [],
+      dinamikDepoOzets: [],
+      barkodlar: [],
     });
   }
 
@@ -217,10 +265,19 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
 
   getStokKartiById(stokKartiId: number) {
     this.clearFormGroup(this.stokKartiAddForm);
-    this.stokKartiService.getStokKartiById(stokKartiId).subscribe((data) => {
+    this.stokKartiService.getStokDtoById(stokKartiId).subscribe((data) => {
+      
+      this.stokKartiAddForm.get('sapKodlari').setValue(this.sAPKodslookUp);
       this.stokKarti = data;
       this.stokKartiAddForm.patchValue(data);
     });
+    this.barkodslookUp = this.barkodslookUp.filter(
+      (barkod) => barkod.stokKartiID !== stokKartiId
+    );
+    this.stokKartiAddForm.get('barkodlar').setValue(this.barkodslookUp);
+    this.sAPKodslookUp = this.sAPKodslookUp.filter(
+      (s) => s.stokKartiID !== stokKartiId
+    );
   }
 
   clearFormGroup(group: FormGroup) {
@@ -250,14 +307,9 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
-  ExportTOExcel()
-  {
-
-  }
-  StokBarkodYazdir()
-  {
-    console.log('Selected IDs:', this.selectedIds);
-
+  ExportTOExcel() {}
+  StokBarkodYazdir() {
+    console.log("Selected IDs:", this.selectedIds);
   }
   updateCheckboxStatus(id: number, checked: boolean): void {
     this.checkboxStatus[id] = checked;
@@ -265,9 +317,28 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
     // Checkbox seçildiyse, seçilenIds dizisine ekle
     if (checked) {
       this.selectedIds.push(id);
-    } else { // Checkbox seçilmediyse, seçilenIds dizisinden çıkar
-      this.selectedIds = this.selectedIds.filter(selectedId => selectedId !== id);
+    } else {
+      // Checkbox seçilmediyse, seçilenIds dizisinden çıkar
+      this.selectedIds = this.selectedIds.filter(
+        (selectedId) => selectedId !== id
+      );
     }
+  }
 
+  addTagSAPKod(kod) {
+    return { kod: kod };
+  }
+
+  addTagDinamikDepoHucre(kod) {
+    return { hucreKodu: kod };
+  }
+  addTagBarkod(kod) {
+    return { barkodu: kod };
+  }
+  getSapKodlari(sapKodlari: any[]): string {
+    if (sapKodlari) {
+      return sapKodlari.map(item => item.kod).join(', ');
+    }
+    return '';
   }
 }

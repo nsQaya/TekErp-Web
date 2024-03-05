@@ -15,8 +15,9 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { LoginGuard } from './core/guards/login-guard';
 import { AuthInterceptorService } from './core/interceptors/auth-interceptor.service';
 import { HttpEntityRepositoryService } from './core/services/http-entity-repository.service';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { NgSelectModule,NgOption  } from '@ng-select/ng-select';
 import { CommonModule } from '@angular/common';
+import { StokrehberComponent } from './core/components/rehber/stokrehber/stokrehber.component';
 
 
 
@@ -56,13 +57,14 @@ export function tokenGetter() {
         deps: [HttpClient]
       }
 
-    }),
-    NgSelectModule
+    })
+    
 
   ],
   declarations: [
     AppComponent,
-    AdminLayoutComponent
+    AdminLayoutComponent,
+    StokrehberComponent
   ],
 
   providers: [

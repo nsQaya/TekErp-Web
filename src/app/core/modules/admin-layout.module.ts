@@ -39,6 +39,7 @@ import { GrupKoduComponent } from '../components/app/stok/grupKodu/grupKodu.comp
 import { OlcuBrComponent } from '../components/app/stok/olcuBr/olcuBr.component';
 import { StokKartiComponent } from '../components/app/stok/stokKarti/stokKarti.component';
 import { SAPKodComponent } from '../components/app/stok/sAPKod/sAPKod.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 
 // export function layoutHttpLoaderFactory(http: HttpClient) {
@@ -63,6 +64,7 @@ import { SAPKodComponent } from '../components/app/stok/sAPKod/sAPKod.component'
         MatSortModule,
         MatCheckboxModule,
         NgbModule,
+        NgSelectModule,
         NgMultiSelectDropDownModule,
         SweetAlert2Module,
         TranslateModule.forChild({

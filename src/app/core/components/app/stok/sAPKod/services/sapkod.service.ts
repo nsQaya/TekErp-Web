@@ -1,7 +1,7 @@
 ﻿import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SAPKod } from '../models/SAPKod';
+import { SAPKod } from '../models/sapkod';
 import { environment } from 'environments/environment';
 
 

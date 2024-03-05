@@ -84,10 +84,10 @@
                     {{ "GrupKoduId" | translate }}
                   </th>
                   <td mat-cell *matCellDef="let element">
-                    {{ element.grupKoduId }}
+                    {{ element.grupKodu?.kodu }}
                   </td>
                 </ng-container>
-
+<!-- 
                 <ng-container matColumnDef="kod1Id">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>
                     {{ "Kod1Id" | translate }}
@@ -131,17 +131,18 @@
                   <td mat-cell *matCellDef="let element">
                     {{ element.kod5Id }}
                   </td>
-                </ng-container>
+                </ng-container> 
+-->
 
                 <ng-container matColumnDef="olcuBr1Id">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>
                     {{ "OlcuBr1Id" | translate }}
                   </th>
                   <td mat-cell *matCellDef="let element">
-                    {{ element.olcuBr1Id }}
+                    {{ element.olcuBr1?.adi }}
                   </td>
                 </ng-container>
-
+<!-- 
                 <ng-container matColumnDef="olcuBr2Id">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>
                     {{ "OlcuBr2Id" | translate }}
@@ -319,17 +320,19 @@
                   <td mat-cell *matCellDef="let element">
                     {{ element.minimumSiparisMiktari }}
                   </td>
-                </ng-container>
+                </ng-container> 
+              -->
 
                 <ng-container matColumnDef="sapKodlari">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>
                     {{ "SapKodlari" | translate }}
                   </th>
                   <td mat-cell *matCellDef="let element">
-                    {{ element.sapKodlari }}
+                    {{ getSapKodlari(element.sapKodlari) }}
+                    <!-- {{ element.sapKodlari?.kod }} -->
                   </td>
                 </ng-container>
-
+<!-- 
                 <ng-container matColumnDef="barkodlar">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>
                     {{ "Barkodlar" | translate }}
@@ -338,7 +341,7 @@
                     {{ element.barkodlar }}
                   </td>
                 </ng-container>
-
+ -->
                 <ng-container matColumnDef="update">
                   <th mat-header-cell *matHeaderCellDef></th>
                   <td style="width: 25px" mat-cell *matCellDef="let element">
@@ -424,6 +427,12 @@
           [formGroup]="stokKartiAddForm"
           (ngSubmit)="save()"
         >
+          <!-- <div class="row">Stok : {{ stokKarti | json }}</div> -->
+          <!-- <div class="row">GrupKodu: {{ grupKoduslookUp | json }}</div>
+          <div class="row">Olçü: {{ olcuBrslookUp | json }}</div> -->
+          <!-- <div *ngIf="hata" class="error-message">
+          <pre>{{ hata }}</pre>
+        </div> -->
           <div class="row">
             <div class="col col-md-3">
               <mat-form-field class="example-full-width">
@@ -433,6 +442,7 @@
                   type="text"
                   id="kodu"
                   name="kodu"
+                  autocomplete="off"
                   formControlName="kodu"
                 />
                 <div
@@ -453,6 +463,7 @@
                   type="text"
                   id="adi"
                   name="adi"
+                  autocomplete="off"
                   formControlName="adi"
                 />
                 <div
@@ -474,6 +485,7 @@
                   type="text"
                   id="ingilizceIsim"
                   name="ingilizceIsim"
+                  autocomplete="off"
                   formControlName="ingilizceIsim"
                 />
                 <div
@@ -490,80 +502,79 @@
           </div>
 
           <div class="row">
-            <div class="col-md-3">GrupKodu</div>
-            <div class="col-md-3">
-              <select
-                class="form-select"
-                placeholder="Seçiniz"
+            <div class="col-md-6">
+              <ng-select
+                [items]="grupKoduslookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Grup Kodu"
                 formControlName="grupKoduId"
               >
-                <option *ngFor="let item of grupKoduslookUp" [value]="item.id">
-                  {{ item.label }}
-                </option>
-              </select>
+              </ng-select>
+              <div
+                class="alert alert-danger"
+                *ngIf="
+                  stokKartiAddForm.get('grupKoduId')!.hasError('grupKoduId') &&
+                  stokKartiAddForm.get('grupKoduId')!.dirty
+                "
+              ></div>
             </div>
 
-            <div class="col-md-2">Kod1</div>
-            <div class="col-md-3">
-              <select
-                class="select2-drop select2-display-none select2-with-searchbox select2-drop-active" 
+            <div class="col-md-6">
+              <ng-select
+                [items]="kod1slookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Kod 1"
                 formControlName="kod1Id"
               >
-                <option *ngFor="let item of kod1slookUp" [value]="item.id">
-                  {{ item.label }}
-                </option>
-              </select>
+              </ng-select>
             </div>
           </div>
-
           <div class="row">
-            <div class="col-md-3">Kod2</div>
-            <div class="col-md-3">
-              <select
-                class="form-select"
+            <div class="col-md-6">
+              <ng-select
+                [items]="kod2slookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Kod 2"
                 formControlName="kod2Id"
               >
-                <option *ngFor="let item of kod2slookUp" [value]="item.id">
-                  {{ item.label }}
-                </option>
-              </select>
+              </ng-select>
             </div>
-            <div class="col-md-3">Kod3</div>
 
-            <div class="col-md-3">
-              <select
-                class="form-select"
+            <div class="col-md-6">
+              <ng-select
+                [items]="kod3slookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Kod 3"
                 formControlName="kod3Id"
               >
-                <option *ngFor="let item of Kod3slookUp" [value]="item.id">
-                  {{ item.label }}
-                </option>
-              </select>
+              </ng-select>
             </div>
           </div>
           <div class="row">
-            <div class="col-md-3">Kod4</div>
-            <div class="col-md-3">
-              <select
-                class="form-select"
+            <div class="col-md-6">
+              <ng-select
+                [items]="kod4slookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Kod 4"
                 formControlName="kod4Id"
               >
-                <option *ngFor="let item of Kod4slookUp" [value]="item.id">
-                  {{ item.label }}
-                </option>
-              </select>
+              </ng-select>
             </div>
-            <div class="col-md-3">Kod5</div>
 
-            <div class="col-md-3">
-              <select
-                class="form-select"
+            <div class="col-md-6">
+              <ng-select
+                [items]="kod5slookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Kod 5"
                 formControlName="kod5Id"
               >
-                <option *ngFor="let item of Kod5slookUp" [value]="item.id">
-                  {{ item.label }}
-                </option>
-              </select>
+              </ng-select>
             </div>
           </div>
 
@@ -591,14 +602,19 @@
             </div>
 
             <div class="col-md-3">
-              <select
-                class="form-select"
+              <ng-select
+                [items]="olcuBrslookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Ölçü Birimi"
                 formControlName="olcuBr1Id"
               >
-                <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
+              </ng-select>
+              <!-- <select class="form-select" formControlName="olcuBr1Id">
+                <option *ngFor="let item of olcuBrslookUp" [value]="item.id">
                   {{ item.label }}
                 </option>
-              </select>
+              </select> -->
             </div>
 
             <div class="col col-md-3">
@@ -624,14 +640,19 @@
             </div>
 
             <div class="col-md-3">
-              <select
-                class="form-select"
+              <ng-select
+                [items]="olcuBrslookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Ölçü Birimi"
                 formControlName="olcuBr2Id"
               >
+              </ng-select>
+              <!-- <select class="form-select" formControlName="olcuBr2Id">
                 <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
                   {{ item.label }}
                 </option>
-              </select>
+              </select> -->
             </div>
           </div>
 
@@ -659,14 +680,20 @@
             </div>
 
             <div class="col-md-3">
-              <select [disabled]="true"
-                class="form-select"
-                
+              <ng-select
+                [disabled]="true"
+                [items]="olcuBrslookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Ölçü Birimi"
+                formControlName="olcuBr1IdBilgi"
               >
+              </ng-select>
+              <!-- <select [disabled]="true" class="form-select">
                 <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
                   {{ item.label }}
                 </option>
-              </select>
+              </select> -->
             </div>
 
             <div class="col col-md-3">
@@ -691,25 +718,25 @@
               </mat-form-field>
             </div>
 
-
             <div class="col-md-3">
-              <select
-                class="form-select"
+              <ng-select
+                [disabled]="true"
+                [items]="olcuBrslookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Ölçü Birimi"
                 formControlName="olcuBr3Id"
               >
+              </ng-select>
+              <!-- <select class="form-select" formControlName="olcuBr3Id">
                 <option *ngFor="let item of OlcuBrslookUp" [value]="item.id">
                   {{ item.label }}
                 </option>
-              </select>
+              </select> -->
             </div>
-
-            
-
-            
           </div>
 
           <div class="row">
-
             <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
@@ -733,14 +760,20 @@
             </div>
 
             <div class="col-md-3">
-              <select
-                class="form-select"
+              <ng-select
+                [disabled]="true"
+                [items]="dovizTipislookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Döviz Tipi"
                 formControlName="alisDovizTipiId"
               >
+              </ng-select>
+              <!-- <select class="form-select" formControlName="alisDovizTipiId">
                 <option *ngFor="let item of dovizTipislookUp" [value]="item.id">
                   {{ item.label }}
                 </option>
-              </select>
+              </select> -->
             </div>
             <div class="col col-md-3">
               <mat-form-field class="example-full-width">
@@ -763,24 +796,26 @@
                 ></div>
               </mat-form-field>
             </div>
-            
+
             <div class="col-md-3">
-              <select
-                class="form-select"
+              <ng-select
+                [disabled]="true"
+                [items]="dovizTipislookUp"
+                bindValue="id"
+                bindLabel="label"
+                placeholder="Döviz Tipi"
                 formControlName="satisDovizTipiId"
               >
+              </ng-select>
+              <!-- <select class="form-select" formControlName="satisDovizTipiId">
                 <option *ngFor="let item of dovizTipislookUp" [value]="item.id">
                   {{ item.label }}
                 </option>
-              </select>
+              </select> -->
             </div>
-
-            
-
-            
           </div>
           <div class="row">
-            <div class="col col-md-12">
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -801,9 +836,8 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -826,18 +860,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col col-md-2">
-              <mat-checkbox
-                formControlName="seriTakibiVarMi"
-                id="seriTakibiVarMi"
-                name="seriTakibiVarMi"
-              >
-                seriTakibiVarMi
-              </mat-checkbox>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -856,9 +879,8 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -877,9 +899,8 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -898,9 +919,8 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -921,7 +941,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col col-md-12">
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -942,9 +962,8 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -965,9 +984,8 @@
                 ></div>
               </mat-form-field>
             </div>
-          </div>
-          <div class="row">
-            <div class="col col-md-12">
+
+            <div class="col col-md-3">
               <mat-form-field class="example-full-width">
                 <input
                   matInput
@@ -988,7 +1006,60 @@
                 ></div>
               </mat-form-field>
             </div>
+            <div class="col col-md-3">
+              <mat-checkbox
+                formControlName="seriTakibiVarMi"
+                id="seriTakibiVarMi"
+                name="seriTakibiVarMi"
+              >
+                seriTakibiVarMi
+              </mat-checkbox>
+            </div>
           </div>
+
+          <div class="row">
+            <div class="col col-md-6">
+              <label for="barkodlar">SAP Kodları</label>
+              <ng-select
+                [items]="sAPKodslookUp"
+                [addTag]="addTagSAPKod"
+                [hideSelected]="true"
+                multiple="true"
+                bindLabel="kod"
+                formControlName="sapKodlari"
+              >
+              </ng-select>
+            </div>
+            <div class="col col-md-6">
+              <label for="barkodlar">Hücreler</label>
+              <ng-select
+                [items]="dinamikDepoHucreslookUp"
+                [addTag]="addTagDinamikDepoHucre"
+                [hideSelected]="true"
+                multiple="true"
+                bindLabel="hucreKodu"
+                formControlName="dinamikDepoOzets"
+              >
+              </ng-select>
+            </div>
+          </div>
+          <div class="row">
+            
+            <div class="col col-md-6">
+              <label for="barkodlar">Barkodlar</label>
+              <ng-select
+                [items]="barkodslookUp"
+                [addTag]="addTagBarkod"
+                [hideSelected]="true"
+                multiple="true"
+                bindLabel="barkodu"
+                formControlName="barkodlar"
+              >
+              </ng-select>
+            </div>
+          </div>
+          <!-- stokKarti.sapKodlari : {{stokKarti|json}} <br> -->
+
 
           <button
             mat-raised-button

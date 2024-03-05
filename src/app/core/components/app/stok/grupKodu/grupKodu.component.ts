@@ -31,6 +31,7 @@ export class GrupKoduComponent implements AfterViewInit, OnInit {
 
 
 	grupKoduId:number;
+	
 
 	constructor(private grupKoduService:GrupKoduService, private lookupService:LookUpService,private alertifyService:AlertifyService,private formBuilder: FormBuilder, private authService:AuthService) { }
 
@@ -98,8 +99,8 @@ export class GrupKoduComponent implements AfterViewInit, OnInit {
 	createGrupKoduAddForm() {
 		this.grupKoduAddForm = this.formBuilder.group({		
 			id : [0],
-kodu : ["", Validators.required],
-adi : ["", Validators.required]
+			kodu : ["", Validators.required],
+			adi : ["", Validators.required]
 		})
 	}
 

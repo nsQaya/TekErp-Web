@@ -19,6 +19,7 @@ import { BarkodComponent } from '../../stok/barkod/barkod.component';
 import { StokKartiComponent } from '../../stok/stokKarti/stokKarti.component';
 import { SAPKodComponent } from '../../stok/sAPKod/sAPKod.component';
 import { OlcuBrComponent } from '../../stok/olcuBr/olcuBr.component';
+import { DinamikDepoHucre } from '../../stok/dinamikDepoHucre/models/DinamikDepoHucre';
 
 
 
@@ -44,8 +45,9 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'kod5',           component: Kod5Component,canActivate:[LoginGuard]},
 
     { path: 'barkod',         component: BarkodComponent,canActivate:[LoginGuard]},
-    { path: 'olcuBirim',      component: OlcuBrComponent,canActivate:[LoginGuard]},
+    { path: 'olcuBr',         component: OlcuBrComponent,canActivate:[LoginGuard]},
     { path: 'sAPKod',         component: SAPKodComponent,canActivate:[LoginGuard]},
-    { path: 'stokKarti',      component: StokKartiComponent,canActivate:[LoginGuard]}
+    { path: 'stokKarti',      component: StokKartiComponent,canActivate:[LoginGuard]},
+    { path: 'dinamikDepoHucre',      component: DinamikDepoHucre,canActivate:[LoginGuard]}
 
 ];

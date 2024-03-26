@@ -2,7 +2,7 @@ import { Component, OnInit,AfterViewInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertifyService } from 'app/core/services/alertify.service';
 import { LookUpService } from 'app/core/services/lookUp.service';
-import { AuthService } from 'app/core/components/admin/login/Services/auth.service';
+import { AuthService } from 'app/core/components/admin/login/services/auth.service';
 import { LogDto } from './models/logdto';
 import { LogDtoService } from './services/logdto.service';
 import { Subject } from 'rxjs/Rx';

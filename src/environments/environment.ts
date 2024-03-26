@@ -6,6 +6,8 @@
 export const environment = {
   production: false,
    getApiUrl: 'http://erpmain.teknomak.com.tr/api/v1',
+   getStokBarkodUrl:'http://erpmain.teknomak.com.tr/Reports/StokBarkod/',
+
    //getApiUrl: 'https://localhost:5001/api/v1',
   getDropDownSetting: {
     singleSelection: false,

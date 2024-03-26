@@ -7,7 +7,7 @@ import { AlertifyService } from 'app/core/services/alertify.service';
 import { LookUpService } from 'app/core/services/lookUp.service';
 import { AuthService } from 'app/core/components/admin/login/services/auth.service';
 import { DinamikDepoHucre } from './models/DinamikDepoHucre';
-import { DinamikDepoHucreService } from './services/DinamikDepoHucre.service';
+import { DinamikDepoHucreService } from './services/dinamikdepohucre.service';
 import { environment } from 'environments/environment';
 
 declare var jQuery: any;

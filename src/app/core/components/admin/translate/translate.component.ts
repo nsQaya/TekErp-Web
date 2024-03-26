@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../login/Services/auth.service';
+import { AuthService } from '../login/services/auth.service';
 import { Translate } from './models/translate';
 import { TranslateService } from './services/translate.service';
 import { LookUp } from '../../../models/LookUp';

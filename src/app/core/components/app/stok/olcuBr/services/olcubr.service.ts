@@ -1,7 +1,7 @@
 ﻿import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { OlcuBr } from '../models/OlcuBr';
+import { OlcuBr } from '../models/olcubr';
 import { environment } from 'environments/environment';
 
 

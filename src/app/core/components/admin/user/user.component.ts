@@ -12,7 +12,7 @@ import { IDropdownSettings } from "ng-multiselect-dropdown";
 import { LookUp } from "app/core/models/LookUp";
 import { AlertifyService } from "app/core/services/alertify.service";
 import { LookUpService } from "app/core/services/lookUp.service";
-import { AuthService } from "../login/Services/auth.service";
+import { AuthService } from "../login/services/auth.service";
 import { MustMatch } from "app/core/directives/must-match";
 import { PasswordDto } from "./models/passwordDto";
 import { environment } from "environments/environment";

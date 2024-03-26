@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit, ViewChild } from "@angular/core";
+import { Component, AfterViewInit, OnInit, ViewChild, ElementRef } from "@angular/core";
 import {
   FormBuilder,
   FormControl,
@@ -10,7 +10,7 @@ import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { AlertifyService } from "app/core/services/alertify.service";
 import { LookUpService } from "app/core/services/lookUp.service";
-import { AuthService } from "app/core/components/admin/login/Services/auth.service";
+import { AuthService } from "app/core/components/admin/login/services/auth.service";
 import { StokKarti } from "./models/stokkarti";
 import { StokKartiService } from "./services/stokkarti.service";
 import { environment } from "environments/environment";
@@ -22,7 +22,8 @@ import { SAPKodService } from "../sAPKod/services/sapkod.service";
 import { SAPKod } from "../sAPKod/models/sapkod";
 import { Barkod } from "../barkod/models/barkod";
 import { DinamikDepoHucre } from "../dinamikDepoHucre/models/DinamikDepoHucre";
-
+import * as XLSX from 'xlsx';
+import { StokKartiForGrid } from "./models/stokkartiforgrid";
 declare var jQuery: any;
 
 @Component({
@@ -34,6 +35,10 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
   dataSource: MatTableDataSource<any>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('TABLE') table: ElementRef;
+  @ViewChild('closebutton') closebutton;
+
+  
 
   // Kullanıcının seçtiği öğelerin ID'lerini içeren dizi
   selectedIds: number[] = [];
@@ -49,39 +54,15 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
     "kodu",
     "adi",
     "ingilizceIsim",
-    "grupKoduId",
-    // "kod1Id",
-    // "kod2Id",
-    // "kod3Id",
-    // "kod4Id",
-    // "kod5Id",
-    "olcuBr1Id",
-    // "olcuBr2Id",
-    // "olcuBr2Pay",
-    // "olcuBr2Payda",
-    // "olcuBr3Id",
-    // "olcuBr3Pay",
-    // "olcuBr3Payda",
-    // "alisDovizTipiId",
-    // "satisDovizTipiId",
-    // "alisFiyati",
-    // "satisFiyati",
-    // "alisKDVOrani",
-    // "satisKDVOrani",
-    // "seriTakibiVarMi",
-    // "en",
-    // "boy",
-    // "genislik",
-    // "agirlik",
-    // "asgariStokMiktari",
-    // "azamiStokMiktari",
-    // "minimumSiparisMiktari",
+    "grupKodu",
+    "olcuBr1",
     "sapKodlari",
     "update",
     "delete",
   ];
 
   stokKartiList: StokKarti[];
+  stokKartiListForGrid:StokKartiForGrid[];
   stokKarti: StokKarti = new StokKarti();
   sAPKodList: any;
 
@@ -113,6 +94,7 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit(): void {
     this.getStokKartiList();
+    this.getStokKartiListForGrid();
   }
 
   ngOnInit() {
@@ -163,9 +145,18 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
   getStokKartiList() {
     this.stokKartiService.getStokKartiList().subscribe((data) => {
       this.stokKartiList = data;
+      // this.dataSource = new MatTableDataSource(data);
+      // this.configDataTable();
+    });
+  }
+
+  getStokKartiListForGrid(){
+    this.stokKartiService.getStokKartiListForGrid().subscribe((data) => {
+      this.stokKartiListForGrid = data;
       this.dataSource = new MatTableDataSource(data);
       this.configDataTable();
     });
+
   }
 
   save() {
@@ -180,10 +171,12 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
   addStokKarti() {
     this.stokKartiService.addStokKarti(this.stokKarti).subscribe((data) => {
       this.getStokKartiList();
+      this.getStokKartiListForGrid();
       this.stokKarti = new StokKarti();
-      jQuery("#stokkarti").modal("hide");
+      // jQuery('#stokkarti').modal('hide');
       this.alertifyService.success(data);
       this.clearFormGroup(this.stokKartiAddForm);
+      this.closebutton.nativeElement.click();
     },
     (error) => {
       // this.hata=error.error;
@@ -198,12 +191,15 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
           (x) => x.id == this.stokKarti.id
         );
         this.stokKartiList[index] = this.stokKarti;
-        this.dataSource = new MatTableDataSource(this.stokKartiList);
-        this.configDataTable();
+        // this.dataSource = new MatTableDataSource(this.stokKartiList); //Eklenen veri yerine tüm listeyi tekrar çek
+        // this.configDataTable();
+
         this.stokKarti = new StokKarti();
-        jQuery("#stokkarti").modal("hide");
+        //jQuery('#stokkarti').modal('hide');
         this.alertifyService.success(data);
+        this.getStokKartiListForGrid();
         this.clearFormGroup(this.stokKartiAddForm);
+        this.closebutton.nativeElement.click();
       },
       (error) => {
         // this.hata=error.error;
@@ -258,8 +254,15 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
       this.stokKartiList = this.stokKartiList.filter(
         (x) => x.id != stokKartiId
       );
-      this.dataSource = new MatTableDataSource(this.stokKartiList);
-      this.configDataTable();
+
+      this.getStokKartiListForGrid();
+
+      // this.dataSource = new MatTableDataSource(this.stokKartiList);
+      // this.configDataTable();
+    },
+    (error) => {
+      // this.hata=error.error;
+      this.alertifyService.error(error.error);
     });
   }
 
@@ -270,6 +273,10 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
       this.stokKartiAddForm.get('sapKodlari').setValue(this.sAPKodslookUp);
       this.stokKarti = data;
       this.stokKartiAddForm.patchValue(data);
+    },
+    (error) => {
+      // this.hata=error.error;
+      this.alertifyService.error(error.error);
     });
     this.barkodslookUp = this.barkodslookUp.filter(
       (barkod) => barkod.stokKartiID !== stokKartiId
@@ -288,6 +295,7 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
       group.get(key).setErrors(null);
       if (key == "id") group.get(key).setValue(0);
     });
+    
   }
 
   checkClaim(claim: string): boolean {
@@ -307,13 +315,26 @@ export class StokKartiComponent implements AfterViewInit, OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
-  ExportTOExcel() {}
+  ExportTOExcel() {
+    const ws: XLSX.WorkSheet=XLSX.utils.table_to_sheet(this.table.nativeElement);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sayfa1');
+    
+    /* save to file */
+    XLSX.writeFile(wb, 'StokList.xlsx');
+  }
   StokBarkodYazdir() {
     console.log("Selected IDs:", this.selectedIds);
+
+    this.stokKartiService.getBarkodPdfUrl(this.selectedIds).subscribe((barkodUrl) => {
+      window.open(environment.getStokBarkodUrl+barkodUrl.url+".pdf", '_blank');
+    },
+    (error) => {
+      this.alertifyService.error(error.error);
+    });
   }
   updateCheckboxStatus(id: number, checked: boolean): void {
     this.checkboxStatus[id] = checked;
-
     // Checkbox seçildiyse, seçilenIds dizisine ekle
     if (checked) {
       this.selectedIds.push(id);

@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { StokKarti } from '../models/stokkarti';
 import { environment } from 'environments/environment';
+import { StokKartiPrintURL } from '../models/stokkartiprinturl';
+import { StokKartiForGrid } from '../models/stokkartiforgrid';
 
 
 @Injectable({
@@ -16,6 +18,11 @@ export class StokKartiService {
   getStokKartiList(): Observable<StokKarti[]> {
 
     return this.httpClient.get<StokKarti[]>(environment.getApiUrl + '/stokKartis/getall')
+  }
+
+  getStokKartiListForGrid(): Observable<StokKartiForGrid[]> {
+
+    return this.httpClient.get<StokKartiForGrid[]>(environment.getApiUrl + '/stokKartis/getallforgrid')
   }
 
   getStokKartiById(id: number): Observable<StokKarti> {
@@ -40,5 +47,11 @@ export class StokKartiService {
     return this.httpClient.request('delete', environment.getApiUrl + '/stokKartis/', { body: { id: id } });
   }
 
+  getBarkodPdfUrl(stokIds: number[]): Observable<StokKartiPrintURL> {
+    return this.httpClient.get<StokKartiPrintURL>(environment.getApiUrl + '/stokKartis/stokkartibarkodpdf?'+stokIds.map((number) => `${urlStokKisit}${number}`).join('&'))
+  }
+
+
 
 }
+const urlStokKisit: string = '_stokIds=';

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ADMINROUTES } from '../sidebar/sidebar.component';
 import {Location, LocationStrategy, PathLocationStrategy} from '@angular/common';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../../admin/login/Services/auth.service';
+import { AuthService } from '../../admin/login/services/auth.service';
 import { SharedService } from 'app/core/services/shared.service';
 
 

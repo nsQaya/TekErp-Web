@@ -2,7 +2,7 @@ import { HostListener } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../admin/login/Services/auth.service';
+import { AuthService } from '../../admin/login/services/auth.service';
 
 
 
@@ -21,20 +21,19 @@ export const ADMINROUTES: RouteInfo[] = [
   { path: '/language', title: 'Languages', icon:'language', class: '', claim:"GetLanguagesQuery" },
   { path: '/translate', title: 'TranslateWords', icon: 'translate', class: '', claim: "GetTranslatesQuery" },
   { path: '/log', title: 'Logs', icon: 'update', class: '', claim: "GetLogDtoQuery" },
-  { path: '/dovizTipi', title: 'DovizTipi', icon: 'update', class: '', claim: "GetDovizTipisQuery" },
-  { path: '/olcuBirim', title: 'OlcuBirim', icon: 'update', class: '', claim: "GetOlcuBirimsQuery" },
+  { path: '/dovizTipi', title: 'DovizTipi', icon: 'update', class: '', claim: "GetDovizTipisQuery" }
 ];
 
 export const USERROUTES: RouteInfo[] = [ 
-  { path: '/stokKarti', title: 'StokKarti', icon: 'update', class: '', claim: "GetStokKartisQuery" },
-  { path: '/grupKodu', title: 'GrupKodu', icon: 'update', class: '', claim: "GetGroupsQuery" },
-  { path: '/kod1', title: 'Kod1', icon: 'update', class: '', claim: "GetKod1sQuery" },
-  { path: '/kod2', title: 'Kod2', icon: 'update', class: '', claim: "GetKod2sQuery" },
-  { path: '/kod3', title: 'Kod3', icon: 'update', class: '', claim: "GetKod3sQuery" },
-  { path: '/kod4', title: 'Kod4', icon: 'update', class: '', claim: "GetKod4sQuery" },
-  { path: '/kod5', title: 'Kod5', icon: 'update', class: '', claim: "GetKod5sQuery" },
-  { path: '/sAPKod', title: 'SAPKOD', icon: 'update', class: '', claim: "GetSAPKodsQuery" },
-  { path: '/barkod', title: 'Barkod', icon: 'update', class: '', claim: "GetBarkodQuery" },
+   { path: '/stokKarti', title: 'StokKarti', icon: 'update', class: '', claim: "GetStokKartisQuery" },
+  // { path: '/grupKodu', title: 'GrupKodu', icon: 'update', class: '', claim: "GetGroupsQuery" },
+  // { path: '/kod1', title: 'Kod1', icon: 'update', class: '', claim: "GetKod1sQuery" },
+  // { path: '/kod2', title: 'Kod2', icon: 'update', class: '', claim: "GetKod2sQuery" },
+  // { path: '/kod3', title: 'Kod3', icon: 'update', class: '', claim: "GetKod3sQuery" },
+  // { path: '/kod4', title: 'Kod4', icon: 'update', class: '', claim: "GetKod4sQuery" },
+  // { path: '/kod5', title: 'Kod5', icon: 'update', class: '', claim: "GetKod5sQuery" },
+  // { path: '/sAPKod', title: 'SAPKOD', icon: 'update', class: '', claim: "GetSAPKodsQuery" },
+  // { path: '/barkod', title: 'Barkod', icon: 'update', class: '', claim: "GetBarkodQuery" },
 
 ];
 export const STOKROUTES: RouteInfo[] = [ 
@@ -47,6 +46,8 @@ export const STOKROUTES: RouteInfo[] = [
   { path: '/kod5', title: 'Kod5', icon: 'update', class: '', claim: "GetKod5sQuery" },
   { path: '/sAPKod', title: 'SAPKOD', icon: 'update', class: '', claim: "GetSAPKodsQuery" },
   { path: '/barkod', title: 'Barkod', icon: 'update', class: '', claim: "GetBarkodQuery" },
+  { path: '/olcuBr', title: 'OlcuBr', icon: 'update', class: '', claim: "GetOlcuBrQuery" },
+  { path: '/dinamikDepoHucre', title: 'Hucre', icon: 'update', class: '', claim: "GetDinamikDepoHucreQuery" },
 
 ];
 

@@ -8,7 +8,7 @@ import { AlertifyService } from 'app/core/services/alertify.service';
 import { LookUpService } from 'app/core/services/lookUp.service';
 import { environment } from 'environments/environment';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
-import { AuthService } from '../login/Services/auth.service';
+import { AuthService } from '../login/services/auth.service';
 import { Group } from './Models/Group';
 import { GroupService } from './Services/Group.service';
 

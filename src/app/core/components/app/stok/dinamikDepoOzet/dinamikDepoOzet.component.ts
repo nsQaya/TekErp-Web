@@ -6,8 +6,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AlertifyService } from 'app/core/services/alertify.service';
 import { LookUpService } from 'app/core/services/lookUp.service';
 import { AuthService } from 'app/core/components/admin/login/services/auth.service';
-import { DinamikDepoOzet } from './models/DinamikDepoOzet';
-import { DinamikDepoOzetService } from './services/DinamikDepoOzet.service';
+import { DinamikDepoOzet } from './models/dinamikdepoozet';
+import { DinamikDepoOzetService } from './services/dinamikdepoozet.service';
 import { environment } from 'environments/environment';
 
 declare var jQuery: any;

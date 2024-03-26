@@ -42,6 +42,7 @@ import { SAPKodComponent } from '../components/app/stok/sAPKod/sAPKod.component'
 import { NgSelectModule } from '@ng-select/ng-select';
 
 
+
 // export function layoutHttpLoaderFactory(http: HttpClient) {
 // 
 //   return new TranslateHttpLoader(http,'../../../../../../assets/i18n/','.json');
@@ -95,7 +96,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
         DovizTipiComponent,
         OlcuBrComponent,
         SAPKodComponent,
-        StokKartiComponent
+        StokKartiComponent,
 
     ]
 })

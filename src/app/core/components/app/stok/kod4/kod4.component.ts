@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AlertifyService } from 'app/core/services/alertify.service';
 import { LookUpService } from 'app/core/services/lookUp.service';
-import { AuthService } from 'app/core/components/admin/login/Services/auth.service';
+import { AuthService } from 'app/core/components/admin/login/services/auth.service';
 import { Kod4 } from './models/kod4';
 import { Kod4Service } from './services/kod4.service';
 import { environment } from 'environments/environment';

@@ -23,4 +23,16 @@ export default ($axios: AxiosInstance) => ({
             password
         })
     },
+    forget(email: string){
+        return $axios.post(`/Auth/Forget`,{
+            email,
+        })
+    },
+    reset(email: string, code: string, password: string){
+        return $axios.post(`/Auth/Reset`,{
+            email,
+            code,
+            password
+        })
+    },
 });

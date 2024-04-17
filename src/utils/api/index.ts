@@ -6,6 +6,7 @@ import axios, {
 } from "axios";
 import { useUserStore } from "../../store/userStore";
 import auth from "./auth";
+import ulke from "./genel/ulke";
 
 
 export interface IBaseResponse{
@@ -49,7 +50,8 @@ const onResponse = (response: AxiosResponse): any => {
   return response;
 };
 
-const onResponseError = (error: AxiosError): IBaseResponseValue<null> => {
+const onResponseError = (error: AxiosError)=> {
+  
   let errorMessage = "Bilinmeyen hata";
 
   if (error.response?.data && typeof error.response.data === "object") {
@@ -58,13 +60,15 @@ const onResponseError = (error: AxiosError): IBaseResponseValue<null> => {
       errorMessage = errorData.detail;
     }
   }
-
-  const response: IBaseResponseValue<null> = {
-    status: false,
-    value: null,
-    detail: errorMessage,
+  
+  const response = {
+    data:{
+      status: false,
+      value: null,
+      detail: errorMessage,
+    }
   };
-
+  
   return response;
 };
 
@@ -73,6 +77,7 @@ instance.interceptors.response.use(onResponse, onResponseError);
 
 const repositories = {
   auth: auth(instance),
+  genel_ulke:ulke(instance),
 };
 
 export default repositories;

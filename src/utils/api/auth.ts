@@ -1,14 +1,6 @@
 import { AxiosInstance } from "axios";
-import { IBaseResponseValue } from ".";
+import { IBaseResponseValue, SuccessRespose } from "../types";
 
-interface TokenResponse{
-    token: string;
-    expirationDate: string;
-}
-
-interface SuccessRespose{
-    accessToken: TokenResponse;
-}
 
 export default ($axios: AxiosInstance) => ({
     login(email: string, password: string){

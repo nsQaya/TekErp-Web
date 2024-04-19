@@ -6,16 +6,9 @@ import axios, {
 } from "axios";
 import { useUserStore } from "../../store/userStore";
 import auth from "./auth";
-import ulke from "./genel/ulke";
+import stok from "./stok";
+import { IBaseResponse, IBaseResponseValue } from "../types";
 
-
-export interface IBaseResponse{
-  status: boolean;
-  detail?: string;
-}
-export interface IBaseResponseValue<T> extends IBaseResponse{
-    value: T;
-}
 
 var instance: AxiosInstance = axios.create({
   baseURL: "http://localhost:60805/api/",
@@ -77,7 +70,7 @@ instance.interceptors.response.use(onResponse, onResponseError);
 
 const repositories = {
   auth: auth(instance),
-  genel_ulke:ulke(instance),
+  stok: stok(instance),
 };
 
 export default repositories;

@@ -1,7 +1,9 @@
-export default ({children} : any) => {
+import { Outlet } from "react-router-dom"
+
+export default () => {
     return (
         <section id="wrapper">
-            {children}
+             <Outlet/>
         </section>
     )
 }

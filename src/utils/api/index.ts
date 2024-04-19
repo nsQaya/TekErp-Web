@@ -7,7 +7,8 @@ import axios, {
 import { useUserStore } from "../../store/userStore";
 import auth from "./auth";
 import stok from "./stok";
-import { IBaseResponse, IBaseResponseValue } from "../types";
+import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI, IStok, IStokKod } from "../types";
+import stokKod from "./stokKod";
 
 
 var instance: AxiosInstance = axios.create({
@@ -70,7 +71,8 @@ instance.interceptors.response.use(onResponse, onResponseError);
 
 const repositories = {
   auth: auth(instance),
-  stok: stok(instance),
+  stok: stok(instance) as ICrudBaseAPI<IStok>,
+  stokKod1: stokKod(instance, 1) as ICrudBaseAPI<IStokKod>,
 };
 
 export default repositories;

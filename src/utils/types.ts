@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 
 export interface IBaseResponse{
     status: boolean;
@@ -22,8 +23,20 @@ export interface TokenResponse{
     expirationDate: string;
 }
 
-export  interface SuccessRespose{
+export interface SuccessRespose{
     accessToken: TokenResponse;
+}
+
+export interface IEntity{
+  id: number
+}
+
+export interface ICrudBaseAPI<T>{
+  getAll: (page: number, take: number)=> Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>
+  get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
+  create: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
+  update: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
+  delete: (id: number) => Promise<AxiosResponse<IBaseResponseValue<IEntity>, any>>
 }
 
 export interface IStok {
@@ -60,3 +73,11 @@ export interface IStok {
     minimumSiparisMiktari: number
     aktarimDurumu: number
   }
+
+  export interface IStokKod {
+    id: number
+    kodu: string
+    adi: string
+    aktarimDurumu: number
+  }
+  

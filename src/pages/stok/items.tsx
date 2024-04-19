@@ -4,6 +4,7 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import api from "../../utils/api";
 import { IStok } from "../../utils/types";
 import CreateOrEditModal from "../../modals/stok/createOrEdit";
+import AppTable from "../../components/AppTable";
 
 const columns: TableColumn<IStok>[] = [
   {
@@ -18,7 +19,6 @@ const columns: TableColumn<IStok>[] = [
   },
   {
     name: "işlemler",
-    button: true,
     cell: (row: IStok) => {
       return (
         <>
@@ -38,35 +38,8 @@ const columns: TableColumn<IStok>[] = [
 ];
 
 export default () => {
-  const [data, setData] = useState<IStok[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [totalRows, setTotalRows] = useState(0);
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+
   const [isModalShowing, setModalShowing] = useState(false);
-
-  const fetchItems = useCallback(async (page: number, take: number) => {
-    setLoading(true);
-    const response = await api.stok.getAll(page, take);
-    setLoading(false);
-    setData(response.data.value.items);
-    setTotalRows(response.data.value.count);
-  }, []);
-
-  const handlePageChange = async (page: number) => {
-    setPage(page);
-  };
-
-  const handlePerRowsChange = useCallback(
-    async (perPage: number) => {
-      setPerPage(perPage);
-    },
-    [setPerPage]
-  );
-
-  useEffect(() => {
-    fetchItems(page - 1, perPage);
-  }, [perPage, page]);
 
   return (
     <div className="container-fluid">
@@ -92,16 +65,10 @@ export default () => {
                 Yeni Stok Ekle
               </button>
               <div className="table-responsive m-t-40">
-                <DataTable
-                  columns={columns}
-                  data={data}
-                  pagination
-                  paginationServer
-                  paginationTotalRows={totalRows}
-                  onChangePage={handlePageChange}
-                  onChangeRowsPerPage={handlePerRowsChange}
-                  paginationPerPage={perPage}
-                  progressPending={loading}
+                <AppTable
+                    baseApi={api.stok}
+                    columns={columns}
+                    key={'Stoklar'}
                 />
               </div>
             </div>

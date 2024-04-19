@@ -9,7 +9,7 @@ export default () => {
   const [cariPages, _] =useState([
     {title: "Stoklar", href: "/stok/stoks"},
     {title: "Grup Kodu", href: "/"},
-    {title: "Kod 1", href: "/"},
+    {title: "Kod 1", href: "/stok/code1"},
     {title: "Kod 2", href: "/"},
     {title: "Kod 3", href: "/"},
     {title: "Kod 4", href: "/"},

@@ -79,10 +79,10 @@ export default () => {
                 <div className="d-flex no-block align-items-center">
                   <div className="ms-auto">
                     <a
-                      href="javascript:void(0)"
+                      href="#"
                       id="to-recover"
                       className="text-muted"
-                      onClick={()=>setRecoverShow(true)}
+                      onClick={(e)=>[e.preventDefault(),setRecoverShow(true)]}
                     >
                       <i className="fas fa-lock m-r-5"></i> Şifremi Unuttum
                     </a>

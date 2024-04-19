@@ -111,7 +111,7 @@ export default () => {
                     </div>
                   </li>
                   <li>
-                    <a className="nav-link text-center link" href="javascript:void(0);">
+                    <a className="nav-link text-center link" href="#">
                       <b>Check all notifications</b>
                       <i className="fa fa-angle-right"></i>
                     </a>

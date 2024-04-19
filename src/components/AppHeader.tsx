@@ -3,14 +3,40 @@ import lightLogo from '../assets/images/logo-light-icon.png'
 import textLogo from '../assets/images/logo-text.png'
 import textLightLogo from '../assets/images/logo-light-text.png'
 import userLogo from '../assets/images/users/1.jpg';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import NavbarToggle from 'react-bootstrap/NavbarToggle'
+import { useCallback, useEffect, useState } from 'react';
 
 export default () => {
-  
+
+  const [isSidebarShowing, setSidebarShowing]= useState(false);
+
+  const onSidebarToggle= useCallback((e: React.MouseEvent<HTMLElement>)=>{
+    e.preventDefault();
+    window.dispatchEvent(new Event("toggleSidebar"));
+  },[]);
+
+  const onToggleSidebar= ()=>{
+    setSidebarShowing(!isSidebarShowing);
+  }
+
+  useEffect(() => {
+    window.addEventListener("toggleSidebar", onToggleSidebar);
+
+    return () => {
+      window.removeEventListener("toggleSidebar", onToggleSidebar);
+    };
+  }, [onToggleSidebar]);
+
   return (
     <header className="topbar">
-      <nav className="navbar top-navbar navbar-expand-md navbar-dark">
+      <Navbar className="top-navbar" expand="md" variant='dark'>
+
         <div className="navbar-header">
-          <a className="navbar-brand" href="index.html">
+
+          <Navbar.Brand href="index.html">
             <b>
               <img
                 src={logo}
@@ -24,7 +50,7 @@ export default () => {
                 className="light-logo"
               />
             </b>
-            <span>
+            <span className='hidden-sm-down'>
               <img
                 src={textLogo}
                 alt="homepage"
@@ -37,55 +63,40 @@ export default () => {
                 alt="homepage"
               />
             </span>
-          </a>
+          </Navbar.Brand>
         </div>
 
-        <div className="navbar-collapse">
-          <ul className="navbar-nav me-auto">
-            <li className="nav-item">
-              <a
-                className="nav-link nav-toggler d-block d-md-none waves-effect waves-dark"
-                href="javascript:void(0)"
-              >
-                <i className="ti-menu"></i>
-              </a>
-            </li>
-            <li className="nav-item">
-              
-              <a
-                className="nav-link sidebartoggler d-none d-lg-block d-md-block waves-effect waves-dark"
-                href="javascript:void(0)"
-              >
+        <Navbar.Collapse>
+          <Nav className="me-auto" as={'ul'}>
+            <Nav.Item as={'li'}>
+              <NavbarToggle className='d-block d-md-none waves-effect waves-dark nav-link' as='a' onClick={onSidebarToggle}>
+                <i className={!isSidebarShowing ? "ti-menu": "ti-close"}></i>
+              </NavbarToggle>
+            </Nav.Item>
+            <Nav.Item as={'li'}>
+              <Nav.Link href='#' className='sidebartoggler d-none waves-effect waves-dark'>
                 <i className="icon-menu"></i>
-              </a>
-            </li>
-          </ul>
+              </Nav.Link>
+            </Nav.Item>
+          </Nav>
 
-          <ul className="navbar-nav my-lg-0">
-            <li className="nav-item dropdown">
-              <a
-                className="nav-link dropdown-toggle waves-effect waves-dark"
-                href=""
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                
+          <Nav className="my-lg-0" as="ul">
+            <Dropdown as={'li'} className='nav-item'>
+              <Dropdown.Toggle as={'a'} className='nav-link waves-effect waves-dark'>
                 <i className="ti-email"></i>
                 <div className="notify">
-                  
                   <span className="heartbit"></span>
                   <span className="point"></span>
                 </div>
-              </a>
-              <div className="dropdown-menu dropdown-menu-end mailbox animated bounceInDown">
+              </Dropdown.Toggle>
+              <Dropdown.Menu className='animated mailbox bounceInDown' align={'end'}>
                 <ul>
                   <li>
                     <div className="drop-title">Notifications</div>
                   </li>
                   <li>
-                    <div className="message-center">
-                      <a href="javascript:void(0)">
+                    <div className='message-center'>
+                      <Dropdown.Item href="#">
                         <div className="btn btn-danger btn-circle text-white">
                           <i className="fa fa-link"></i>
                         </div>
@@ -96,108 +107,48 @@ export default () => {
                           </span>
                           <span className="time">9:30 AM</span>
                         </div>
-                      </a>
-
-                      <a href="javascript:void(0)">
-                        <div className="btn btn-success btn-circle text-white">
-                          <i className="ti-calendar"></i>
-                        </div>
-                        <div className="mail-contnet">
-                          <h5>Event today</h5>
-                          <span className="mail-desc">
-                            Just a reminder that you have event
-                          </span>
-                          <span className="time">9:10 AM</span>
-                        </div>
-                      </a>
-
-                      <a href="javascript:void(0)">
-                        <div className="btn btn-info btn-circle text-white">
-                          <i className="ti-settings"></i>
-                        </div>
-                        <div className="mail-contnet">
-                          <h5>Settings</h5>
-                          <span className="mail-desc">
-                            You can customize this template as you want
-                          </span>
-                          <span className="time">9:08 AM</span>
-                        </div>
-                      </a>
-
-                      <a href="javascript:void(0)">
-                        <div className="btn btn-primary btn-circle">
-                          <i className="ti-user"></i>
-                        </div>
-                        <div className="mail-contnet">
-                          <h5>Pavan kumar</h5>
-                          <span className="mail-desc">
-                            Just see the my admin!
-                          </span>
-                          <span className="time">9:02 AM</span>
-                        </div>
-                      </a>
+                      </Dropdown.Item>
                     </div>
                   </li>
                   <li>
-                    <a
-                      className="nav-link text-center link"
-                      href="javascript:void(0);"
-                    >
-                      
-                      <strong>Check all notifications</strong>
+                    <a className="nav-link text-center link" href="javascript:void(0);">
+                      <b>Check all notifications</b>
                       <i className="fa fa-angle-right"></i>
                     </a>
                   </li>
                 </ul>
-              </div>
-            </li>
+              </Dropdown.Menu>
+            </Dropdown>
 
-           
-            <li className="nav-item dropdown u-pro">
-              <a
-                className="nav-link dropdown-toggle waves-effect waves-dark profile-pic"
-                href=""
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
+            <Dropdown as={'li'} className='nav-item u-pro'>
+              <Dropdown.Toggle as={'a'} className='nav-link waves-effect waves-dark profile-pic'>
                 <img
                   src={userLogo}
                   alt="user"
-                  className=""
+                  className="me-2"
                 />
                 <span className="hidden-md-down">
                   Mark &nbsp;<i className="fa fa-angle-down"></i>
                 </span>
-              </a>
-              <div className="dropdown-menu dropdown-menu-end animated flipInY show">
-                <a href="javascript:void(0)" className="dropdown-item">
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu className='animated flipInY' align='end'>
+                <Dropdown.Item href="#">
                   <i className="ti-user"></i> My Profile
-                </a>
-
-                <a href="javascript:void(0)" className="dropdown-item">
+                </Dropdown.Item>
+                <Dropdown.Item href="#">
                   <i className="ti-wallet"></i> My Balance
-                </a>
-
-                <a href="javascript:void(0)" className="dropdown-item">
-                  <i className="ti-email"></i> Inbox
-                </a>
-
-                <div className="dropdown-divider"></div>
-
-                <a href="javascript:void(0)" className="dropdown-item">
-                  <i className="ti-settings"></i> Account Setting
-                </a>
-                <div className="dropdown-divider"></div>
-                <a href="login.html" className="dropdown-item">
+                </Dropdown.Item>
+                <Dropdown.Item href="#">
                   <i className="fa fa-power-off"></i> Logout
-                </a>
-              </div>
-            </li>
+                </Dropdown.Item>
+              </Dropdown.Menu>
 
-          </ul>
-        </div>
-      </nav>
+            </Dropdown>
+
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
     </header>
   );
 };

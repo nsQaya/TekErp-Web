@@ -80,4 +80,24 @@ export interface IStok {
     adi: string
     aktarimDurumu: number
   }
+  export interface IUlke {
+    id: number
+    kodu: string
+    adi: string
+    aktarimDurumu: number
+  }
+  export interface IIl {
+    id: number
+    adi: string
+    plakaKodu: string
+    ulkeId:number
+    aktarimDurumu: number
+  }
+  export interface IIlce {
+    id: number
+    adi: string
+    ilceKodu: string
+    ilId:number
+    aktarimDurumu: number
+  }
   

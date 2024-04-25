@@ -7,9 +7,11 @@ import axios, {
 import { useUserStore } from "../../store/userStore";
 import auth from "./auth";
 import stok from "./stok";
-import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI, IStok, IStokKod } from "../types";
+import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI, IIl, IIlce, IStok, IStokKod, IUlke } from "../types";
 import stokKod from "./stokKod";
-
+import ulke  from "./ulke";
+import il from "./il";
+import ilce from "./ilce";
 
 var instance: AxiosInstance = axios.create({
   baseURL: "http://localhost:60805/api/",
@@ -77,6 +79,10 @@ const repositories = {
   stokKod3: stokKod(instance, 3) as ICrudBaseAPI<IStokKod>,
   stokKod4: stokKod(instance, 4) as ICrudBaseAPI<IStokKod>,
   stokKod5: stokKod(instance, 5) as ICrudBaseAPI<IStokKod>,
+
+  ulke: ulke(instance) as ICrudBaseAPI<IUlke>,
+  il: il(instance) as ICrudBaseAPI<IIl>,
+  ilce: ilce(instance) as ICrudBaseAPI<IIlce>,
 };
 
 export default repositories;

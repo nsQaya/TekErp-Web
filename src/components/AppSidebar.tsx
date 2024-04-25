@@ -6,9 +6,9 @@ import { useState } from 'react';
 export default () => {
 
   const [tanimPages, _] =useState([
-    {title: "Ülke", href: "/"},
-    {title: "İl", href: "/"},
-    {title: "İlçe", href: "/"},
+    {title: "Ülke", href: "/tanimlamalar/ulkes"},
+    {title: "İl", href: "/tanimlamalar/ils"},
+    {title: "İlçe", href: "/tanimlamalar/ilces"},
     {title: "Depo", href: "/"},
     {title: "Hücre", href: "/"},
     {title: "Döviz Tipi", href: "/"},

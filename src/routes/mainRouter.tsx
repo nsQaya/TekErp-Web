@@ -6,6 +6,10 @@ import StockItems from "../pages/stok/items";
 import StockCode1Items from "../pages/stok/code1/items";
 import StockCode2Items from "../pages/stok/code2/items";
 
+import UlkeItems from "../pages/taminlamalar/ulke/items";
+import IlItems from "../pages/taminlamalar/il/items";
+import IlceItems from "../pages/taminlamalar/ilce/items";
+
 export default createHashRouter([
   {
     path: "/",
@@ -14,6 +18,23 @@ export default createHashRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/tanimlamalar",
+        children: [
+          {
+            path: "ulkes",
+            element: <UlkeItems />,
+          },
+          {
+            path: "ils",
+            element: <IlItems />,
+          },
+          {
+            path: "ilces",
+            element: <IlceItems />,
+          },
+        ],
       },
       {
         path: "/stok",

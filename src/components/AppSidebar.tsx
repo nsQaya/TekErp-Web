@@ -89,13 +89,13 @@ export default () => {
           <ul id="sidebarnav">
             <li className="nav-small-cap">--- PERSONAL</li>
             <SideBarItem icon='icon-home' name='Anasayfa' href='/' />
-            <SideBarItem icon='ti-eye' name='Tanımlamalar' items={tanimPages} count={4}/>
-            <SideBarItem icon='ti-eye' name='Kullanıcı' items={kullaniciPages} count={4}/>
-            <SideBarItem icon='ti-eye' name='Stok' items={stokPages} count={4}/>
-            <SideBarItem icon='ti-eye' name='Cari' items={cariPages} count={4}/>
-            <SideBarItem icon='ti-eye' name='Fatura' items={faturaPages} count={4}/>
-            <SideBarItem icon='ti-eye' name='E-Belge' items={eBelgePages} count={4}/>
-            <SideBarItem icon='ti-eye' name='Aktarım' items={aktarimPages} count={4}/>
+            <SideBarItem icon='ti-settings' name='Tanımlamalar' items={tanimPages} count={4}/>
+            <SideBarItem icon='ti-user' name='Kullanıcı' items={kullaniciPages} count={4}/>
+            <SideBarItem icon='ti-dropbox' name='Stok' items={stokPages} count={4}/>
+            <SideBarItem icon='ti-id-badge' name='Cari' items={cariPages} count={4}/>
+            <SideBarItem icon='ti-write' name='Fatura' items={faturaPages} count={4}/>
+            <SideBarItem icon='ti-cloud-up' name='E-Belge' items={eBelgePages} count={4}/>
+            <SideBarItem icon='ti-exchange-vertical' name='Aktarım' items={aktarimPages} count={4}/>
           </ul>
         </Nav>
       </div>

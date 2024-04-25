@@ -38,14 +38,14 @@ export default (props: IStokKodModalProps) => {
       response= await api.stokKod1.create({
         adi: name,
         kodu: code,
-        aktarimDurumu: 1,
+        aktarimDurumu: 0,
       });
     }else{
       response= await api.stokKod1.update({
         id: id,
         adi: name,
         kodu: code,
-        aktarimDurumu: 1
+        aktarimDurumu: 0
       });
     }
 

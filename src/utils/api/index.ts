@@ -73,6 +73,10 @@ const repositories = {
   auth: auth(instance),
   stok: stok(instance) as ICrudBaseAPI<IStok>,
   stokKod1: stokKod(instance, 1) as ICrudBaseAPI<IStokKod>,
+  stokKod2: stokKod(instance, 2) as ICrudBaseAPI<IStokKod>,
+  stokKod3: stokKod(instance, 3) as ICrudBaseAPI<IStokKod>,
+  stokKod4: stokKod(instance, 4) as ICrudBaseAPI<IStokKod>,
+  stokKod5: stokKod(instance, 5) as ICrudBaseAPI<IStokKod>,
 };
 
 export default repositories;

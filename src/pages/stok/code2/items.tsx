@@ -3,7 +3,7 @@ import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
 import { IStokKod } from "../../../utils/types";
-import CreateOrEditModal from "../../../modals/stok/code1/createOrEdit";
+import CreateOrEditModal from "../../../modals/stok/code2/createOrEdit";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 
 export default () => {
@@ -22,7 +22,7 @@ export default () => {
 
   const deleteItem= useCallback(async (item: IStokKod)=>{
     if(!window.confirm("Emin misin ?")) return;
-    await api.stokKod1.delete(item.id);
+    await api.stokKod2.delete(item.id);
     myTable.current?.refresh();
   },[])
 
@@ -65,7 +65,7 @@ export default () => {
         selected={selectedItem}
       />
 
-      <AppBreadcrumb title="Kod 1'ler" />
+      <AppBreadcrumb title="Kod 2'ler" />
       <div className="row">
         <div className="col-12">
           <div className="card">
@@ -79,13 +79,13 @@ export default () => {
                 className="btn btn-info btn-rounded m-t-10 float-end text-white"
                 onClick={(e) => [e.preventDefault(), setModalShowing(true)]}
               >
-                Yeni Kod-1 Ekle
+                Yeni Kod-2 Ekle
               </button>
               <div className="table-responsive m-t-40">
                 <AppTable
-                  baseApi={api.stokKod1}
+                  baseApi={api.stokKod2}
                   columns={columns}
-                  key={"Stoklar 1 Kodlar"}
+                  key={"Stoklar 2 Kodlar"}
                   ref={myTable}
                 />
               </div>

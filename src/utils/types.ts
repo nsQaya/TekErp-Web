@@ -91,6 +91,7 @@ export interface IStok {
     adi: string
     plakaKodu: string
     ulkeId:number
+    ulkeAdi:string
     aktarimDurumu: number
   }
   export interface IIlce {

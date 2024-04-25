@@ -5,7 +5,7 @@ import { IBaseResponseValue, IIl, IPagedResponse } from "../types";
 
 export default ($axios: AxiosInstance) => ({
     getAll(page: number, take: number){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IIl>>>(`/ils`, {
+        return $axios.get<IBaseResponseValue<IPagedResponse<IIl>>>(`/ils/GetListForGrid`, {
             params: {
                 pageIndex: page,
                 pageSize: take,

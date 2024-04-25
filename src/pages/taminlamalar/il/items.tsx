@@ -35,7 +35,7 @@ export default () => {
     },
     {
       name: "Ülke",
-      selector: (row) => row.ulkeId,
+      selector: (row) => row.ulkeAdi,
       sortable: true,
     },
     {

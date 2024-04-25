@@ -59,14 +59,28 @@ function App() {
     });
   }, []);
 
+  const handleScroll = useCallback(() => {
+    setBodyClasses((prevClasses) => {
+      const newClasses = new Set(prevClasses);
+      if (scrollY < 80) {
+        newClasses.delete("fixed-sidebar");
+      } else {
+        newClasses.add("fixed-sidebar");
+      }
+      return newClasses;
+    });
+  }, []);
+
   useEffect(() => {
     onChangeSize();
     window.addEventListener("resize", onChangeSize);
     window.addEventListener("toggleSidebar", onToggleSidebar);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
       window.removeEventListener("resize", onChangeSize);
       window.removeEventListener("toggleSidebar", onToggleSidebar);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 

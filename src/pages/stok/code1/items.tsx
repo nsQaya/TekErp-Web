@@ -5,11 +5,44 @@ import api from "../../../utils/api";
 import { IStokKod } from "../../../utils/types";
 import CreateOrEditModal from "../../../modals/stok/code1/createOrEdit";
 import AppTable, { ITableRef } from "../../../components/AppTable";
+import DynamicModal, { FormItemTypes, IFormItem } from "../../../modals/DynamicModal";
 
 export default () => {
   const myTable = createRef<ITableRef>();
   const [isModalShowing, setModalShowing] = useState(false);
   const [selectedItem, setSelectedItem]= useState<IStokKod>();
+
+
+  const items= [
+    {
+      name: "id",
+      type: FormItemTypes.input,
+      hidden: true
+    },
+    {
+      title: "Kodu",
+      name: "kodu",
+      type: FormItemTypes.input
+    },
+    {
+      title: "Test",
+      name: "test",
+      type: FormItemTypes.select,
+      options: [{value:1, label: 1453},{value:2, label: 14532}]
+    },
+    {
+      title: "kodlar",
+      name: "codes",
+      type: FormItemTypes.creatable
+    },
+  ] as IFormItem[];
+
+  const [selectedItem1, _]= useState({
+    id: "1453",
+    kodu: "AA",
+    test: 2,
+    codes:["asd","lle"]
+  })
 
   const onSuccess = () => {
     if(selectedItem){
@@ -57,7 +90,11 @@ export default () => {
 
   return (
     <div className="container-fluid">
-      
+
+      <DynamicModal title="Test Ekle" api={api.stokKod1} items={items} selectedItem={selectedItem1}/>
+
+      <DynamicModal title="Test Ekle" api={api.stokKod1} items={items}/>
+
       <CreateOrEditModal
         show={isModalShowing}
         onHide={() => [setSelectedItem(undefined), setModalShowing(false)]}

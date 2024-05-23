@@ -3,7 +3,6 @@ import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
 import { IStokKod } from "../../../utils/types";
-import CreateOrEditModal from "../../../modals/stok/code2/createOrEdit";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 
 export default () => {
@@ -58,13 +57,6 @@ export default () => {
   return (
     <div className="container-fluid">
       
-      <CreateOrEditModal
-        show={isModalShowing}
-        onHide={() => [setSelectedItem(undefined), setModalShowing(false)]}
-        onSuccess={onSuccess}
-        selected={selectedItem}
-      />
-
       <AppBreadcrumb title="Kod 2'ler" />
       <div className="row">
         <div className="col-12">

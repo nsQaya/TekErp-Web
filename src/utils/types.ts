@@ -80,6 +80,21 @@ export interface IStok {
     adi: string
     aktarimDurumu: number
   }
+
+  export interface IStokOlcuBirim {
+    id: number
+    adi: string
+    simge: string
+  }
+
+  export interface IDovizTipi {
+    id: number
+    kodu: string
+    adi:string
+    simge: string
+    tCMMId: number
+  }
+
   export interface IUlke {
     id: number
     kodu: string

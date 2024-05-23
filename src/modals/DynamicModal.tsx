@@ -29,12 +29,18 @@ interface DynamicModalProps<T> {
     title: string;
     api: ICrudBaseAPI<T>;
     items: IFormItem[]
+    isShownig: boolean;
+    onDone?: Function;
+    onHide: ()=>void;
 }
 
 function DynamicModal<T>(props: DynamicModalProps<T>) {
-    const [isShowing, setShowing] = useState(true);
+    const [isShowing, setShowing] = useState(false);
     const [formItems, setFormItems] = useState<IFormItem[]>([]);
 
+    useEffect(()=>{
+        setShowing(props.isShownig);
+    },[props.isShownig])
 
     useEffect(() => {
         const initializedItems = props.items.map(item => ({
@@ -82,10 +88,14 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
             return;
         }
 
+        if(props.onDone){
+            props.onDone();
+        }
+
     },[formItems]);
 
     return (
-        <Modal show={isShowing} onHide={() => setShowing(false)}>
+        <Modal show={isShowing} onHide={props.onHide}>
             <Modal.Header closeButton>
                 <Modal.Title>{props.title}</Modal.Title>
             </Modal.Header>
@@ -98,7 +108,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                                     key={index}
                                     type="text"
                                     className="form-control"
-                                    placeholder={item.name}
+                                    placeholder={item.title}
                                     value={item.value}
                                     onChange={(e) => item.setValue && item.setValue(e.target.value)}
                                     required
@@ -107,9 +117,10 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                         ) : (item.type === FormItemTypes.select && item.options) ? (
                             <div className="col-md-12 m-b-20">
                                 <Select
-                                    defaultValue={item.value}
-                                    placeholder={item.name}
+                                    defaultValue={item.options.find(x=>x.value==item.value)}
+                                    placeholder={item.title}
                                     key={index}
+
                                     onChange={(selected: any) => item.setValue && item.setValue(selected)}
                                     options={item.options as Options<any>}
                                 />
@@ -119,7 +130,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                             <div className="col-md-12 m-b-20">
                                 <CreatableSelect
                                     key={index}
-                                    placeholder={item.name}
+                                    placeholder={item.title}
                                     isMulti
                                     onChange={(items:any)=>item.setValue && item.setValue(items.map((x:any)=>x.value))}
                                 />
@@ -130,7 +141,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
 
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={()=>setShowing(false)}>
+                <Button variant="secondary" onClick={props.onHide}>
                     Kapat
                 </Button>
                 <Button variant="primary" onClick={()=>onSubmit()}>

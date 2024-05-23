@@ -1,15 +1,27 @@
-import { createRef, useCallback,   useState } from "react";
+import { createRef, useCallback,   useEffect,   useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
-import { IIl } from "../../../utils/types";
-import CreateOrEditModal from "../../../modals/tanimlamalar/il/createOrEdit";
+import { IIl, IUlke } from "../../../utils/types";
+
 import AppTable, { ITableRef } from "../../../components/AppTable";
+import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
 
 export default () => {
   const myTable = createRef<ITableRef>();
   const [isModalShowing, setModalShowing] = useState(false);
   const [selectedItem, setSelectedItem]= useState<IIl>();
+  const [countries, setCountries] = useState<FormSelectItem[]>();
+
+
+  const fetchCountries= useCallback(async()=>{
+    const { data: {value: {items}} } = await api.ulke.getAll(0,1000);
+    setCountries(items.map(x=>({label: x.adi, value: String(x.id)})))
+  },[])
+
+  useEffect(()=>{
+    fetchCountries();
+  },[]);
 
   const onSuccess = () => {
     if(selectedItem){
@@ -18,11 +30,12 @@ export default () => {
       alert("Başarıyla eklendi !");
     }
     myTable.current?.refresh();
+    setModalShowing(false);
   };
 
   const deleteItem= useCallback(async (item: IIl)=>{
     if(!window.confirm("Emin misin ?")) return;
-    await api.stokKod1.delete(item.id);
+    await api.il.delete(item.id);
     myTable.current?.refresh();
   },[])
 
@@ -70,14 +83,42 @@ export default () => {
     },
   ];
 
+  const modalItems= [
+    {
+      name: "id",
+      type: FormItemTypes.input,
+      hidden: true
+    },
+    {
+      title: "ülke",
+      name: "ulkeId",
+      type: FormItemTypes.select,
+      options: countries
+    },
+    {
+      title: "Adı",
+      name: "adi",
+      type: FormItemTypes.input
+    },
+    {
+      title: "Plaka",
+      name: "plakaKodu",
+      type: FormItemTypes.input
+    }
+  ] as IFormItem[];
+
+
   return (
     <div className="container-fluid">
       
-      <CreateOrEditModal
-        show={isModalShowing}
-        onHide={() => [setSelectedItem(undefined), setModalShowing(false)]}
-        onSuccess={onSuccess}
-        selected={selectedItem}
+      <DynamicModal 
+        isShownig={isModalShowing} 
+        title="il Ekle" 
+        api={api.il} 
+        items={modalItems}
+        onDone={onSuccess}
+        selectedItem={selectedItem}
+        onHide={()=>setModalShowing(false)}
       />
 
       <AppBreadcrumb title="İller" />

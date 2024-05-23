@@ -7,11 +7,14 @@ import axios, {
 import { useUserStore } from "../../store/userStore";
 import auth from "./auth";
 import stok from "./stok";
-import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI, IIl, IIlce, IStok, IStokKod, IUlke } from "../types";
+import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI, IDovizTipi, IIl, IIlce, IStok, IStokKod, IStokOlcuBirim, IUlke } from "../types";
 import stokKod from "./stokKod";
 import ulke  from "./ulke";
 import il from "./il";
 import ilce from "./ilce";
+import stokGrupKod from "./stokGrupKod";
+import stokOlcuBirim from "./stokOlcuBirim";
+import dovizTipi from "./dovizTipi";
 
 var instance: AxiosInstance = axios.create({
   baseURL: "http://localhost:60805/api/",
@@ -74,15 +77,20 @@ instance.interceptors.response.use(onResponse, onResponseError);
 const repositories = {
   auth: auth(instance),
   stok: stok(instance) as ICrudBaseAPI<IStok>,
+  stokGrupKodu: stokGrupKod(instance) as ICrudBaseAPI<IStokKod>,
   stokKod1: stokKod(instance, 1) as ICrudBaseAPI<IStokKod>,
   stokKod2: stokKod(instance, 2) as ICrudBaseAPI<IStokKod>,
   stokKod3: stokKod(instance, 3) as ICrudBaseAPI<IStokKod>,
   stokKod4: stokKod(instance, 4) as ICrudBaseAPI<IStokKod>,
   stokKod5: stokKod(instance, 5) as ICrudBaseAPI<IStokKod>,
+  stokOlcuBirim: stokOlcuBirim(instance) as ICrudBaseAPI<IStokOlcuBirim>,
 
   ulke: ulke(instance) as ICrudBaseAPI<IUlke>,
   il: il(instance) as ICrudBaseAPI<IIl>,
   ilce: ilce(instance) as ICrudBaseAPI<IIlce>,
+
+  dovizTipi: dovizTipi(instance) as ICrudBaseAPI<IDovizTipi>,
+
 };
 
 export default repositories;

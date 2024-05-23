@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { createRef, useCallback, useEffect, useState } from "react";
 import AppBreadcrumb from "../../components/AppBreadcrumb";
 import DataTable, { TableColumn } from "react-data-table-component";
 import api from "../../utils/api";
 import { IStok } from "../../utils/types";
 import CreateOrEditModal from "../../modals/stok/createOrEdit";
-import AppTable from "../../components/AppTable";
+import AppTable, { ITableRef } from "../../components/AppTable";
 
 const columns: TableColumn<IStok>[] = [
   {
@@ -38,13 +38,21 @@ const columns: TableColumn<IStok>[] = [
 ];
 
 export default () => {
-
+  const myTable = createRef<ITableRef>();
   const [isModalShowing, setModalShowing] = useState(false);
+
+  const onDone= useCallback(()=>{
+    
+    myTable?.current?.refresh();
+    setModalShowing(false);
+  },[]);
 
   return (
     <div className="container-fluid">
+      
       <CreateOrEditModal
         show={isModalShowing}
+        onDone= {onDone}
         onHide={() => setModalShowing(false)}
       />
 
@@ -69,6 +77,7 @@ export default () => {
                     baseApi={api.stok}
                     columns={columns}
                     key={'Stoklar'}
+                    ref={myTable}
                 />
               </div>
             </div>

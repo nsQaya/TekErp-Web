@@ -1,5 +1,6 @@
 import { AxiosInstance } from "axios";
-import { IBaseResponseValue, IDovizTipi, IPagedResponse } from "../types";
+import { IBaseResponseValue, IPagedResponse } from "../types";
+import { IDovizTipi } from "../types/tanimlamalar/IDovizTipi";
 
 
 

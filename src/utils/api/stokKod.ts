@@ -1,5 +1,6 @@
 import { AxiosInstance } from "axios";
-import { IBaseResponseValue, IPagedResponse, IStokKod } from "../types";
+import { IBaseResponseValue, IPagedResponse } from "../types";
+import { IStokKod } from "../types/Stok/IStokKod";
 
 
 

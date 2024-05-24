@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import api from "../../../utils/api";
-import { IBaseResponseValue, IIlce } from "../../../utils/types";
+import { IBaseResponseValue } from "../../../utils/types";
+import { IIlce } from "../../../utils/types/tanimlamalar/IIlce";
 import { AxiosResponse } from "axios";
 
 

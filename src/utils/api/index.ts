@@ -7,7 +7,14 @@ import axios, {
 import { useUserStore } from "../../store/userStore";
 import auth from "./auth";
 import stok from "./stok";
-import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI, IDovizTipi, IIl, IIlce, IStok, IStokKod, IStokOlcuBirim, IUlke } from "../types";
+import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI, IStokKartiWithDetail } from "../types";
+import { IStokOlcuBirim } from "../types/tanimlamalar/IStokOlcuBirim";
+import { IStokKod } from "../types/Stok/IStokKod";
+import { IIlce } from "../types/tanimlamalar/IIlce";
+import { IIl } from "../types/tanimlamalar/IIl";
+import { IUlke } from "../types/tanimlamalar/IUlke";
+import { IDovizTipi } from "../types/tanimlamalar/IDovizTipi";
+import { IStok } from "../types/Stok/IStok";
 import stokKod from "./stokKod";
 import ulke  from "./ulke";
 import il from "./il";
@@ -15,6 +22,7 @@ import ilce from "./ilce";
 import stokGrupKod from "./stokGrupKod";
 import stokOlcuBirim from "./stokOlcuBirim";
 import dovizTipi from "./dovizTipi";
+import stokWithDetail from './stokWithDetail';
 
 var instance: AxiosInstance = axios.create({
   baseURL: "http://localhost:60805/api/",
@@ -59,12 +67,13 @@ const onResponseError = (error: AxiosError)=> {
       errorMessage = errorData.detail;
     }
   }
-  
+
   const response = {
     data:{
       status: false,
       value: null,
       detail: errorMessage,
+      errors: (error.response?.data as any).Errors || undefined
     }
   };
   
@@ -77,6 +86,7 @@ instance.interceptors.response.use(onResponse, onResponseError);
 const repositories = {
   auth: auth(instance),
   stok: stok(instance) as ICrudBaseAPI<IStok>,
+  stokWithDetail: stokWithDetail(instance) as ICrudBaseAPI<IStokKartiWithDetail>,
   stokGrupKodu: stokGrupKod(instance) as ICrudBaseAPI<IStokKod>,
   stokKod1: stokKod(instance, 1) as ICrudBaseAPI<IStokKod>,
   stokKod2: stokKod(instance, 2) as ICrudBaseAPI<IStokKod>,

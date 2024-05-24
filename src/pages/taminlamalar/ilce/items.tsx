@@ -2,7 +2,7 @@ import { createRef, useCallback,   useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
-import { IIlce } from "../../../utils/types";
+import { IIlce } from "../../../utils/types/tanimlamalar/IIlce";
 import CreateOrEditModal from "../../../modals/tanimlamalar/ilce/createOrEdit";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 

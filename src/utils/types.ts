@@ -1,8 +1,17 @@
 import { AxiosResponse } from "axios";
+import { IStok } from "./types/Stok/IStok";
+import { IStokBarkod } from "./types/Stok/IStokBarkod";
+import { IHucre } from "./types/tanimlamalar/IHucre";
+
+export interface IError{
+  property: string;
+  Errors?: string[];
+}
 
 export interface IBaseResponse{
     status: boolean;
-    detail?: string;
+    detail: string;
+    errors?: IError[];
   }
   export interface IBaseResponseValue<T> extends IBaseResponse{
       value: T;
@@ -39,81 +48,17 @@ export interface ICrudBaseAPI<T>{
   delete: (id: number) => Promise<AxiosResponse<IBaseResponseValue<IEntity>, any>>
 }
 
-export interface IStok {
-    id: number
-    kodu: string
-    adi: string
-    ingilizceIsim: string
-    stokGrupKoduId: any
-    stokKod1Id: any
-    stokKod2Id: any
-    stokKod3Id: any
-    stokKod4Id: any
-    stokKod5Id: any
-    stokOlcuBirim1Id: number
-    stokOlcuBirim2Id: any
-    olcuBr2Pay: number
-    olcuBr2Payda: number
-    stokOlcuBirim3Id: any
-    olcuBr3Pay: number
-    olcuBr3Payda: number
-    alisDovizTipiId: number
-    satisDovizTipiId: number
-    alisFiyati: number
-    satisFiyati: number
-    alisKDVOrani: number
-    satisKDVOrani: number
-    seriTakibiVarMi: boolean
-    en: number
-    boy: number
-    genislik: number
-    agirlik: number
-    asgariStokMiktari: number
-    azamiStokMiktari: number
-    minimumSiparisMiktari: number
-    aktarimDurumu: number
+export interface IStokKartiWithDetail{
+  stokKarti:IStok
+  stokBarkods:IStokBarkod[]
+  sAPKods:ISapKod[]
+  hucres:IHucre[]
+}
+
+  export interface ISapKod {
+    id?: number
+    kod: string
+    stokKartiId?: number
   }
 
-  export interface IStokKod {
-    id: number
-    kodu: string
-    adi: string
-    aktarimDurumu: number
-  }
 
-  export interface IStokOlcuBirim {
-    id: number
-    adi: string
-    simge: string
-  }
-
-  export interface IDovizTipi {
-    id: number
-    kodu: string
-    adi:string
-    simge: string
-    tCMMId: number
-  }
-
-  export interface IUlke {
-    id: number
-    kodu: string
-    adi: string
-    aktarimDurumu: number
-  }
-  export interface IIl {
-    id: number
-    adi: string
-    plakaKodu: string
-    ulkeId:number
-    ulkeAdi:string
-    aktarimDurumu: number
-  }
-  export interface IIlce {
-    id: number
-    adi: string
-    ilceKodu: string
-    ilId:number
-    aktarimDurumu: number
-  }
-  

@@ -5,9 +5,12 @@ import Select, { Options } from "react-select";
 import { FormSelectItem } from "../DynamicModal";
 import api from "../../utils/api";
 import CreatableSelect from "react-select/creatable";
+import { IStok } from "../../utils/types/Stok/IStok";
+import { IStokKartiWithDetail } from "../../utils/types";
 
 interface IStokModalProps {
   show: boolean;
+  selectedItem?: IStok;
   onDone?: Function;
   onHide?: Function;
 }
@@ -50,9 +53,103 @@ export default (props: IStokModalProps) => {
   const [asgariStokMiktari, setAsgariStokMiktari] = useState(0);
   const [azamiStokMiktari, setAzamiStokMiktari] = useState(0);
   const [minimumSiparisMiktari, setMinimumSiparisMiktari] = useState(0);
-  const [stokBarkods, setStokBarkods] = useState<string[]>([]);
-  const [sAPKOds, setSAPKods] = useState<string[]>([]);
-  const [hucres, setHucres] = useState<string[]>([]);
+
+  const [stokBarkods, setStokBarkods] = useState<{label: string, value: string}[]>([]);
+  const [sAPKOds, setSAPKods] = useState<{label: string, value: string}[]>([]);
+  const [hucres, setHucres] = useState<{label: string, value: string}[]>([]);
+
+
+  const fetchItem= async(id: number)=>{
+    const {data} = await api.stokWithDetail.get(id);
+    if(!data.status){
+      return alert(data.detail);
+    }
+
+    console.log(data);
+    const item= data.value;
+
+    setID(item.stokKarti.id as number);
+    setAdi(item.stokKarti.adi);
+    setKodu(item.stokKarti.kodu);
+    setIngilizceIsim(item.stokKarti.ingilizceIsim);
+    setStokGrupKoduId(item.stokKarti.stokGrupKoduId);
+    setStokKod1Id(item.stokKarti.stokKod1Id);
+    setStokKod2Id(item.stokKarti.stokKod2Id);
+    setStokKod3Id(item.stokKarti.stokKod3Id);
+    setStokKod4Id(item.stokKarti.stokKod4Id);
+    setStokKod5Id(item.stokKarti.stokKod5Id);
+    setStokOlcuBirim1Id(item.stokKarti.stokOlcuBirim1Id);
+    setStokOlcuBirim2Id(item.stokKarti.stokOlcuBirim2Id);
+    setOlcuBr2Pay(item.stokKarti.olcuBr2Pay);
+    setOlcuBr2Payda(item.stokKarti.olcuBr2Payda);
+    setStokOlcuBirim3Id(item.stokKarti.stokOlcuBirim3Id);
+    setOlcuBr3Pay(item.stokKarti.olcuBr3Pay);
+    setOlcuBr3Payda(item.stokKarti.olcuBr3Payda);
+    setAlisDovizTipiId(item.stokKarti.alisDovizTipiId);
+    setSatisDovizTipiId(item.stokKarti.satisDovizTipiId);
+    setAlisFiyati(item.stokKarti.alisFiyati);
+    setSatisFiyati(item.stokKarti.satisFiyati);
+    setAlisKDVOrani(item.stokKarti.alisKDVOrani);
+    setSatisKDVOrani(item.stokKarti.satisKDVOrani);
+    setSeriTakibiVarMi(item.stokKarti.seriTakibiVarMi);
+    setEn(item.stokKarti.en);
+    setBoy(item.stokKarti.boy);
+    setGenislik(item.stokKarti.genislik);
+    setAgirlik(item.stokKarti.agirlik);
+    setAsgariStokMiktari(item.stokKarti.asgariStokMiktari);
+    setAzamiStokMiktari(item.stokKarti.azamiStokMiktari);
+    setMinimumSiparisMiktari(item.stokKarti.minimumSiparisMiktari);
+
+    setHucres(item.hucres.map(x=>({label: x.kodu, value: x.kodu })));
+    setSAPKods(item.sAPKods.map(x=>({label: x.kod, value: x.kod })));
+    setStokBarkods(item.stokBarkods.map(x=>({label: x.barkod, value: x.barkod })));
+  }
+
+  useEffect(()=>{
+    if(!props.selectedItem) return;
+    fetchItem(props.selectedItem.id as number);
+  },[props.selectedItem]);
+
+  useEffect(()=>{
+    if(props.show) return;
+
+    setID(undefined);
+    setAdi("");
+    setKodu("");
+    setIngilizceIsim("");
+    setStokGrupKoduId(null);
+    setStokKod1Id(null);
+    setStokKod2Id(null);
+    setStokKod3Id(null);
+    setStokKod4Id(null);
+    setStokKod5Id(null);
+    setStokOlcuBirim1Id(1);
+    setStokOlcuBirim2Id(null);
+    setOlcuBr2Pay(1);
+    setOlcuBr2Payda(1);
+    setStokOlcuBirim3Id(null);
+    setOlcuBr3Pay(1);
+    setOlcuBr3Payda(1);
+    setAlisDovizTipiId(1);
+    setSatisDovizTipiId(1);
+    setAlisFiyati(0);
+    setSatisFiyati(0);
+    setAlisKDVOrani(0);
+    setSatisKDVOrani(0);
+    setSeriTakibiVarMi(false);
+    setEn(0);
+    setBoy(0);
+    setGenislik(0);
+    setAgirlik(0);
+    setAsgariStokMiktari(0);
+    setAzamiStokMiktari(0);
+    setMinimumSiparisMiktari(0);
+
+    setHucres([]);
+    setSAPKods([]);
+    setStokBarkods([]);
+
+  },[props.show])
 
   const [stokGrupKodus, setStokGrupKodus] = useState<FormSelectItem[]>([]);
   const [stokKod1s, setStokKod1s] = useState<FormSelectItem[]>([]);
@@ -121,9 +218,66 @@ export default (props: IStokModalProps) => {
     fetchInitals();
   }, []);
 
-  const onSubmit = useCallback(() => {
-    alert("asd");
-  }, []);
+  const onSubmit = useCallback(async() => {
+    if(adi==""){
+      return alert("ADI ZORUNLU");
+    }
+
+    const request= {
+      stokKarti:{
+        adi: adi,
+        agirlik: agirlik,
+        aktarimDurumu: 1,
+        alisDovizTipiId: alisDovizTipiId,
+        alisFiyati: alisFiyati,
+        alisKDVOrani: alisKDVOrani,
+        asgariStokMiktari: asgariStokMiktari,
+        azamiStokMiktari: azamiStokMiktari,
+        boy: boy,
+        en: en,
+        genislik: genislik,
+        ingilizceIsim: ingilizceIsim,
+        kodu: kodu,
+        minimumSiparisMiktari: minimumSiparisMiktari,
+        olcuBr2Pay: olcuBr2Pay,
+        olcuBr2Payda: olcuBr2Payda,
+        olcuBr3Pay: olcuBr3Pay,
+        olcuBr3Payda: olcuBr3Payda,
+        satisDovizTipiId: satisDovizTipiId,
+        satisFiyati: satisFiyati,
+        satisKDVOrani: satisKDVOrani,
+        seriTakibiVarMi: seriTakibiVarMi,
+        stokGrupKoduId: stokGrupKoduId,
+        stokKod1Id: stokKod1Id,
+        stokKod2Id: stokKod2Id,
+        stokKod3Id: stokKod3Id,
+        stokKod4Id: stokKod4Id,
+        stokKod5Id: stokKod5Id,
+        stokOlcuBirim1Id: stokOlcuBirim1Id,
+        stokOlcuBirim2Id: stokOlcuBirim2Id,
+        stokOlcuBirim3Id: stokOlcuBirim3Id, 
+      },
+      hucres: hucres.map(x=>({ kodu: x.value })),
+      sAPKods: sAPKOds.map(x=>({ kod: x.value })),
+      stokBarkods: stokBarkods.map(x=>({ barkod: x.value, stokOlcuBirimId: stokOlcuBirim1Id })),
+    } as IStokKartiWithDetail;
+
+    if(ID){
+      request.stokKarti.id= ID;
+    }
+
+    const { data } = (!ID) ? await api.stokWithDetail.create(request) : await api.stokWithDetail.update(request);
+
+    if(!data.status){
+      console.log(data);
+      return alert(((data.errors && data.errors[0].Errors ) && data.errors[0].Errors[0]) || "Bir hata oldu");
+    }
+
+    if(props.onDone){
+      props.onDone();
+    }
+
+  }, [ID, adi,agirlik,alisDovizTipiId,alisFiyati,alisKDVOrani,asgariStokMiktari,azamiStokMiktari,boy,en,genislik,ingilizceIsim,kodu,minimumSiparisMiktari,olcuBr2Pay,olcuBr2Payda,olcuBr3Pay,olcuBr3Payda,satisDovizTipiId,satisFiyati,satisKDVOrani,seriTakibiVarMi,stokGrupKoduId,stokKod1Id,stokKod2Id,stokKod3Id,stokKod4Id,stokKod5Id,stokOlcuBirim1Id,stokOlcuBirim2Id,stokOlcuBirim3Id, hucres, sAPKOds,stokBarkods]);
 
   return (
     <Modal show={isShowing} onHide={() => props.onHide && props.onHide()}>
@@ -144,10 +298,10 @@ export default (props: IStokModalProps) => {
               />
             </div>
             <div className="col-md-12 m-b-20">
+              <label className="form-label">Kodu</label>
               <input
                 type="text"
                 className="form-control"
-                placeholder="Kodu"
                 value={kodu}
                 onChange={(text) => setKodu(text.target.value)}
               />
@@ -362,13 +516,10 @@ export default (props: IStokModalProps) => {
             </div>
 
             <div className="col-md-12 m-b-20">
-              <input
-                type="checkbox"
-                className="form-control"
-                placeholder="Seri Takibi"
-                checked={seriTakibiVarMi}
-                onChange={(text) => setSeriTakibiVarMi(text.target.checked)}
-              />
+              <div className="form-check mr-sm-2 mb-3">
+                  <input type="checkbox" className="form-check-input" id="checkbox0" value="check" checked={seriTakibiVarMi} onChange={(text) => setSeriTakibiVarMi(text.target.checked)}/>
+                  <label className="form-check-label">Seri takibi var mı ?</label>
+              </div>
             </div>
 
             <div className="col-md-12 m-b-20">
@@ -440,14 +591,14 @@ export default (props: IStokModalProps) => {
                 onChange={(text) => setMinimumSiparisMiktari(text.target.valueAsNumber)}
               />
             </div>
-
+            
             <div className="col-md-12 m-b-20">
               <CreatableSelect
                 placeholder="Barkodlar"
                 isMulti
                 value={stokBarkods}
                 onChange={(items: any) =>
-                  setStokBarkods(items.map((x: any) => x.value))
+                  setStokBarkods(items)
                 }
               />
             </div>
@@ -458,17 +609,18 @@ export default (props: IStokModalProps) => {
                 isMulti
                 value={sAPKOds}
                 onChange={(items: any) =>
-                  setSAPKods(items.map((x: any) => x.value))
+                  setSAPKods(items)
                 }
               />
             </div>
+
             <div className="col-md-12 m-b-20">
               <CreatableSelect
                 placeholder="Hucreler"
                 isMulti
                 value={hucres}
                 onChange={(items: any) =>
-                  setHucres(items.map((x: any) => x.value))
+                  setHucres(items)
                 }
               />
             </div>

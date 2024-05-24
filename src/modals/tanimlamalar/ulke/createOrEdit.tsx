@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import api from "../../../utils/api";
-import { IBaseResponseValue, IUlke } from "../../../utils/types";
+import { IBaseResponseValue } from "../../../utils/types";
+import { IUlke } from "../../../utils/types/tanimlamalar/IUlke";
 import { AxiosResponse } from "axios";
 
 interface IStokKodModalProps {

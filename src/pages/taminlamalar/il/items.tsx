@@ -2,7 +2,7 @@ import { createRef, useCallback,   useEffect,   useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
-import { IIl, IUlke } from "../../../utils/types";
+import { IIl } from "../../../utils/types/tanimlamalar/IIl";
 
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";

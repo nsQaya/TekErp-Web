@@ -1,5 +1,6 @@
 import { AxiosInstance } from "axios";
-import { IBaseResponseValue, IPagedResponse, IStok } from "../types";
+import { IBaseResponseValue, IPagedResponse } from "../types";
+import { IStok } from "../types/Stok/IStok";
 
 
 export default ($axios: AxiosInstance) => ({

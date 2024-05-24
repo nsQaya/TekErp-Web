@@ -2,7 +2,7 @@ import { createRef, useCallback, useEffect, useRef, useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
-import { IStokKod } from "../../../utils/types";
+import { IStokKod } from "../../../utils/types/Stok/IStokKod";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 
 export default () => {

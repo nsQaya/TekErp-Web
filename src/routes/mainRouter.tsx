@@ -6,6 +6,10 @@ import StockItems from "../pages/stok/items";
 import StockCode1Items from "../pages/stok/code1/items";
 import StockCode2Items from "../pages/stok/code2/items";
 
+import IhtiyacPlanlama from "../pages/planlama/ihtiyacPlanlama"
+
+import IhtiyacPlanlamaRapor from "../pages/rapor/ihtiyacPlanlamaRapor"
+
 import UlkeItems from "../pages/taminlamalar/ulke/items";
 import IlItems from "../pages/taminlamalar/il/items";
 import IlceItems from "../pages/taminlamalar/ilce/items";
@@ -51,6 +55,33 @@ export default createHashRouter([
             path: "code2",
             element: <StockCode2Items />,
           },
+        ],
+      },
+      {
+        path: "/planlama",
+        children: [
+          {
+            path: "ihtiyacplanlama",
+            element: <IhtiyacPlanlama />,
+          },
+          {
+            path: "code1",
+            element: <StockCode1Items />,
+          },
+          {
+            path: "code2",
+            element: <StockCode2Items />,
+          },
+        ],
+      },
+      {
+        path: "/rapor",
+        children: [
+          {
+            path: "ihtiyacPlanlamaRapor",
+            element: <IhtiyacPlanlamaRapor />,
+          },
+          
         ],
       },
     ],

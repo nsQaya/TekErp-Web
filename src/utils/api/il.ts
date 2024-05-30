@@ -1,15 +1,18 @@
 import { AxiosInstance } from "axios";
 import { IBaseResponseValue, IPagedResponse } from "../types";
 import { IIl } from "../types/tanimlamalar/IIl";
+import { SortOrder } from "react-data-table-component";
 
 
 
 export default ($axios: AxiosInstance) => ({
-    getAll(page: number, take: number){
+    getAll(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
         return $axios.get<IBaseResponseValue<IPagedResponse<IIl>>>(`/ils/GetListForGrid`, {
             params: {
                 pageIndex: page,
                 pageSize: take,
+                sortColumn: sortColumn, // Sıralama sütunu
+                sortDirection: sortDirection, // Sıralama yönü
             }
         });
     },

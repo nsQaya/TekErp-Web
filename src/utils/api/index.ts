@@ -7,7 +7,8 @@ import axios, {
 import { useUserStore } from "../../store/userStore";
 import auth from "./auth";
 import stok from "./stok";
-import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI, IStokKartiWithDetail } from "../types";
+import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI } from "../types";
+import { IStokKartiWithDetail } from "../types/Stok/IStokKartiWithDetail";
 import { IStokOlcuBirim } from "../types/tanimlamalar/IStokOlcuBirim";
 import { IStokKod } from "../types/Stok/IStokKod";
 import { IIlce } from "../types/tanimlamalar/IIlce";
@@ -15,6 +16,7 @@ import { IIl } from "../types/tanimlamalar/IIl";
 import { IUlke } from "../types/tanimlamalar/IUlke";
 import { IDovizTipi } from "../types/tanimlamalar/IDovizTipi";
 import { IStok } from "../types/Stok/IStok";
+import {IIhtiyacPlanlamaRapor} from "../types/planlama/IIhtiyacPlanlamaRapor";
 import stokKod from "./stokKod";
 import ulke  from "./ulke";
 import il from "./il";
@@ -23,6 +25,9 @@ import stokGrupKod from "./stokGrupKod";
 import stokOlcuBirim from "./stokOlcuBirim";
 import dovizTipi from "./dovizTipi";
 import stokWithDetail from './stokWithDetail';
+import ihtiyacPlanlama from "./ihtiyacPlanlama";
+import ihtiyacPlanlamaRapor from "./ihtiyacPlanlamaRapor";
+import { IIhtiyacPlanlama } from "../types/planlama/IIhtiyacPlanlama";
 
 var instance: AxiosInstance = axios.create({
   baseURL: "http://localhost:60805/api/",
@@ -67,9 +72,10 @@ const onResponseError = (error: AxiosError)=> {
       errorMessage = errorData.detail;
     }
   }
+  console.log(error);
 
   const response = {
-    data:{
+    data:{      
       status: false,
       value: null,
       detail: errorMessage,
@@ -100,6 +106,8 @@ const repositories = {
   ilce: ilce(instance) as ICrudBaseAPI<IIlce>,
 
   dovizTipi: dovizTipi(instance) as ICrudBaseAPI<IDovizTipi>,
+  ihtiyacPlanlamaRapor: ihtiyacPlanlamaRapor(instance) as ICrudBaseAPI<IIhtiyacPlanlamaRapor>,
+  ihtiyacPlanlama: ihtiyacPlanlama(instance) as ICrudBaseAPI<IIhtiyacPlanlama>,
 
 };
 

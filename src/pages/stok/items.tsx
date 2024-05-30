@@ -5,6 +5,7 @@ import api from "../../utils/api";
 import { IStok } from "../../utils/types/Stok/IStok";
 import CreateOrEditModal from "../../modals/stok/createOrEdit";
 import AppTable, { ITableRef } from "../../components/AppTable";
+import { IStokKartiWithDetail } from "../../utils/types/Stok/IStokKartiWithDetail";
 
 
 export default () => {
@@ -23,26 +24,41 @@ export default () => {
     myTable.current?.refresh();
   },[])
 
-  const columns: TableColumn<IStok>[] = [
+  const columns: TableColumn<IStokKartiWithDetail>[] = [
     {
       name: "#",
-      selector: (row: IStok) => row.id as number,
+      selector: (row: IStokKartiWithDetail) => row.stokKarti.id as number,
+      sortable: true,
+    },
+    {
+      name: "Kodu",
+      selector: (row: IStokKartiWithDetail) => row.stokKarti.kodu,
       sortable: true,
     },
     {
       name: "Adı",
-      selector: (row: IStok) => row.adi,
+      selector: (row: IStokKartiWithDetail) => row.stokKarti.adi,
+      sortable: true,
+    },
+    {
+      name: "İngilizce Adı",
+      selector: (row: IStokKartiWithDetail) => row.stokKarti.ingilizceIsim,
+      sortable: true,
+    },
+    {
+      name: "Adı",
+      selector: (row: IStokKartiWithDetail) => row.stokKarti.adi,
       sortable: true,
     },
     {
       name: "işlemler",
-      cell: (row: IStok) => {
+      cell: (row: IStokKartiWithDetail) => {
         return (
           <>
-            <button className="btn btn-info ms-1" onClick={(e)=>[e.preventDefault(),setSelectedItem(row), setModalShowing(true)]}>
+            <button className="btn btn-info ms-1" onClick={(e)=>[e.preventDefault(),setSelectedItem(row.stokKarti), setModalShowing(true)]}>
               <i className="ti-pencil"></i>
             </button>
-            <button className="btn btn-danger ms-1" onClick={(e)=>[e.preventDefault(), deleteItem(row)]}>
+            <button className="btn btn-danger ms-1" onClick={(e)=>[e.preventDefault(), deleteItem(row.stokKarti)]}>
               <i className="ti-trash"></i>
             </button>
           </>
@@ -79,10 +95,11 @@ export default () => {
               </button>
               <div className="table-responsive m-t-40">
                 <AppTable
-                    baseApi={api.stok}
+                    baseApi={api.stokWithDetail}
                     columns={columns}
                     key={'Stoklar'}
                     ref={myTable}
+                    rowSelectable={true}
                 />
               </div>
             </div>

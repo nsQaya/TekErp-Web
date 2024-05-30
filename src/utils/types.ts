@@ -1,7 +1,5 @@
 import { AxiosResponse } from "axios";
-import { IStok } from "./types/Stok/IStok";
-import { IStokBarkod } from "./types/Stok/IStokBarkod";
-import { IHucre } from "./types/tanimlamalar/IHucre";
+import { SortOrder } from "react-data-table-component";
 
 export interface IError{
   property: string;
@@ -41,24 +39,17 @@ export interface IEntity{
 }
 
 export interface ICrudBaseAPI<T>{
-  getAll: (page: number, take: number)=> Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>
+  // getAll: (page: number, take: number)=> Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>
+  getAll(page: number, take: number, sortColumn?: string, sortDirection?: SortOrder): Promise<{ data: { value: { items: T[], count: number } } }>;
   get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   create: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   update: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   delete: (id: number) => Promise<AxiosResponse<IBaseResponseValue<IEntity>, any>>
 }
 
-export interface IStokKartiWithDetail{
-  stokKarti:IStok
-  stokBarkods:IStokBarkod[]
-  sAPKods:ISapKod[]
-  hucres:IHucre[]
+
+export interface IRaporBaseAPI<T>{
+  getAll: (page: number, take: number)=> Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>
+  get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
 }
-
-  export interface ISapKod {
-    id?: number
-    kod: string
-    stokKartiId?: number
-  }
-
 

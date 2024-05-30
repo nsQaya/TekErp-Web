@@ -1,9 +1,18 @@
 import { AxiosInstance } from "axios";
-import { IBaseResponseValue, IStokKartiWithDetail } from "../types";
+import { IBaseResponseValue, IPagedResponse } from "../types";
+import { IStokKartiWithDetail } from "../types/Stok/IStokKartiWithDetail";
 
 
 
 export default ($axios: AxiosInstance) => ({
+    getAll(page: number, take: number){
+        return $axios.post<IBaseResponseValue<IPagedResponse<IStokKartiWithDetail>>>(`/StokKartis/GetListWithDetails?PageIndex=${page}&PageSize=${take}`, {
+            params: {
+                pageIndex: page,
+                pageSize: take,
+            }
+        });
+    },
     create(params: Partial<IStokKartiWithDetail>){
         return $axios.post<IBaseResponseValue<IStokKartiWithDetail>>(`/StokKartis/CreateStokKartiWithDetails`, params);
     },

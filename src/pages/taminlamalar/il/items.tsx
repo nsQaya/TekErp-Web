@@ -7,6 +7,7 @@ import { IIl } from "../../../utils/types/tanimlamalar/IIl";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
 
+
 export default () => {
   const myTable = createRef<ITableRef>();
   const [isModalShowing, setModalShowing] = useState(false);
@@ -48,7 +49,7 @@ export default () => {
     },
     {
       name: "Ülke",
-      selector: (row) => row.ulkeAdi,
+      selector: (row) => row.ulke.adi,
       sortable: true,
     },
     {
@@ -138,13 +139,16 @@ export default () => {
                 Yeni İl Ekle
               </button>
               <div className="table-responsive m-t-40">
+              {/* <DataTableExtensions {...tableData}> */}
                 <AppTable
                   baseApi={api.il}
                   columns={columns}
                   key={"İller"}
                   ref={myTable}
+                  rowSelectable={false}
                 />
               </div>
+              {/* </DataTableExtensions> */}
             </div>
           </div>
         </div>

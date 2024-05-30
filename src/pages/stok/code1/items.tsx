@@ -1,9 +1,8 @@
-import { createRef, useCallback, useEffect, useRef, useState } from "react";
+import { createRef, useCallback,   useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
 import { IStokKod } from "../../../utils/types/Stok/IStokKod";
-import CreateOrEditModal from "../../../modals/stok/code1/createOrEdit";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, IFormItem } from "../../../modals/DynamicModal";
 
@@ -87,6 +86,7 @@ export default () => {
         items={items}
         onDone={onSuccess}
         selectedItem={selectedItem}
+        onHide={()=>setModalShowing(false)}
       />
 
       <AppBreadcrumb title="Kod 1'ler" />

@@ -6,7 +6,7 @@ import { FormSelectItem } from "../DynamicModal";
 import api from "../../utils/api";
 import CreatableSelect from "react-select/creatable";
 import { IStok } from "../../utils/types/Stok/IStok";
-import { IStokKartiWithDetail } from "../../utils/types";
+import { IStokKartiWithDetail } from "../../utils/types/Stok/IStokKartiWithDetail";
 
 interface IStokModalProps {
   show: boolean;
@@ -327,7 +327,7 @@ export default (props: IStokModalProps) => {
 
             <div className="col-md-12 m-b-20">
               <Select
-                defaultValue={stokGrupKodus.find(
+                value={stokGrupKodus.find(
                   (x) => x.value == stokGrupKoduId
                 )}
                 placeholder="Stok Grup Kodu"
@@ -338,7 +338,7 @@ export default (props: IStokModalProps) => {
 
             <div className="col-md-12 m-b-20">
               <Select
-                defaultValue={stokKod1s.find((x) => x.value == stokKod1Id)}
+                value={stokKod1s.find((x) => x.value == stokKod1Id)}
                 placeholder="Stok Kodu 1"
                 onChange={(selected: any) => setStokKod1Id(selected.value)}
                 options={stokKod1s as Options<any>}
@@ -347,7 +347,7 @@ export default (props: IStokModalProps) => {
 
             <div className="col-md-12 m-b-20">
               <Select
-                defaultValue={stokKod1s.find((x) => x.value == stokKod2Id)}
+                value={stokKod1s.find((x) => x.value == stokKod2Id)}
                 placeholder="Stok Kodu 2"
                 onChange={(selected: any) => setStokKod2Id(selected.value)}
                 options={stokKod2s as Options<any>}
@@ -356,7 +356,7 @@ export default (props: IStokModalProps) => {
 
             <div className="col-md-12 m-b-20">
               <Select
-                defaultValue={stokKod3s.find((x) => x.value == stokKod3Id)}
+                value={stokKod3s.find((x) => x.value == stokKod3Id)}
                 placeholder="Stok Kodu 3"
                 onChange={(selected: any) => setStokKod3Id(selected.value)}
                 options={stokKod3s as Options<any>}
@@ -365,7 +365,7 @@ export default (props: IStokModalProps) => {
 
             <div className="col-md-12 m-b-20">
               <Select
-                defaultValue={stokKod4s.find((x) => x.value == stokKod4Id)}
+                value={stokKod4s.find((x) => x.value == stokKod4Id)}
                 placeholder="Stok Kodu 4"
                 onChange={(selected: any) => setStokKod4Id(selected.value)}
                 options={stokKod4s as Options<any>}
@@ -374,7 +374,7 @@ export default (props: IStokModalProps) => {
 
             <div className="col-md-12 m-b-20">
               <Select
-                defaultValue={stokKod5s.find((x) => x.value == stokKod5Id)}
+                value={stokKod5s.find((x) => x.value == stokKod5Id)}
                 placeholder="Stok Kodu 5"
                 onChange={(selected: any) => setStokKod5Id(selected.value)}
                 options={stokKod5s as Options<any>}
@@ -384,7 +384,7 @@ export default (props: IStokModalProps) => {
             
             <div className="col-md-12 m-b-20">
               <Select
-                defaultValue={stokOlcuBirims.find((x) => x.value == stokOlcuBirim1Id.toString())}
+                value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim1Id.toString())}
                 placeholder="Ölçü Birim 1"
                 onChange={(selected: any) => setStokOlcuBirim1Id(selected.value)}
                 options={stokOlcuBirims as Options<any>}
@@ -393,7 +393,7 @@ export default (props: IStokModalProps) => {
 
             <div className="col-md-12 m-b-20">
               <Select
-                defaultValue={stokOlcuBirims.find((x) => x.value == stokOlcuBirim2Id)}
+                value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim2Id)}
                 placeholder="Ölçü Birim 2"
                 onChange={(selected: any) => setStokOlcuBirim2Id(selected.value)}
                 options={stokOlcuBirims as Options<any>}
@@ -402,7 +402,7 @@ export default (props: IStokModalProps) => {
 
             <div className="col-md-12 m-b-20">
               <Select
-                defaultValue={stokOlcuBirims.find((x) => x.value == stokOlcuBirim3Id)}
+                value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim3Id)}
                 placeholder="Ölçü Birim 3"
                 onChange={(selected: any) => setStokOlcuBirim3Id(selected.value)}
                 options={stokOlcuBirims as Options<any>}

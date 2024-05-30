@@ -81,6 +81,15 @@ export default () => {
     {title: "Plasiyer Kodu Aktarım", href: "/"},
   ]);
 
+  const [raporPages, ________] =useState([
+    {title: "İhtiyaç Planlama", href: "/rapor/ihtiyacPlanlamaRapor"},
+    {title: "Sac Planlama", href: "/planlama/sacPlanlama"}
+  ]);
+
+  const [planlamaPages, _________] =useState([
+    {title: "İhtiyaç Planlama", href: "/planlama/ihtiyacPlanlama"},
+    {title: "Sac Planlama", href: "/planlama/sacPlanlama"}
+  ]);
 
   return (
     <aside className="left-sidebar">
@@ -89,13 +98,15 @@ export default () => {
           <ul id="sidebarnav">
             <li className="nav-small-cap">--- PERSONAL</li>
             <SideBarItem icon='icon-home' name='Anasayfa' href='/' />
-            <SideBarItem icon='ti-settings' name='Tanımlamalar' items={tanimPages} count={4}/>
-            <SideBarItem icon='ti-user' name='Kullanıcı' items={kullaniciPages} count={4}/>
-            <SideBarItem icon='ti-dropbox' name='Stok' items={stokPages} count={4}/>
-            <SideBarItem icon='ti-id-badge' name='Cari' items={cariPages} count={4}/>
-            <SideBarItem icon='ti-write' name='Fatura' items={faturaPages} count={4}/>
-            <SideBarItem icon='ti-cloud-up' name='E-Belge' items={eBelgePages} count={4}/>
-            <SideBarItem icon='ti-exchange-vertical' name='Aktarım' items={aktarimPages} count={4}/>
+            <SideBarItem icon='ti-settings' name='Tanımlamalar' items={tanimPages} count={1}/>
+            <SideBarItem icon='ti-user' name='Kullanıcı' items={kullaniciPages} count={1}/>
+            <SideBarItem icon='ti-dropbox' name='Stok' items={stokPages} count={1}/>
+            <SideBarItem icon='ti-id-badge' name='Cari' items={cariPages} count={1}/>
+            <SideBarItem icon='ti-write' name='Fatura' items={faturaPages} count={1}/>
+            <SideBarItem icon='ti-cloud-up' name='E-Belge' items={eBelgePages} count={1}/>
+            <SideBarItem icon='ti-exchange-vertical' name='Planlama' items={planlamaPages} count={1}/>
+            <SideBarItem icon='ti-exchange-vertical' name='Aktarım' items={aktarimPages} count={1}/>
+            <SideBarItem icon='ti-exchange-vertical' name='Rapor' items={raporPages} count={1}/>
           </ul>
         </Nav>
       </div>

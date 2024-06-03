@@ -40,7 +40,8 @@ export interface IEntity{
 
 export interface ICrudBaseAPI<T>{
   // getAll: (page: number, take: number)=> Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>
-  getAll(page: number, take: number, sortColumn?: string, sortDirection?: SortOrder): Promise<{ data: { value: { items: T[], count: number } } }>;
+  getAllForGrid(page: number, take: number, sortColumn?: string, sortDirection?: SortOrder): Promise<{ data: { value: { items: T[], count: number } } }>;
+  getAll(page: number, take: number): Promise<{ data: { value: { items: T[], count: number } } }>;
   get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   create: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   update: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>

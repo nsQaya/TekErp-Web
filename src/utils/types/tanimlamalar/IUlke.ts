@@ -1,6 +1,6 @@
 
 export interface IUlke {
-  id: number;
+  id?: number;
   kodu: string;
   adi: string;
   aktarimDurumu: number;

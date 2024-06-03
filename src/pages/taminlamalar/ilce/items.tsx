@@ -1,15 +1,31 @@
-import { createRef, useCallback,   useState } from "react";
+import { createRef, useCallback,   useEffect,   useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
-import { IIlce } from "../../../utils/types/tanimlamalar/IIlce";
-import CreateOrEditModal from "../../../modals/tanimlamalar/ilce/createOrEdit";
+
+
 import AppTable, { ITableRef } from "../../../components/AppTable";
+import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
+import { IIlce } from "../../../utils/types/tanimlamalar/IIlce";
+
+
 
 export default () => {
-  const myTable = createRef<ITableRef>();
+  const myTable = createRef<ITableRef<IIlce>>();
   const [isModalShowing, setModalShowing] = useState(false);
   const [selectedItem, setSelectedItem]= useState<IIlce>();
+
+  const [iller, setiller] = useState<FormSelectItem[]>();
+
+
+  const fetchCountries= useCallback(async()=>{
+    const { data: {value: {items}} } = await api.il.getAll(0,1000);
+    setiller(items.map(x=>({label: x.adi, value: String(x.id)})))
+  },[])
+
+  useEffect(()=>{
+    fetchCountries();
+  },[]);
 
   const onSuccess = () => {
     if(selectedItem){
@@ -18,11 +34,12 @@ export default () => {
       alert("Başarıyla eklendi !");
     }
     myTable.current?.refresh();
+    setModalShowing(false);
   };
 
   const deleteItem= useCallback(async (item: IIlce)=>{
     if(!window.confirm("Emin misin ?")) return;
-    await api.stokKod1.delete(item.id);
+    await api.ilce.delete(item.id);
     myTable.current?.refresh();
   },[])
 
@@ -35,7 +52,12 @@ export default () => {
     },
     {
       name: "İl",
-      selector: (row) => row.ilId,
+      selector: (row) => row.il.adi,
+      sortable: true,
+    },
+    {
+      name: "Plaka Kodu",
+      selector: (row) => row.il.plakaKodu,
       sortable: true,
     },
     {
@@ -70,17 +92,45 @@ export default () => {
     },
   ];
 
+  const modalItems= [
+    {
+      name: "id",
+      type: FormItemTypes.input,
+      hidden: true
+    },
+    {
+      title: "il",
+      name: "ilId",
+      type: FormItemTypes.select,
+      options: iller
+    },
+    {
+      title: "Adı",
+      name: "adi",
+      type: FormItemTypes.input
+    },
+    {
+      title: "İlçe Kodu",
+      name: "ilceKodu",
+      type: FormItemTypes.input
+    }
+  ] as IFormItem[];
+
+
   return (
     <div className="container-fluid">
       
-      <CreateOrEditModal
-        show={isModalShowing}
-        onHide={() => [setSelectedItem(undefined), setModalShowing(false)]}
-        onSuccess={onSuccess}
-        selected={selectedItem}
+      <DynamicModal 
+        isShownig={isModalShowing} 
+        title="ilçe Ekle" 
+        api={api.ilce} 
+        items={modalItems}
+        onDone={onSuccess}
+        selectedItem={selectedItem}
+        onHide={()=>setModalShowing(false)}
       />
 
-      <AppBreadcrumb title="İller" />
+      <AppBreadcrumb title="" />
       <div className="row">
         <div className="col-12">
           <div className="card">
@@ -94,7 +144,7 @@ export default () => {
                 className="btn btn-info btn-rounded m-t-10 float-end text-white"
                 onClick={(e) => [e.preventDefault(), setModalShowing(true)]}
               >
-                Yeni İlçe Ekle
+                Yeni
               </button>
               <div className="table-responsive m-t-40">
                 <AppTable
@@ -102,6 +152,7 @@ export default () => {
                   columns={columns}
                   key={"İlçeler"}
                   ref={myTable}
+                  rowSelectable={false}
                 />
               </div>
             </div>

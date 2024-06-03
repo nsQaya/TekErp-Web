@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
 import { IBaseResponseValue, IPagedResponse } from "../types";
-import { IStokKartiWithDetail } from "../types/Stok/IStokKartiWithDetail";
+import { IStokKartiWithDetail } from "../types/stok/IStokKartiWithDetail";
 
 
 

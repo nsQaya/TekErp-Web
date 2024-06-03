@@ -6,8 +6,7 @@ import { IIhtiyacPlanlama } from "../../utils/types/planlama/IIhtiyacPlanlama";
 import AppTable, { ITableRef } from "../../components/AppTable";
 
 export default () => {
-  const myTable = createRef<ITableRef>();
-
+  const myTable = createRef<ITableRef<IIhtiyacPlanlama>>();
   const columns: TableColumn<IIhtiyacPlanlama>[] = [
     {
       name: "Tarih",
@@ -105,7 +104,7 @@ export default () => {
       style: {
         fontSize: "9px",
       },
-    },
+    }
   ];
 
   return (
@@ -125,7 +124,6 @@ export default () => {
                   columns={columns}
                   key={"ihtiyacPlanlama"}
                   ref={myTable}
-                  
                 />
               </div>
             </div>

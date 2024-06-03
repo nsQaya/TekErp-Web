@@ -1,7 +1,10 @@
-import { AxiosInstance } from "axios";
-import { IBaseResponseValue, IPagedResponse } from "../types";
-import { IStok } from "../types/Stok/IStok";
+import { AxiosInstance, AxiosResponse } from "axios";
+import { IBaseResponseValue, ICrudBaseAPI, IPagedResponse } from "../types";
+import { IStok } from "../types/stok/IStok";
 
+export interface IStokAPI extends ICrudBaseAPI<IStok> {
+    getBarkod: (ids: number[]) => AxiosResponse<IBaseResponseValue<{url: string}>>
+}
 
 export default ($axios: AxiosInstance) => ({
     getAll(page: number, take: number){
@@ -12,4 +15,8 @@ export default ($axios: AxiosInstance) => ({
             }
         });
     },
+    getBarkod(ids: number[]){
+        return $axios.get<IBaseResponseValue<{url: string}>>(`/StokKartis/GetStokKartiBarkodPdfUrl?stokIds=${ids.join('&stokIds=')}`);
+    }
+
 });

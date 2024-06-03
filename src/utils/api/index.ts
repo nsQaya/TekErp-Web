@@ -6,31 +6,34 @@ import axios, {
 } from "axios";
 import { useUserStore } from "../../store/userStore";
 import auth from "./auth";
-import stok from "./stok";
+import stok, { IStokAPI } from "./stok";
 import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI } from "../types";
-import { IStokKartiWithDetail } from "../types/Stok/IStokKartiWithDetail";
+import { IStokKartiWithDetail } from "../types/stok/IStokKartiWithDetail";
 import { IStokOlcuBirim } from "../types/tanimlamalar/IStokOlcuBirim";
-import { IStokKod } from "../types/Stok/IStokKod";
+import { IStokKod } from "../types/stok/IStokKod";
 import { IIlce } from "../types/tanimlamalar/IIlce";
 import { IIl } from "../types/tanimlamalar/IIl";
 import { IUlke } from "../types/tanimlamalar/IUlke";
 import { IDovizTipi } from "../types/tanimlamalar/IDovizTipi";
-import { IStok } from "../types/Stok/IStok";
+
 import {IIhtiyacPlanlamaRapor} from "../types/planlama/IIhtiyacPlanlamaRapor";
 import stokKod from "./stokKod";
-import ulke  from "./ulke";
-import il from "./il";
-import ilce from "./ilce";
+import ulke  from "./tanimlamalar/ulke";
+import il from "./tanimlamalar/il";
+import ilce from "./tanimlamalar/ilce";
 import stokGrupKod from "./stokGrupKod";
-import stokOlcuBirim from "./stokOlcuBirim";
-import dovizTipi from "./dovizTipi";
+import stokOlcuBirim from "./tanimlamalar/stokOlcuBirim";
+import dovizTipi from "./tanimlamalar/dovizTipi";
 import stokWithDetail from './stokWithDetail';
 import ihtiyacPlanlama from "./ihtiyacPlanlama";
 import ihtiyacPlanlamaRapor from "./ihtiyacPlanlamaRapor";
 import { IIhtiyacPlanlama } from "../types/planlama/IIhtiyacPlanlama";
+import { IAmbarFisi } from "../types/fatura/IAmbarFisi";
+import ambarCikisFisi from "./fatura/ambarCikisFisi";
+import { apiURL } from "../config";
 
 var instance: AxiosInstance = axios.create({
-  baseURL: "http://localhost:60805/api/",
+  baseURL: apiURL,
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
@@ -91,23 +94,25 @@ instance.interceptors.response.use(onResponse, onResponseError);
 
 const repositories = {
   auth: auth(instance),
-  stok: stok(instance) as ICrudBaseAPI<IStok>,
-  stokWithDetail: stokWithDetail(instance) as ICrudBaseAPI<IStokKartiWithDetail>,
-  stokGrupKodu: stokGrupKod(instance) as ICrudBaseAPI<IStokKod>,
-  stokKod1: stokKod(instance, 1) as ICrudBaseAPI<IStokKod>,
-  stokKod2: stokKod(instance, 2) as ICrudBaseAPI<IStokKod>,
-  stokKod3: stokKod(instance, 3) as ICrudBaseAPI<IStokKod>,
-  stokKod4: stokKod(instance, 4) as ICrudBaseAPI<IStokKod>,
-  stokKod5: stokKod(instance, 5) as ICrudBaseAPI<IStokKod>,
-  stokOlcuBirim: stokOlcuBirim(instance) as ICrudBaseAPI<IStokOlcuBirim>,
+  stok: stok(instance) as unknown as IStokAPI,
+  stokWithDetail: stokWithDetail(instance) as unknown as ICrudBaseAPI<IStokKartiWithDetail>,
+  stokGrupKodu: stokGrupKod(instance) as unknown as ICrudBaseAPI<IStokKod>,
+  stokKod1: stokKod(instance, 1) as unknown as ICrudBaseAPI<IStokKod>,
+  stokKod2: stokKod(instance, 2) as unknown as ICrudBaseAPI<IStokKod>,
+  stokKod3: stokKod(instance, 3)as unknown  as ICrudBaseAPI<IStokKod>,
+  stokKod4: stokKod(instance, 4) as unknown as ICrudBaseAPI<IStokKod>,
+  stokKod5: stokKod(instance, 5) as unknown as ICrudBaseAPI<IStokKod>,
+  stokOlcuBirim: stokOlcuBirim(instance) as unknown as ICrudBaseAPI<IStokOlcuBirim>,
 
-  ulke: ulke(instance) as ICrudBaseAPI<IUlke>,
-  il: il(instance) as ICrudBaseAPI<IIl>,
-  ilce: ilce(instance) as ICrudBaseAPI<IIlce>,
+  ulke: ulke(instance) as unknown as ICrudBaseAPI<IUlke>,
+  il: il(instance) as unknown as ICrudBaseAPI<IIl>,
+  ilce: ilce(instance) as unknown as ICrudBaseAPI<IIlce>,
 
-  dovizTipi: dovizTipi(instance) as ICrudBaseAPI<IDovizTipi>,
-  ihtiyacPlanlamaRapor: ihtiyacPlanlamaRapor(instance) as ICrudBaseAPI<IIhtiyacPlanlamaRapor>,
-  ihtiyacPlanlama: ihtiyacPlanlama(instance) as ICrudBaseAPI<IIhtiyacPlanlama>,
+  dovizTipi: dovizTipi(instance) as unknown as ICrudBaseAPI<IDovizTipi>,
+  ihtiyacPlanlamaRapor: ihtiyacPlanlamaRapor(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlamaRapor>,
+  ihtiyacPlanlama: ihtiyacPlanlama(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlama>,
+
+  ambarFisi:ambarCikisFisi(instance) as unknown as ICrudBaseAPI<IAmbarFisi>
 
 };
 

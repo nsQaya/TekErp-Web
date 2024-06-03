@@ -7,7 +7,7 @@ import CreateOrEditModal from "../../../modals/tanimlamalar/ulke/createOrEdit";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 
 export default () => {
-  const myTable = createRef<ITableRef>();
+  const myTable = createRef<ITableRef<IUlke>>();
   const [isModalShowing, setModalShowing] = useState(false);
   const [selectedItem, setSelectedItem]= useState<IUlke>();
 

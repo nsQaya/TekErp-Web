@@ -1,6 +1,6 @@
 
 export interface IStokOlcuBirim {
-  id: number;
+  id?: number;
   adi: string;
   simge: string;
 }

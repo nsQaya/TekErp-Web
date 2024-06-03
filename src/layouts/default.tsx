@@ -1,4 +1,4 @@
-import { Outlet, Route, Router } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 import AppHeader from "../components/AppHeader"
 import AppSidebar from "../components/AppSidebar"
 

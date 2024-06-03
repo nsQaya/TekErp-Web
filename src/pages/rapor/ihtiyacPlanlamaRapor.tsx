@@ -4,9 +4,12 @@ import { TableColumn } from "react-data-table-component";
 import api from "../../utils/api/index";
 import { IIhtiyacPlanlamaRapor } from "../../utils/types/planlama/IIhtiyacPlanlamaRapor";
 import AppTable, { ITableRef } from "../../components/AppTable";
+import { useNavigate } from "react-router-dom";
 
 export default () => {
-  const myTable = createRef<ITableRef>();
+  const myTable = createRef<ITableRef<IIhtiyacPlanlamaRapor>>();
+
+  const navigate= useNavigate();
 
   const columns: TableColumn<IIhtiyacPlanlamaRapor>[] = [
     // {
@@ -178,6 +181,18 @@ export default () => {
         fontSize: "9px",
       },
     },
+    {
+      name: "işlemler",
+      cell: (row) => {
+        return (
+          <>
+            <button className="btn btn-warning ms-1" onClick={(e)=>[e.preventDefault(), navigate(`/fatura/ambarfisiekle?proje=${row.projeKodu}&unit=${row.plasiyerKodu}`)]}>
+              <i className="ti-eye"></i>
+            </button>
+          </>
+        );
+      },
+    },
   ];
 
   const conditionalRowStyles = [
@@ -220,7 +235,7 @@ export default () => {
         backgroundColor: "#00c292", // Koyu Yeşil
         color: "white",
       },
-    },
+    }
   ];
 
   return (
@@ -240,6 +255,7 @@ export default () => {
                   columns={columns}
                   key={"ihtiyacPlanlama"}
                   ref={myTable}
+                  rowSelectable={false}
                   rowStyles={conditionalRowStyles}
                   rowPerPageOptions={[10, 50, 100,250,500,1000,10000]}
                 />

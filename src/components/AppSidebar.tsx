@@ -46,13 +46,13 @@ export default () => {
   ]);
 
   const [faturaPages, _____] =useState([
-    {title: "Satış Faturası", href: "/"},
-    {title: "Alış Faturası", href: "/"},
-    {title: "Satış İrsaliyesi", href: "/"},
-    {title: "Alış İrsaliyesi", href: "/"},
-    {title: "Ambar Çıkış Fişi", href: "/"},
-    {title: "Ambar Giriş Fişi", href: "/"},
-    {title: "Depolar Arası Transfer", href: "/"},
+    {title: "Satış Faturası", href: "/fatura/satisfatura"},
+    {title: "Alış Faturası", href: "/fatura/alisfatura"},
+    {title: "Satış İrsaliyesi", href: "/fatura/satisirsaliye"},
+    {title: "Alış İrsaliyesi", href: "/fatura/alisirsaliye"},
+    {title: "Ambar Çıkış Fişi", href: "/fatura/ambarcikisfisi"},
+    {title: "Ambar Giriş Fişi", href: "/fatura/ambargirisfisi"},
+    {title: "Depolar Arası Transfer", href: "/fatura/depolararasitransfer"},
   ]);
 
   const [eBelgePages, ______] =useState([
@@ -104,9 +104,9 @@ export default () => {
             <SideBarItem icon='ti-id-badge' name='Cari' items={cariPages} count={1}/>
             <SideBarItem icon='ti-write' name='Fatura' items={faturaPages} count={1}/>
             <SideBarItem icon='ti-cloud-up' name='E-Belge' items={eBelgePages} count={1}/>
-            <SideBarItem icon='ti-exchange-vertical' name='Planlama' items={planlamaPages} count={1}/>
+            <SideBarItem icon='ti-clipboard' name='Planlama' items={planlamaPages} count={1}/>
             <SideBarItem icon='ti-exchange-vertical' name='Aktarım' items={aktarimPages} count={1}/>
-            <SideBarItem icon='ti-exchange-vertical' name='Rapor' items={raporPages} count={1}/>
+            <SideBarItem icon='ti-printer' name='Rapor' items={raporPages} count={1}/>
           </ul>
         </Nav>
       </div>

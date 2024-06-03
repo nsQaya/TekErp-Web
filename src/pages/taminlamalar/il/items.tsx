@@ -6,10 +6,11 @@ import { IIl } from "../../../utils/types/tanimlamalar/IIl";
 
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
+import { aktarimDurumu } from "../../../utils/types/enums/aktarimDurumu";
 
 
 export default () => {
-  const myTable = createRef<ITableRef>();
+  const myTable = createRef<ITableRef<IIl>>();
   const [isModalShowing, setModalShowing] = useState(false);
   const [selectedItem, setSelectedItem]= useState<IIl>();
   const [countries, setCountries] = useState<FormSelectItem[]>();
@@ -122,7 +123,7 @@ export default () => {
         onHide={()=>setModalShowing(false)}
       />
 
-      <AppBreadcrumb title="İller" />
+      <AppBreadcrumb title="" />
       <div className="row">
         <div className="col-12">
           <div className="card">
@@ -136,10 +137,9 @@ export default () => {
                 className="btn btn-info btn-rounded m-t-10 float-end text-white"
                 onClick={(e) => [e.preventDefault(), setModalShowing(true)]}
               >
-                Yeni İl Ekle
+                Yeni
               </button>
               <div className="table-responsive m-t-40">
-              {/* <DataTableExtensions {...tableData}> */}
                 <AppTable
                   baseApi={api.il}
                   columns={columns}
@@ -148,7 +148,6 @@ export default () => {
                   rowSelectable={false}
                 />
               </div>
-              {/* </DataTableExtensions> */}
             </div>
           </div>
         </div>

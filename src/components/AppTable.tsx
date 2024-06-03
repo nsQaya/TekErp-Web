@@ -25,21 +25,27 @@ interface ITableProps<T> {
   baseApi: ICrudBaseAPI<T>;
   rowStyles?: ConditionalStyles<T>[];
   rowPerPageOptions?: number[];
-  rowSelectable:boolean;
+  rowSelectable?:boolean;
+  onChangeSelected?: (selected: {
+    allSelected: boolean;
+    selectedCount: number;
+    selectedRows: T[];
+  })=> void;
 }
 
-export interface ITableRef {
+export interface ITableRef<T> {
   refresh: () => Promise<void>;
+  data: T[]
 }
 
-function ITable<T>(props: ITableProps<T>, ref: ForwardedRef<ITableRef>) {
+function ITable<T>(props: ITableProps<T>, ref: ForwardedRef<ITableRef<T>>) {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [sortColumn, setSortColumn] = useState<string>('Id');
-  const [sortDirection, setSortDirection] = useState<SortOrder | undefined>("asc");
+  const [sortDirection, setSortDirection] = useState<SortOrder>("asc" as SortOrder);
 
   const fetchItems = useCallback(
     async (
@@ -49,7 +55,7 @@ function ITable<T>(props: ITableProps<T>, ref: ForwardedRef<ITableRef>) {
       sortDirection?: SortOrder
     ) => {
       setLoading(true);
-      const response = await props.baseApi.getAll(
+      const response = await props.baseApi.getAllForGrid(
         page,
         take,
         sortColumn,
@@ -78,8 +84,8 @@ function ITable<T>(props: ITableProps<T>, ref: ForwardedRef<ITableRef>) {
       console.log(column.name)
       if (column.selector)
         {
-      setSortColumn(column.selector.toString());
-      setSortDirection(sortDirection);
+          setSortColumn(column.selector.toString());
+          setSortDirection(sortDirection);
         }
     },
     []
@@ -94,14 +100,10 @@ function ITable<T>(props: ITableProps<T>, ref: ForwardedRef<ITableRef>) {
   }, [perPage, page, sortColumn, sortDirection, fetchItems]);
 
   useImperativeHandle(ref, () => ({
-    refresh,
+    refresh, data
   }));
 
-  const tableData = {
-    columns: props.columns,
-    data: data,
-  };
-
+  
   return (
         <DataTable
           columns={props.columns}
@@ -117,7 +119,8 @@ function ITable<T>(props: ITableProps<T>, ref: ForwardedRef<ITableRef>) {
           progressPending={loading}
           conditionalRowStyles={props.rowStyles}
           paginationRowsPerPageOptions={props.rowPerPageOptions}
-          selectableRows={props.rowSelectable}
+          selectableRows={props.rowSelectable || false}
+          onSelectedRowsChange={props.onChangeSelected ? props.onChangeSelected : undefined}
         />
   );
 }

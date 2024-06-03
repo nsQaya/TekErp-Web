@@ -1,23 +1,15 @@
-import { createRef, useCallback, useEffect, useRef, useState } from "react";
+import { createRef, useCallback,   useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
-import { IStokKod } from "../../../utils/types/Stok/IStokKod";
+import { IStokKod } from "../../../utils/types/stok/IStokKod";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 
 export default () => {
-  const myTable = createRef<ITableRef>();
-  const [isModalShowing, setModalShowing] = useState(false);
-  const [selectedItem, setSelectedItem]= useState<IStokKod>();
+  const myTable = createRef<ITableRef<IStokKod>>();
+   const [, setModalShowing] = useState(false);
+   const [, setSelectedItem]= useState<IStokKod>();
 
-  const onSuccess = () => {
-    if(selectedItem){
-      alert("Başarıyla güncellendi !");
-    }else{
-      alert("Başarıyla eklendi !");
-    }
-    myTable.current?.refresh();
-  };
 
   const deleteItem= useCallback(async (item: IStokKod)=>{
     if(!window.confirm("Emin misin ?")) return;

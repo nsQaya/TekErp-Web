@@ -14,6 +14,10 @@ import UlkeItems from "../pages/taminlamalar/ulke/items";
 import IlItems from "../pages/taminlamalar/il/items";
 import IlceItems from "../pages/taminlamalar/ilce/items";
 
+import AmbarCikisFisiListe from "../pages/fatura/ambarCikisFisiListe";
+import AmbarFisiEkle from "../pages/fatura/ambarFisiEkle";
+import AmbarCikisFisi from "../pages/fatura/ambarCikisFisi";
+
 export default createHashRouter([
   {
     path: "/",
@@ -58,6 +62,47 @@ export default createHashRouter([
         ],
       },
       {
+        path: "/fatura",
+        children: [
+          {
+            path: "satisfatura",
+            element: <IhtiyacPlanlama />,
+          },
+          {
+            path: "alisfatura",
+            element: <StockCode1Items />,
+          },
+          {
+            path: "satisirsaliye",
+            element: <StockCode2Items />,
+          },
+          {
+            path: "alisirsaliye",
+            element: <StockCode2Items />,
+          },
+          {
+            path: "ambarcikisfisiliste",
+            element: <AmbarCikisFisiListe />,
+          },
+          {
+            path: "ambarcikisfisi",
+            element: <AmbarCikisFisi />,
+          },
+          {
+            path: "ambargirisfisi",
+            element: <AmbarCikisFisi />,
+          },
+          {
+            path: "depolararasitransfer",
+            element: <StockCode2Items />,
+          },
+          {
+            path: "ambarfisiekle",
+            element: <AmbarFisiEkle />,
+          },
+        ],
+      },
+      {
         path: "/planlama",
         children: [
           {
@@ -81,7 +126,6 @@ export default createHashRouter([
             path: "ihtiyacPlanlamaRapor",
             element: <IhtiyacPlanlamaRapor />,
           },
-          
         ],
       },
     ],

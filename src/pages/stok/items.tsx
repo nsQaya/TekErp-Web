@@ -2,16 +2,21 @@ import { createRef, useCallback,  useState } from "react";
 import AppBreadcrumb from "../../components/AppBreadcrumb";
 import  { TableColumn } from "react-data-table-component";
 import api from "../../utils/api";
-import { IStok } from "../../utils/types/Stok/IStok";
+import { IStok } from "../../utils/types/stok/IStok";
 import CreateOrEditModal from "../../modals/stok/createOrEdit";
 import AppTable, { ITableRef } from "../../components/AppTable";
-import { IStokKartiWithDetail } from "../../utils/types/Stok/IStokKartiWithDetail";
+import { IStokKartiWithDetail } from "../../utils/types/stok/IStokKartiWithDetail";
+import { baseURL } from "../../utils/config";
+import { convertArrayOfObjectsToExcel } from "../../utils/excel";
+import { saveAs } from 'file-saver';
 
 
 export default () => {
-  const myTable = createRef<ITableRef>();
+  const myTable = createRef<ITableRef<IStokKartiWithDetail>>();
   const [isModalShowing, setModalShowing] = useState(false);
   const [selectedItem, setSelectedItem]= useState<IStok>();
+  const [selectedStokIDS, setSelectedStokIDS]= useState<number[]>([]);
+
 
   const onDone= useCallback(()=>{
     myTable?.current?.refresh();
@@ -24,6 +29,18 @@ export default () => {
     myTable.current?.refresh();
   },[])
 
+  const writeBarkods= useCallback(async()=>{
+    const {data} = await api.stok.getBarkod(selectedStokIDS);
+
+    if(!data.status){
+      return alert("Barkod oluşturulamadı")
+    }
+
+    location.href=baseURL+"/assets/"+data.value.url+".prf";
+
+  },[selectedStokIDS])
+
+  
   const columns: TableColumn<IStokKartiWithDetail>[] = [
     {
       name: "#",
@@ -67,9 +84,16 @@ export default () => {
     },
   ];
 
+  const onExport= useCallback(()=>{
+    if(!myTable.current?.data) return;
+
+    const myColumns= columns.filter(x=>x.name!="işlemler");
+    let blob = convertArrayOfObjectsToExcel<IStokKartiWithDetail>(myColumns, myTable.current.data);
+    saveAs(blob, 'data.xlsx');
+  },[myTable])
+
   return (
     <div className="container-fluid">
-      
       <CreateOrEditModal
         show={isModalShowing}
         onDone= {onDone}
@@ -86,13 +110,32 @@ export default () => {
               <h6 className="card-subtitle">
                 Export data to Copy, CSV, Excel, PDF & Print
               </h6>
+
               <button
                 type="button"
-                className="btn btn-info btn-rounded m-t-10 float-end text-white"
+                className="btn btn-info btn-rounded m-t-10 float-end text-white ms-3"
+                onClick={(e) => [e.preventDefault(), onExport()]}
+              >
+                Çıktı Al
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-info btn-rounded m-t-10 float-end text-white ms-3"
                 onClick={(e) => [e.preventDefault(), setModalShowing(true)]}
               >
                 Yeni Stok Ekle
               </button>
+
+              <button 
+                type="button" 
+                className="btn btn-info btn-rounded m-t-10 float-end text-white" 
+                onClick={(e) => [e.preventDefault(), writeBarkods()]}
+                disabled={selectedStokIDS.length <= 0}
+              >
+                Barkod Yazdır
+              </button>
+
               <div className="table-responsive m-t-40">
                 <AppTable
                     baseApi={api.stokWithDetail}
@@ -100,6 +143,7 @@ export default () => {
                     key={'Stoklar'}
                     ref={myTable}
                     rowSelectable={true}
+                    onChangeSelected={(selected)=>setSelectedStokIDS(selected.selectedRows.map(x=>Number(x.stokKarti.id)))}
                 />
               </div>
             </div>

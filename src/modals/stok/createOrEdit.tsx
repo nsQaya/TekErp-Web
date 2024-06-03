@@ -5,8 +5,8 @@ import Select, { Options } from "react-select";
 import { FormSelectItem } from "../DynamicModal";
 import api from "../../utils/api";
 import CreatableSelect from "react-select/creatable";
-import { IStok } from "../../utils/types/Stok/IStok";
-import { IStokKartiWithDetail } from "../../utils/types/Stok/IStokKartiWithDetail";
+import { IStok } from "../../utils/types/stok/IStok";
+import { IStokKartiWithDetail } from "../../utils/types/stok/IStokKartiWithDetail";
 
 interface IStokModalProps {
   show: boolean;

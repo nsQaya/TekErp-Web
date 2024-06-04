@@ -13,10 +13,17 @@ import IhtiyacPlanlamaRapor from "../pages/rapor/ihtiyacPlanlamaRapor"
 import UlkeItems from "../pages/taminlamalar/ulke/items";
 import IlItems from "../pages/taminlamalar/il/items";
 import IlceItems from "../pages/taminlamalar/ilce/items";
+import DepoItems from "../pages/taminlamalar/depo/items";
+import HucreItem from "../pages/taminlamalar/hucre/items";
+import DovizTipiItem from "../pages/taminlamalar/dovizTipi/items";
+import PlasiyerItem from "../pages/taminlamalar/plasiyer/items";
+import ProjeItem from "../pages/taminlamalar/proje/items";
+import UniteItem from "../pages/taminlamalar/unite/items";
 
 import AmbarCikisFisiListe from "../pages/fatura/ambarCikisFisiListe";
 import AmbarFisiEkle from "../pages/fatura/ambarFisiEkle";
 import AmbarCikisFisi from "../pages/fatura/ambarCikisFisi";
+
 
 export default createHashRouter([
   {
@@ -41,6 +48,30 @@ export default createHashRouter([
           {
             path: "ilces",
             element: <IlceItems />,
+          },
+          {
+            path: "depoes",
+            element: <DepoItems />,
+          },
+          {
+            path: "hucres",
+            element: <HucreItem />,
+          },
+          {
+            path: "dovizTipis",
+            element: <DovizTipiItem />,
+          },
+          {
+            path: "plasiyers",
+            element: <PlasiyerItem />,
+          },
+          {
+            path: "projes",
+            element: <ProjeItem />,
+          },
+          {
+            path: "unites",
+            element: <UniteItem />,
           },
         ],
       },

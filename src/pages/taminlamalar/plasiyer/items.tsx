@@ -1,31 +1,20 @@
-import { createRef, useCallback,   useEffect,   useState } from "react";
+import { createRef, useCallback,      useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
-
-
 import AppTable, { ITableRef } from "../../../components/AppTable";
-import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
-import { IIlce } from "../../../utils/types/tanimlamalar/IIlce";
+import DynamicModal, { FormItemTypes,  IFormItem } from "../../../modals/DynamicModal";
+import { IPlasiyer } from "../../../utils/types/tanimlamalar/IPlasiyer";
+
 
 
 
 export default () => {
-  const myTable = createRef<ITableRef<IIlce>>();
+  const myTable = createRef<ITableRef<IPlasiyer>>();
   const [isModalShowing, setModalShowing] = useState(false);
-  const [selectedItem, setSelectedItem]= useState<IIlce>();
+  const [selectedItem, setSelectedItem]= useState<IPlasiyer>();
+  
 
-  const [iller, setiller] = useState<FormSelectItem[]>();
-
-
-  const fetchCountries= useCallback(async()=>{
-    const { data: {value: {items}} } = await api.il.getAll(0,1000);
-    setiller(items.map(x=>({label: x.adi, value: String(x.id)})))
-  },[])
-
-  useEffect(()=>{
-    fetchCountries();
-  },[]);
 
   const onSuccess = () => {
     if(selectedItem){
@@ -37,32 +26,22 @@ export default () => {
     setModalShowing(false);
   };
 
-  const deleteItem= useCallback(async (item: IIlce)=>{
+  const deleteItem= useCallback(async (item: IPlasiyer)=>{
     if(!window.confirm("Emin misin ?")) return;
-    await api.ilce.delete(item.id as number);
+    await api.plasiyer.delete(item.id as number);
     myTable.current?.refresh();
   },[])
 
 
-  const columns: TableColumn<IIlce>[] = [
+  const columns: TableColumn<IPlasiyer>[] = [
     {
       name: "#",
       selector: (row) => row.id as number,
       sortable: true,
     },
     {
-      name: "İl",
-      selector: (row) => row.il.adi,
-      sortable: true,
-    },
-    {
-      name: "Plaka Kodu",
-      selector: (row) => row.il.plakaKodu,
-      sortable: true,
-    },
-    {
-      name: "İlçe Kodu",
-      selector: (row) => row.ilceKodu,
+      name: "Kodu",
+      selector: (row) => row.kodu,
       sortable: true,
     },
     {
@@ -99,19 +78,13 @@ export default () => {
       hidden: true
     },
     {
-      title: "il",
-      name: "ilId",
-      type: FormItemTypes.select,
-      options: iller
+      title: "Kodu",
+      name: "kodu",
+      type: FormItemTypes.input
     },
     {
       title: "Adı",
       name: "adi",
-      type: FormItemTypes.input
-    },
-    {
-      title: "İlçe Kodu",
-      name: "ilceKodu",
       type: FormItemTypes.input
     }
   ] as IFormItem[];
@@ -122,8 +95,8 @@ export default () => {
       
       <DynamicModal 
         isShownig={isModalShowing} 
-        title="ilçe Ekle" 
-        api={api.ilce} 
+        title="Plasiyer Ekle" 
+        api={api.plasiyer} 
         items={modalItems}
         onDone={onSuccess}
         selectedItem={selectedItem}
@@ -148,9 +121,9 @@ export default () => {
               </button>
               <div className="table-responsive m-t-40">
                 <AppTable
-                  baseApi={api.ilce}
+                  baseApi={api.plasiyer}
                   columns={columns}
-                  key={"İlçeler"}
+                  key={"Depolar"}
                   ref={myTable}
                   rowSelectable={false}
                 />

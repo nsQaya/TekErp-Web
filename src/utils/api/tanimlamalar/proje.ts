@@ -7,13 +7,21 @@ import { IProje } from "../../types/tanimlamalar/IProje";
 const controller="projes";
 
 export default ($axios: AxiosInstance) => ({
-    getAll(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IProje>>>(`/${controller}`, {
+    getAllForGrid(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
+        return $axios.get<IBaseResponseValue<IPagedResponse<IProje>>>(`/${controller}/GetListForGrid`, {
             params: {
                 pageIndex: page,
                 pageSize: take,
                 sortColumn: sortColumn, // Sıralama sütunu
                 sortDirection: sortDirection, // Sıralama yönü
+            }
+        });
+    },
+    getAll(page: number, take: number){
+        return $axios.get<IBaseResponseValue<IPagedResponse<IProje>>>(`/${controller}`, {
+            params: {
+                pageIndex: page,
+                pageSize: take
             }
         });
     },

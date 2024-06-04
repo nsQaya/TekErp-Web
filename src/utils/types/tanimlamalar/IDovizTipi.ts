@@ -4,5 +4,5 @@ export interface IDovizTipi {
   kodu: string;
   adi: string;
   simge: string;
-  tCMMId: number;
+  tcmbId: number;
 }

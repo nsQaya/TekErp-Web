@@ -6,13 +6,21 @@ import { IDepo } from "../../types/tanimlamalar/IDepo";
 const controller="depoes";
 
 export default ($axios: AxiosInstance) => ({
-    getAll(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IDepo>>>(`/${controller}`, {
+    getAllForGrid(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
+        return $axios.get<IBaseResponseValue<IPagedResponse<IDepo>>>(`/${controller}/GetListForGrid`, {
             params: {
                 pageIndex: page,
                 pageSize: take,
                 sortColumn: sortColumn, // Sıralama sütunu
                 sortDirection: sortDirection, // Sıralama yönü
+            }
+        });
+    },
+    getAll(page: number, take: number){
+        return $axios.get<IBaseResponseValue<IPagedResponse<IDepo>>>(`/${controller}`, {
+            params: {
+                pageIndex: page,
+                pageSize: take
             }
         });
     },

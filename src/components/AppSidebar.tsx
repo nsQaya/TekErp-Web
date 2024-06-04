@@ -9,12 +9,12 @@ export default () => {
     {title: "Ülke", href: "/tanimlamalar/ulkes"},
     {title: "İl", href: "/tanimlamalar/ils"},
     {title: "İlçe", href: "/tanimlamalar/ilces"},
-    {title: "Depo", href: "/"},
-    {title: "Hücre", href: "/"},
-    {title: "Döviz Tipi", href: "/"},
-    {title: "Plasiyer Kodu", href: "/"},
-    {title: "Proje Kodu", href: "/"},
-    {title: "Ünite Kodu", href: "/"},
+    {title: "Depo", href: "/tanimlamalar/depoes"},
+    {title: "Hücre", href: "/tanimlamalar/hucres"},
+    {title: "Döviz Tipi", href: "/tanimlamalar/dovizTipis"},
+    {title: "Plasiyer Kodu", href: "/tanimlamalar/plasiyers"},
+    {title: "Proje Kodu", href: "/tanimlamalar/projes"},
+    {title: "Ünite Kodu", href: "/tanimlamalar/unites"},
   ]);
 
   const [kullaniciPages, __] =useState([

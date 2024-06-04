@@ -1,7 +1,7 @@
 import { IIl } from "./IIl";
 
 export interface IIlce {
-  id: number;
+  id?: number;
   adi: string;
   ilceKodu: string;
   ilId: number;

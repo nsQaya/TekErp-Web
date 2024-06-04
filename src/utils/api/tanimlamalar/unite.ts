@@ -8,13 +8,21 @@ import { IUnite } from "../../types/tanimlamalar/IUnite";
 const controller="unites";
 
 export default ($axios: AxiosInstance) => ({
-    getAll(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IUnite>>>(`/${controller}`, {
+    getAllForGrid(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
+        return $axios.get<IBaseResponseValue<IPagedResponse<IUnite>>>(`/${controller}/GetListForGrid`, {
             params: {
                 pageIndex: page,
                 pageSize: take,
                 sortColumn: sortColumn, // Sıralama sütunu
                 sortDirection: sortDirection, // Sıralama yönü
+            }
+        });
+    },
+    getAll(page: number, take: number){
+        return $axios.get<IBaseResponseValue<IPagedResponse<IUnite>>>(`/${controller}`, {
+            params: {
+                pageIndex: page,
+                pageSize: take
             }
         });
     },

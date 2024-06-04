@@ -31,6 +31,16 @@ import { IIhtiyacPlanlama } from "../types/planlama/IIhtiyacPlanlama";
 import { IAmbarFisi } from "../types/fatura/IAmbarFisi";
 import ambarCikisFisi from "./fatura/ambarCikisFisi";
 import { apiURL } from "../config";
+import { IDepo } from "../types/tanimlamalar/IDepo";
+import depo from "./tanimlamalar/depo";
+import hucre from "./tanimlamalar/hucre";
+import { IHucre } from "../types/tanimlamalar/IHucre";
+import plasiyer from "./tanimlamalar/plasiyer";
+import { IPlasiyer } from "../types/tanimlamalar/IPlasiyer";
+import proje from "./tanimlamalar/proje";
+import { IProje } from "../types/tanimlamalar/IProje";
+import unite from "./tanimlamalar/unite";
+import { IUnite } from "../types/tanimlamalar/IUnite";
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
@@ -107,6 +117,11 @@ const repositories = {
   ulke: ulke(instance) as unknown as ICrudBaseAPI<IUlke>,
   il: il(instance) as unknown as ICrudBaseAPI<IIl>,
   ilce: ilce(instance) as unknown as ICrudBaseAPI<IIlce>,
+  depo: depo(instance) as unknown as ICrudBaseAPI<IDepo>,
+  hucre: hucre(instance) as unknown as ICrudBaseAPI<IHucre>,
+  plasiyer: plasiyer(instance) as unknown as ICrudBaseAPI<IPlasiyer>,
+  proje: proje(instance) as unknown as ICrudBaseAPI<IProje>,
+  unite: unite(instance) as unknown as ICrudBaseAPI<IUnite>,
 
   dovizTipi: dovizTipi(instance) as unknown as ICrudBaseAPI<IDovizTipi>,
   ihtiyacPlanlamaRapor: ihtiyacPlanlamaRapor(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlamaRapor>,

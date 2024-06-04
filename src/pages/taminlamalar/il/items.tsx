@@ -37,7 +37,7 @@ export default () => {
 
   const deleteItem= useCallback(async (item: IIl)=>{
     if(!window.confirm("Emin misin ?")) return;
-    await api.il.delete(item.id);
+    await api.il.delete(item.id as number);
     myTable.current?.refresh();
   },[])
 
@@ -45,7 +45,7 @@ export default () => {
   const columns: TableColumn<IIl>[] = [
     {
       name: "#",
-      selector: (row) => row.id,
+      selector: (row) => row.id as number,
       sortable: true,
     },
     {

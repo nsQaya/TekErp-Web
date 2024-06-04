@@ -7,13 +7,21 @@ import { IPlasiyer } from "../../types/tanimlamalar/IPlasiyer";
 const controller="plasiyers";
 
 export default ($axios: AxiosInstance) => ({
-    getAll(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IPlasiyer>>>(`/${controller}`, {
+    getAllForGrid(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
+        return $axios.get<IBaseResponseValue<IPagedResponse<IPlasiyer>>>(`/${controller}/GetListForGrid`, {
             params: {
                 pageIndex: page,
                 pageSize: take,
                 sortColumn: sortColumn, // Sıralama sütunu
                 sortDirection: sortDirection, // Sıralama yönü
+            }
+        });
+    },
+    getAll(page: number, take: number){
+        return $axios.get<IBaseResponseValue<IPagedResponse<IPlasiyer>>>(`/${controller}`, {
+            params: {
+                pageIndex: page,
+                pageSize: take
             }
         });
     },

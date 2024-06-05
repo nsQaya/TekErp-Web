@@ -26,8 +26,6 @@ import { Button } from "primereact/button";
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { saveAs } from 'file-saver';
-import 'primereact/resources/primereact.css';
-import 'primeicons/primeicons.css';
 
 declare module 'jspdf' {
   interface jsPDF {
@@ -59,7 +57,7 @@ export interface ITableRef<T> {
 }
 
 function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>) {
-  const [selectedCustomers, setSelectedCustomers] = useState<DataTableValue[]>([]);
+  const [selectedItems, setSelectedItems] = useState<DataTableValue[]>([]);
   const table = useRef<DataTable<DataTableValue[]>>(null);
   const [data, setData] = useState<DataTableValue[]>([]);
   const [loading, setLoading] = useState(false);
@@ -83,7 +81,10 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
     setLoading(false);
     setData(response.data.value.items);
     setTotalRows(response.data.value.count);
-  }, [page, perPage, sortColumn, sortDirection, props.baseApi]);
+
+    console.log(filters); // filterler burda gönderilecek
+
+  }, [page, perPage, sortColumn, sortDirection, props.baseApi, filters]);
 
   const handleTableEvent = useCallback((event: DataTableStateEvent) => {
     setFirst(event.first);
@@ -154,7 +155,6 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
 
   return (
     <>
-      {JSON.stringify(selectedCustomers)}
       <DataTable
         ref={table}
         rowClassName={props.rowStyles}
@@ -177,10 +177,10 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
         first={first}
         onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<DataTableValue[]>) => {
           props.onChangeSelected && props.onChangeSelected(e.value);
-          setSelectedCustomers(e.value);
+          setSelectedItems(e.value);
         }}
         selectionMode={props.rowSelectable ? "multiple" : null}
-        selection={selectedCustomers}
+        selection={selectedItems}
       >
         {props.rowSelectable && <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>}
         {props.columns.map((column, index) => (

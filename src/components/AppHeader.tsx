@@ -8,6 +8,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavbarToggle from 'react-bootstrap/NavbarToggle'
 import { useCallback, useEffect, useState } from 'react';
+import { useUserStore } from '../store/userStore';
 
 export default () => {
 
@@ -21,6 +22,13 @@ export default () => {
   const onToggleSidebar= ()=>{
     setSidebarShowing(!isSidebarShowing);
   }
+
+  const resetUserStore = useUserStore(state => state.reset);
+
+  const handleLogout = () => {
+    resetUserStore();
+     window.location.href = '/';
+  };
 
   useEffect(() => {
     window.addEventListener("toggleSidebar", onToggleSidebar);
@@ -139,7 +147,7 @@ export default () => {
                 <Dropdown.Item href="#">
                   <i className="ti-wallet"></i> My Balance
                 </Dropdown.Item>
-                <Dropdown.Item href="#">
+                <Dropdown.Item href="#" onClick={handleLogout}>
                   <i className="fa fa-power-off"></i> Logout
                 </Dropdown.Item>
               </Dropdown.Menu>

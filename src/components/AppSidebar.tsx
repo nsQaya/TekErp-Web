@@ -46,13 +46,13 @@ export default () => {
   ]);
 
   const [faturaPages, _____] =useState([
-    {title: "Satış Faturası", href: "/fatura/satisfatura"},
-    {title: "Alış Faturası", href: "/fatura/alisfatura"},
-    {title: "Satış İrsaliyesi", href: "/fatura/satisirsaliye"},
-    {title: "Alış İrsaliyesi", href: "/fatura/alisirsaliye"},
-    {title: "Ambar Çıkış Fişi", href: "/fatura/ambarcikisfisi"},
-    {title: "Ambar Giriş Fişi", href: "/fatura/ambargirisfisi"},
-    {title: "Depolar Arası Transfer", href: "/fatura/depolararasitransfer"},
+    {title: "Satış Faturası", href: "/fatura/satisfaturaliste"},
+    {title: "Alış Faturası", href: "/fatura/alisfaturaliste"},
+    {title: "Satış İrsaliyesi", href: "/fatura/satisirsaliyeliste"},
+    {title: "Alış İrsaliyesi", href: "/fatura/alisirsaliyeliste"},
+    {title: "Ambar Çıkış Fişi", href: "/fatura/ambarcikisfisiliste"},
+    {title: "Ambar Giriş Fişi", href: "/fatura/ambargirisfisiliste"},
+    {title: "Depolar Arası Transfer", href: "/fatura/depolararasitransferliste"},
   ]);
 
   const [eBelgePages, ______] =useState([

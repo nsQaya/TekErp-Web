@@ -6,7 +6,7 @@ import { IIl } from "../../../utils/types/tanimlamalar/IIl";
 
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
-import { aktarimDurumu } from "../../../utils/types/enums/aktarimDurumu";
+
 
 
 export default () => {

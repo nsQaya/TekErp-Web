@@ -1,7 +1,8 @@
 import { AxiosInstance } from "axios";
-import { SortOrder } from "react-data-table-component";
+
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { IUlke } from "../../types/tanimlamalar/IUlke";
+import { SortOrder } from "react-data-table-component";
 
 const controller="ulkes";
 

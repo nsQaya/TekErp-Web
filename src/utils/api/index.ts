@@ -76,7 +76,7 @@ const onResponse = (response: AxiosResponse): any => {
 };
 
 const onResponseError = (error: AxiosError)=> {
-  
+
   let errorMessage = "Bilinmeyen hata";
 
   if (error.response?.data && typeof error.response.data === "object") {
@@ -88,14 +88,14 @@ const onResponseError = (error: AxiosError)=> {
   console.log(error);
 
   const response = {
-    data:{      
+    data:{
       status: false,
       value: null,
       detail: errorMessage,
       errors: (error.response?.data as any).Errors || undefined
     }
   };
-  
+
   return response;
 };
 

@@ -5,14 +5,13 @@ import api from "../../../utils/api";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes,  IFormItem } from "../../../modals/DynamicModal";
 import { IUlke } from "../../../utils/types/tanimlamalar/IUlke";
-
-
+import { ColumnProps } from "primereact/column";
 
 export default () => {
   const myTable = createRef<ITableRef<IUlke>>();
   const [isModalShowing, setModalShowing] = useState(false);
   const [selectedItem, setSelectedItem]= useState<IUlke>();
-  
+
 
 
   const onSuccess = () => {
@@ -32,30 +31,31 @@ export default () => {
   },[])
 
 
-  const columns: TableColumn<IUlke>[] = [
+  const columns: ColumnProps[] = [
     {
-      name: "#",
-      selector: (row) => row.id as number,
+      field: "id",
+      header: "#",
+      sortable: true
+    },
+    {
+      header: "Kodu",
+      field: "kodu",
+      sortable: true,
+      filter: true
+    },
+    {
+      header: "Adı",
+      field: "adi",
       sortable: true,
     },
     {
-      name: "Kodu",
-      selector: (row) => row.kodu,
+      header: "Aktarım Durumu",
+      field: "aktarimDurumu",
       sortable: true,
     },
     {
-      name: "Adı",
-      selector: (row) => row.adi,
-      sortable: true,
-    },
-    {
-      name: "Aktarım Durumu",
-      selector: (row) => row.aktarimDurumu,
-      sortable: true,
-    },
-    {
-      name: "işlemler",
-      cell: (row) => {
+      header: "işlemler",
+      body: (row)=>{
         return (
           <>
             <button className="btn btn-info ms-1"  onClick={(e)=>[e.preventDefault(),setSelectedItem(row), setModalShowing(true)]}>
@@ -66,7 +66,7 @@ export default () => {
             </button>
           </>
         );
-      },
+      }
     },
   ];
 
@@ -91,11 +91,11 @@ export default () => {
 
   return (
     <div className="container-fluid">
-      
-      <DynamicModal 
-        isShownig={isModalShowing} 
-        title="Ülke Ekle" 
-        api={api.ulke} 
+
+      <DynamicModal
+        isShownig={isModalShowing}
+        title="Ülke Ekle"
+        api={api.ulke}
         items={modalItems}
         onDone={onSuccess}
         selectedItem={selectedItem}
@@ -118,13 +118,14 @@ export default () => {
               >
                 Yeni
               </button>
-              <div className="table-responsive m-t-40">
+              <div className="table-responsive m-t-50">
+
                 <AppTable
                   baseApi={api.ulke}
                   columns={columns}
                   key={"Ülkeler"}
                   ref={myTable}
-                  rowSelectable={false}
+                  rowSelectable={true}
                 />
               </div>
             </div>

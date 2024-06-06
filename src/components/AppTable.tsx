@@ -26,6 +26,7 @@ import { Button } from "primereact/button";
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { saveAs } from 'file-saver';
+import { transformFilter } from "../utils/transformFilter";
 
 declare module 'jspdf' {
   interface jsPDF {
@@ -72,11 +73,17 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
 
   const fetchItems = useCallback(async () => {
     setLoading(true);
+
+    const transformedFiltersResult = transformFilter(filters || {});
+    const filterToSend = transformedFiltersResult.filter || { logic: 'and', filters: [] }; 
+    
+
     const response = await props.baseApi.getAllForGrid(
       page - 1,
       perPage,
       sortColumn,
-      sortDirection === 1 ? 'ASC' : 'DESC'
+      sortDirection === 1 ? 'ASC' : 'DESC',
+      filterToSend       
     );
     setLoading(false);
     setData(response.data.value.items);
@@ -98,6 +105,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
     if (event.filters) {
       setFilters(event.filters);
     }
+    console.log(event);
   }, []);
 
   const refresh = useCallback(async () => {

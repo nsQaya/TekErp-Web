@@ -1,12 +1,12 @@
 import { createRef, useCallback,   useEffect,   useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
-import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
 
 
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
 import { IHucre } from "../../../utils/types/tanimlamalar/IHucre";
+import { ColumnProps } from "primereact/column";
 
 
 
@@ -45,25 +45,28 @@ export default () => {
   },[])
 
 
-  const columns: TableColumn<IHucre>[] = [
+  const columns: ColumnProps[] = [
     {
-      name: "#",
-      selector: (row) => row.id as number,
-      sortable: true,
+      header: "#",
+      field: "id",
+      sortable: false,
+      filter: false
     },
     {
-      name: "Hücre Kodu",
-      selector: (row) => row.kodu,
+      header: "Hücre Kodu",
+      field: "kodu",
       sortable: true,
+      filter: true
     },
     {
-      name: "Depo Kodu",
-      selector: (row) => row.depo.kodu,
+      header: "Depo Kodu",
+      field: "depo.kodu",
       sortable: true,
+      filter: true
     },
     {
-      name: "işlemler",
-      cell: (row) => {
+      header: "işlemler",
+      body: (row) => {
         return (
           <>
             <button className="btn btn-info ms-1"  onClick={(e)=>[e.preventDefault(),setSelectedItem(row), setModalShowing(true)]}>

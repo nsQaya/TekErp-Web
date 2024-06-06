@@ -1,6 +1,5 @@
 import { createRef, useCallback,useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
-import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes,  IFormItem } from "../../../modals/DynamicModal";
@@ -47,6 +46,7 @@ export default () => {
       header: "Adı",
       field: "adi",
       sortable: true,
+      filter: true
     },
     {
       header: "Aktarım Durumu",

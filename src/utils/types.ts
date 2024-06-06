@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import { SortOrder } from "primereact/datatable";
+import { TransformedFilter } from "./transformFilter";
 
 
 
@@ -42,7 +43,12 @@ export interface IEntity{
 
 export interface ICrudBaseAPI<T>{
   // getAll: (page: number, take: number)=> Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>
-  getAllForGrid(page: number, take: number, sortColumn?: string, sortDirection?: string): Promise<{ data: { value: { items: T[], count: number } } }>;
+  getAllForGrid(page: number, 
+    take: number, 
+    sortColumn?: string, 
+    sortDirection?: string ,
+    filters?:  TransformedFilter | null
+  ): Promise<{ data: { value: { items: T[], count: number } } }>;
   getAll(page: number, take: number): Promise<{ data: { value: { items: T[], count: number } } }>;
   get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   create: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>

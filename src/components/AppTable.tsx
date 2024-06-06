@@ -74,22 +74,18 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   const fetchItems = useCallback(async () => {
     setLoading(true);
 
-    const transformedFiltersResult = transformFilter(filters || {});
-    const filterToSend = transformedFiltersResult.filter || { logic: 'and', filters: [] }; 
-    
+    const dynamicQuery = transformFilter(filters || {}, sortColumn, sortDirection);
 
     const response = await props.baseApi.getAllForGrid(
       page - 1,
       perPage,
-      sortColumn,
-      sortDirection === 1 ? 'ASC' : 'DESC',
-      filterToSend       
+      dynamicQuery
     );
     setLoading(false);
     setData(response.data.value.items);
     setTotalRows(response.data.value.count);
 
-    console.log(filters); // filterler burda gönderilecek
+    //console.log(filters); // filterler burda gönderilecek
 
   }, [page, perPage, sortColumn, sortDirection, props.baseApi, filters]);
 
@@ -105,7 +101,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
     if (event.filters) {
       setFilters(event.filters);
     }
-    console.log(event);
+    //console.log(event);
   }, []);
 
   const refresh = useCallback(async () => {

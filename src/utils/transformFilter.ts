@@ -1,3 +1,5 @@
+import { SortOrder } from "primereact/datatable";
+
 type GridFilter = {
   value: any; // Belirli bir tip belirleyebilirsiniz, örneğin string, number, vb.
   matchMode?: string; // matchMode undefined olabileceği için optional yapıyoruz
@@ -20,8 +22,24 @@ export type TransformedFilter = {
   filters?: TransformedFilter[]; 
 };
 
-function transformFilter(gridFilters: FilterMeta): { filter: TransformedFilter } {
+export type TransformedSort=
+{
+  field:string;
+  dir:string;
+}
+
+export type DynamicQuery={
+  sort:TransformedSort[];
+  filter:TransformedFilter;
+}
+function transformFilter(gridFilters: FilterMeta, sortColumn: string, sortDirection: SortOrder): DynamicQuery {
   const transformedFilters: TransformedFilter[] = [];
+  const transformedSort: TransformedSort[] = [
+    {
+      field: sortColumn,
+      dir: sortDirection === 1 ? 'asc' : 'desc',
+    },
+  ];
 
   Object.keys(gridFilters).forEach((key) => {
       const filter = gridFilters[key];
@@ -49,17 +67,26 @@ function transformFilter(gridFilters: FilterMeta): { filter: TransformedFilter }
   });
 
   if (transformedFilters.length === 0) {
-      return { filter: { field: "Id", operator: "gte", value: "0" } }; // No filters applied
+    return {
+      sort: transformedSort,
+      filter: { field: 'Id', operator: 'gte', value: '0' },
+    };
   }
 
   if (transformedFilters.length === 1) {
-      return { filter: transformedFilters[0] }; // Single filter
+    return {
+      sort: transformedSort,
+      filter: transformedFilters[0],
+    };
   }
 
   const mainFilter = transformedFilters.shift() as TransformedFilter;
   mainFilter.filters = transformedFilters;
 
-  return { filter: mainFilter };
+  return {
+    sort: transformedSort,
+    filter: mainFilter,
+  };
 }
 
 function mapMatchModeToOperator(matchMode: string): string {

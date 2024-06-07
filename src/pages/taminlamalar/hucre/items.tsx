@@ -7,6 +7,8 @@ import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
 import { IHucre } from "../../../utils/types/tanimlamalar/IHucre";
 import { ColumnProps } from "primereact/column";
+import { InputText } from "primereact/inputtext";
+import {FloatLabel } from "primereact/floatlabel";
 
 
 
@@ -101,9 +103,15 @@ export default () => {
   ] as IFormItem[];
 
 
+  function setValue(value: string): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="container-fluid">
       
+
+
       <DynamicModal 
         isShownig={isModalShowing} 
         title="Hücre Ekle" 
@@ -123,6 +131,26 @@ export default () => {
               <h6 className="card-subtitle">
                 Export data to Copy, CSV, Excel, PDF & Print
               </h6>
+              <div className="row">
+              <div className="col-md-3">
+              <FloatLabel>
+            <InputText id="username" onChange={(e) => setValue(e.target.value)}/>
+            <label htmlFor="username">UserName</label>
+            </FloatLabel>
+            </div>
+            <div className="col-md-3">
+              <FloatLabel>
+            <InputText id="username" onChange={(e) => setValue(e.target.value)} />
+            <label htmlFor="username">UserName</label>
+            </FloatLabel>
+            </div>
+            <div className="col-md-3">
+              <FloatLabel>
+            <InputText id="username" onChange={(e) => setValue(e.target.value)} />
+            <label htmlFor="username">UserName</label>
+            </FloatLabel>
+            </div>
+            </div>
               <button
                 type="button"
                 className="btn btn-info btn-rounded m-t-10 float-end text-white"
@@ -137,6 +165,7 @@ export default () => {
                   key={"Hücreler"}
                   ref={myTable}
                   rowSelectable={false}
+                  rowPerPageOptions={[10,25,50,100]}
                 />
               </div>
             </div>

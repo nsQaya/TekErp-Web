@@ -66,7 +66,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   const [first, setFirst] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState((props.rowPerPageOptions && props.rowPerPageOptions[0]) || 10);
   const [sortColumn, setSortColumn] = useState<string>('Id');
   const [sortDirection, setSortDirection] = useState<SortOrder>(0);
   const [filters, setFilters] = useState<DataTableFilterMeta | undefined>();
@@ -78,7 +78,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
     const dynamicQuery = transformFilter(filters || {}, sortColumn, sortDirection);
 
     const response = await props.baseApi.getAllForGrid(
-      page - 1,
+      page,
       perPage,
       dynamicQuery
     );
@@ -86,13 +86,13 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
     setData(response.data.value.items);
     setTotalRows(response.data.value.count);
 
-    //console.log(filters); // filterler burda gönderilecek
-
   }, [page, perPage, sortColumn, sortDirection, props.baseApi, filters]);
 
   const handleTableEvent = useCallback((event: DataTableStateEvent) => {
+
     setFirst(event.first);
-    setPage(event.page || 1);
+    setPage(event.page || 0);
+    setPerPage(event.rows);
 
     if (event.sortField) {
       setSortColumn(event.sortField);
@@ -160,7 +160,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   );
 
   return (
-    <>
+    <div className="mb-3">
       <DataTable
         size={'small'}
         ref={table}
@@ -169,12 +169,12 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
         value={data as DataTableValue[]}
         showGridlines
         paginator
-        rows={10}
+        rows={perPage}
         loading={loading}
         dataKey="id"
         filterDisplay="row"
         emptyMessage="Kayıt yok."
-        rowsPerPageOptions={props.rowPerPageOptions}
+        rowsPerPageOptions={props.rowPerPageOptions || [10,50,100]}
         totalRecords={totalRows}
         lazy
         onPage={handleTableEvent}
@@ -196,7 +196,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
           <Column key={index} {...column} />
         ))}
       </DataTable>
-    </>
+    </div>
   );
 }
 

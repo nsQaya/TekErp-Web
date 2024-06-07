@@ -1,4 +1,4 @@
-import {
+import React, {
   ForwardedRef,
   forwardRef,
   ReactNode,
@@ -50,6 +50,7 @@ interface ITableProps {
   rowPerPageOptions?: number[];
   rowSelectable?: boolean;
   onChangeSelected?: (data: DataTableValue[]) => void;
+  appendHeader?: () => React.ReactNode;
 }
 
 export interface ITableRef<T> {
@@ -154,6 +155,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
       <Button type="button" severity="warning" rounded onClick={exportPdf} data-pr-tooltip="PDF">
         PDF
       </Button>
+      {props.appendHeader && props.appendHeader()}
     </div>
   );
 
@@ -169,6 +171,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
         rowClassName={props.rowStyles}
         header={header}
         value={data as DataTableValue[]}
+        showGridlines
         paginator
         rows={perPage}
         loading={loading}
@@ -191,6 +194,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
         }}
         selectionMode={props.rowSelectable ? "multiple" : null}
         selection={selectedItems}
+        globalFilterFields={props.columns.filter(x => x.filter === true).map(x => x.field).filter((field): field is string => field !== undefined)}
       >
         {props.rowSelectable && <Column selectionMode="multiple" headerStyle={{ width: '1rem' }}></Column>}
         {props.columns.map((column, index) => (

@@ -1,7 +1,8 @@
 
 import { RouterProvider } from "react-router-dom";
 import { useUserStore } from "./store/userStore";
-
+import { locale, addLocale, updateLocaleOption, updateLocaleOptions, localeOption, localeOptions } from 'primereact/api';
+import tr from "./utils/languages/tr";
 import "./assets/css/style.css";
 import { useCallback, useEffect, useState } from "react";
 
@@ -89,7 +90,9 @@ function App() {
   }, [bodyClasses]);
 
   const userStore = useUserStore();
-  
+
+  addLocale('tr', tr);
+  locale('tr');
   return (
     <RouterProvider router={userStore.isLogged() ? mainRouter : authRouter} />
   );

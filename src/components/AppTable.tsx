@@ -65,9 +65,9 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   const [first, setFirst] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(50);
   const [sortColumn, setSortColumn] = useState<string>('Id');
-  const [sortDirection, setSortDirection] = useState<SortOrder>(0);
+  const [sortDirection, setSortDirection] = useState<SortOrder>(-1);
   const [filters, setFilters] = useState<DataTableFilterMeta | undefined>();
   const exportColumns = props.columns.map((col) => ({ title: col.header, dataKey: col.field }));
 
@@ -160,17 +160,23 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   return (
     <>
       <DataTable
+      size="small"
+      stripedRows 
+      scrollHeight="620px"
+      tableStyle={{ minWidth: '50rem' }}
+      scrollable
         ref={table}
         rowClassName={props.rowStyles}
         header={header}
         value={data as DataTableValue[]}
         paginator
-        rows={10}
+        rows={perPage}
         loading={loading}
         dataKey="id"
-        filterDisplay="row"
+        filterDisplay="row" //Bu özellik her sutün üstüne arama filtresi koyuyor.
         emptyMessage="Kayıt yok."
-        rowsPerPageOptions={props.rowPerPageOptions}
+        //rowsPerPageOptions={props.rowPerPageOptions}
+        rowsPerPageOptions={[10,25,50,100]}
         totalRecords={totalRows}
         lazy
         onPage={handleTableEvent}
@@ -186,7 +192,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
         selectionMode={props.rowSelectable ? "multiple" : null}
         selection={selectedItems}
       >
-        {props.rowSelectable && <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>}
+        {props.rowSelectable && <Column selectionMode="multiple" headerStyle={{ width: '1rem' }}></Column>}
         {props.columns.map((column, index) => (
           <Column key={index} {...column} />
         ))}

@@ -68,37 +68,37 @@ export default (props: IStokModalProps) => {
     console.log(data);
     const item= data.value;
 
-    setID(item.stokKarti.id as number);
-    setAdi(item.stokKarti.adi);
-    setKodu(item.stokKarti.kodu);
-    setIngilizceIsim(item.stokKarti.ingilizceIsim);
-    setStokGrupKoduId(item.stokKarti.stokGrupKoduId);
-    setStokKod1Id(item.stokKarti.stokKod1Id);
-    setStokKod2Id(item.stokKarti.stokKod2Id);
-    setStokKod3Id(item.stokKarti.stokKod3Id);
-    setStokKod4Id(item.stokKarti.stokKod4Id);
-    setStokKod5Id(item.stokKarti.stokKod5Id);
-    setStokOlcuBirim1Id(item.stokKarti.stokOlcuBirim1Id);
-    setStokOlcuBirim2Id(item.stokKarti.stokOlcuBirim2Id);
-    setOlcuBr2Pay(item.stokKarti.olcuBr2Pay);
-    setOlcuBr2Payda(item.stokKarti.olcuBr2Payda);
-    setStokOlcuBirim3Id(item.stokKarti.stokOlcuBirim3Id);
-    setOlcuBr3Pay(item.stokKarti.olcuBr3Pay);
-    setOlcuBr3Payda(item.stokKarti.olcuBr3Payda);
-    setAlisDovizTipiId(item.stokKarti.alisDovizTipiId);
-    setSatisDovizTipiId(item.stokKarti.satisDovizTipiId);
-    setAlisFiyati(item.stokKarti.alisFiyati);
-    setSatisFiyati(item.stokKarti.satisFiyati);
-    setAlisKDVOrani(item.stokKarti.alisKDVOrani);
-    setSatisKDVOrani(item.stokKarti.satisKDVOrani);
-    setSeriTakibiVarMi(item.stokKarti.seriTakibiVarMi);
-    setEn(item.stokKarti.en);
-    setBoy(item.stokKarti.boy);
-    setGenislik(item.stokKarti.genislik);
-    setAgirlik(item.stokKarti.agirlik);
-    setAsgariStokMiktari(item.stokKarti.asgariStokMiktari);
-    setAzamiStokMiktari(item.stokKarti.azamiStokMiktari);
-    setMinimumSiparisMiktari(item.stokKarti.minimumSiparisMiktari);
+    setID(item.id as number);
+    setAdi(item.adi);
+    setKodu(item.kodu);
+    setIngilizceIsim(item.ingilizceIsim);
+    setStokGrupKoduId(item.stokGrupKoduId);
+    setStokKod1Id(item.stokKod1Id);
+    setStokKod2Id(item.stokKod2Id);
+    setStokKod3Id(item.stokKod3Id);
+    setStokKod4Id(item.stokKod4Id);
+    setStokKod5Id(item.stokKod5Id);
+    setStokOlcuBirim1Id(item.stokOlcuBirim1Id);
+    setStokOlcuBirim2Id(item.stokOlcuBirim2Id);
+    setOlcuBr2Pay(item.olcuBr2Pay);
+    setOlcuBr2Payda(item.olcuBr2Payda);
+    setStokOlcuBirim3Id(item.stokOlcuBirim3Id);
+    setOlcuBr3Pay(item.olcuBr3Pay);
+    setOlcuBr3Payda(item.olcuBr3Payda);
+    setAlisDovizTipiId(item.alisDovizTipiId);
+    setSatisDovizTipiId(item.satisDovizTipiId);
+    setAlisFiyati(item.alisFiyati);
+    setSatisFiyati(item.satisFiyati);
+    setAlisKDVOrani(item.alisKDVOrani);
+    setSatisKDVOrani(item.satisKDVOrani);
+    setSeriTakibiVarMi(item.seriTakibiVarMi);
+    setEn(item.en);
+    setBoy(item.boy);
+    setGenislik(item.genislik);
+    setAgirlik(item.agirlik);
+    setAsgariStokMiktari(item.asgariStokMiktari);
+    setAzamiStokMiktari(item.azamiStokMiktari);
+    setMinimumSiparisMiktari(item.minimumSiparisMiktari);
 
     setHucres(item.hucres.map(x=>({label: x.kodu, value: x.kodu })));
     setSAPKods(item.sAPKods.map(x=>({label: x.kod, value: x.kod })));
@@ -224,7 +224,7 @@ export default (props: IStokModalProps) => {
     }
 
     const request= {
-      stokKarti:{
+      
         adi: adi,
         agirlik: agirlik,
         aktarimDurumu: 1,
@@ -256,14 +256,13 @@ export default (props: IStokModalProps) => {
         stokOlcuBirim1Id: stokOlcuBirim1Id,
         stokOlcuBirim2Id: stokOlcuBirim2Id,
         stokOlcuBirim3Id: stokOlcuBirim3Id, 
-      },
       hucres: hucres.map(x=>({ kodu: x.value })),
       sAPKods: sAPKOds.map(x=>({ kod: x.value })),
       stokBarkods: stokBarkods.map(x=>({ barkod: x.value, stokOlcuBirimId: stokOlcuBirim1Id })),
     } as IStokKartiWithDetail;
 
     if(ID){
-      request.stokKarti.id= ID;
+      request.id= ID;
     }
 
     const { data } = (!ID) ? await api.stokWithDetail.create(request) : await api.stokWithDetail.update(request);
@@ -280,52 +279,160 @@ export default (props: IStokModalProps) => {
   }, [ID, adi,agirlik,alisDovizTipiId,alisFiyati,alisKDVOrani,asgariStokMiktari,azamiStokMiktari,boy,en,genislik,ingilizceIsim,kodu,minimumSiparisMiktari,olcuBr2Pay,olcuBr2Payda,olcuBr3Pay,olcuBr3Payda,satisDovizTipiId,satisFiyati,satisKDVOrani,seriTakibiVarMi,stokGrupKoduId,stokKod1Id,stokKod2Id,stokKod3Id,stokKod4Id,stokKod5Id,stokOlcuBirim1Id,stokOlcuBirim2Id,stokOlcuBirim3Id, hucres, sAPKOds,stokBarkods]);
 
   return (
-    <Modal show={isShowing} onHide={() => props.onHide && props.onHide()}>
+    <Modal show={isShowing} onHide={() => props.onHide && props.onHide()} className="custom-modal">
       <Modal.Header closeButton>
-        <Modal.Title>Stok Ekle</Modal.Title>
+        <Modal.Title>
+          <span style={{ fontWeight: 'bold' }}>STOK EKLE </span>
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <form className="form-horizontal form-material">
-          <div className="form-group">
-          <div className="col-md-12 m-b-20">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="id"
-                value={ID}
-                hidden
-                onChange={(text) => setID(text.target.valueAsNumber)}
-              />
+          <div className="row">
+            <div className="col-lg-6">
+              <div className="form-group">
+                <label className="form-label">Stok Kodu</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder=""
+                  value={kodu}
+                  onChange={(text) => setKodu(text.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Stok Adı</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder=""
+                  value={adi}
+                  onChange={(text) => setAdi(text.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">İngilizce Adı</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder=""
+                  value={ingilizceIsim}
+                  onChange={(text) => setIngilizceIsim(text.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Alış KDV Oranı</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder=""
+                  value={alisKDVOrani < 0 ? 0 : alisKDVOrani}
+                  onChange={(event) => {
+                    const newValue = event.target.valueAsNumber;
+                    setAlisKDVOrani(newValue < 0 ? 0 : newValue);
+                  }}
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Satış KDV Oranı</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder=""
+                  value={satisKDVOrani < 0 ? 0 : satisKDVOrani}
+                  onChange={(event) => {
+                    const newValue = event.target.valueAsNumber;
+                    setSatisKDVOrani(newValue < 0 ? 0 : newValue);
+                  }}
+                />
+              </div>
             </div>
-            <div className="col-md-12 m-b-20">
-              <label className="form-label">Kodu</label>
-              <input
-                type="text"
-                className="form-control"
-                value={kodu}
-                onChange={(text) => setKodu(text.target.value)}
-              />
-            </div>
-            <div className="col-md-12 m-b-20">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Adı"
-                value={adi}
-                onChange={(text) => setAdi(text.target.value)}
-              />
-            </div>
-            <div className="col-md-12 m-b-20">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="İngilizce Adı"
-                value={ingilizceIsim}
-                onChange={(text) => setIngilizceIsim(text.target.value)}
-              />
-            </div>
+            <div className="col-lg-6 m-b-50">
+              <div className="col-lg-12 m-b-20">
+                <label className="form-label"></label>
+                <Select
+                  value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim1Id.toString())}
+                  placeholder="Ölçü Birim 1"
+                  onChange={(selected: any) => setStokOlcuBirim1Id(selected.value)}
+                  options={stokOlcuBirims as Options<any>}
+                />
+              </div>
 
-            <div className="col-md-12 m-b-20">
+              <div className="col-lg-12 m-b-20" >
+                <label className="form-label"> </label>
+                <Select
+                  value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim2Id)}
+                  placeholder="Ölçü Birim 2"
+                  onChange={(selected: any) => setStokOlcuBirim2Id(selected.value)}
+                  options={stokOlcuBirims as Options<any>}
+                />
+              </div>
+              <div className="col-lg-12 m-b-20" >
+                <label className="form-label"> </label>
+                <Select
+                  value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim3Id)}
+                  placeholder="Ölçü Birim 3"
+                  onChange={(selected: any) => setStokOlcuBirim3Id(selected.value)}
+                  options={stokOlcuBirims as Options<any>}
+                />
+              </div>
+
+              <div className="form-group">
+                <div className="row">
+                  <div className="col-lg-12">
+                    <label className="form-label"> </label>
+                  </div>
+                  <div className="col-lg-6">
+                    <label className="form-label">   </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      className="form-control"
+                      placeholder="Pay 2"
+                      value={olcuBr2Pay}
+                      onChange={(text) => setOlcuBr2Pay(text.target.valueAsNumber)}
+                    />
+                  </div>
+                  <div className="col-lg-6">
+                    <input
+                      type="number"
+                      step="0.01"
+                      className="form-control"
+                      placeholder="Payda 2"
+                      value={olcuBr2Payda}
+                      onChange={(text) => setOlcuBr2Payda(text.target.valueAsNumber)}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="form-group">
+                <div className="row">
+                  <div className="col-lg-12">
+                    <label className="form-label"> </label>
+                  </div>
+                  <div className="col-lg-6">
+                    <input
+                      type="number"
+                      step="0.01"
+                      className="form-control"
+                      placeholder="Pay 3"
+                      value={olcuBr3Pay}
+                      onChange={(text) => setOlcuBr3Pay(text.target.valueAsNumber)}
+                    />
+                  </div>
+                  <div className="col-lg-6">
+                    <input
+                      type="number"
+                      step="0.01"
+                      className="form-control"
+                      placeholder="Payda 3"
+                      value={olcuBr3Payda}
+                      onChange={(text) => setOlcuBr3Payda(text.target.valueAsNumber)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-6 m-b-20" >
               <Select
                 value={stokGrupKodus.find(
                   (x) => x.value == stokGrupKoduId
@@ -335,297 +442,249 @@ export default (props: IStokModalProps) => {
                 options={stokGrupKodus as Options<any>}
               />
             </div>
-
-            <div className="col-md-12 m-b-20">
+            <div className="col-lg-6 m-b-20">
               <Select
                 value={stokKod1s.find((x) => x.value == stokKod1Id)}
-                placeholder="Stok Kodu 1"
+                placeholder="Kod1"
                 onChange={(selected: any) => setStokKod1Id(selected.value)}
                 options={stokKod1s as Options<any>}
               />
             </div>
 
-            <div className="col-md-12 m-b-20">
+            <div className="col-lg-6 m-b-20">
               <Select
                 value={stokKod1s.find((x) => x.value == stokKod2Id)}
-                placeholder="Stok Kodu 2"
+                placeholder="Kod2"
                 onChange={(selected: any) => setStokKod2Id(selected.value)}
                 options={stokKod2s as Options<any>}
               />
             </div>
 
-            <div className="col-md-12 m-b-20">
+            <div className="col-lg-6 m-b-20">
               <Select
                 value={stokKod3s.find((x) => x.value == stokKod3Id)}
-                placeholder="Stok Kodu 3"
+                placeholder="Kod3"
                 onChange={(selected: any) => setStokKod3Id(selected.value)}
                 options={stokKod3s as Options<any>}
               />
             </div>
 
-            <div className="col-md-12 m-b-20">
+            <div className="col-lg-6 m-b-20">
               <Select
                 value={stokKod4s.find((x) => x.value == stokKod4Id)}
-                placeholder="Stok Kodu 4"
+                placeholder="Kod4"
                 onChange={(selected: any) => setStokKod4Id(selected.value)}
                 options={stokKod4s as Options<any>}
               />
             </div>
 
-            <div className="col-md-12 m-b-20">
+            <div className="col-lg-6 m-b-20">
               <Select
                 value={stokKod5s.find((x) => x.value == stokKod5Id)}
-                placeholder="Stok Kodu 5"
+                placeholder="Kod5"
                 onChange={(selected: any) => setStokKod5Id(selected.value)}
                 options={stokKod5s as Options<any>}
               />
             </div>
+            <div className="row">
+              <div className="col-lg-6 m-b-20">
+                <label className="form-label">Alış Fiyatı</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder=""
+                  value={alisFiyati < 0 ? 0 : alisFiyati}
+                  onChange={(event) => {
+                    const newValue = event.target.valueAsNumber;
+                    setAlisFiyati(newValue < 0 ? 0 : newValue);
+                  }}
 
-            
-            <div className="col-md-12 m-b-20">
-              <Select
-                value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim1Id.toString())}
-                placeholder="Ölçü Birim 1"
-                onChange={(selected: any) => setStokOlcuBirim1Id(selected.value)}
-                options={stokOlcuBirims as Options<any>}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <Select
-                value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim2Id)}
-                placeholder="Ölçü Birim 2"
-                onChange={(selected: any) => setStokOlcuBirim2Id(selected.value)}
-                options={stokOlcuBirims as Options<any>}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <Select
-                value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim3Id)}
-                placeholder="Ölçü Birim 3"
-                onChange={(selected: any) => setStokOlcuBirim3Id(selected.value)}
-                options={stokOlcuBirims as Options<any>}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Pay 2"
-                value={olcuBr2Pay}
-                onChange={(text) => setOlcuBr2Pay(text.target.valueAsNumber)}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Payda 2"
-                value={olcuBr2Payda}
-                onChange={(text) => setOlcuBr2Payda(text.target.valueAsNumber)}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <Select
-                defaultValue={stokOlcuBirims.find((x) => x.value == stokOlcuBirim1Id.toString())}
-                placeholder="Ölçü Birim 1"
-                onChange={(selected: any) => setStokOlcuBirim1Id(selected.value)}
-                options={stokOlcuBirims as Options<any>}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Pay 3"
-                value={olcuBr3Pay}
-                onChange={(text) => setOlcuBr3Pay(text.target.valueAsNumber)}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Payda 3"
-                value={olcuBr3Payda}
-                onChange={(text) => setOlcuBr3Payda(text.target.valueAsNumber)}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Alış Fiyatı"
-                value={alisFiyati}
-                onChange={(text) => setAlisFiyati(text.target.valueAsNumber)}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <Select
-                defaultValue={dovizTipis.find((x) => x.value == alisDovizTipiId.toString())}
-                placeholder="Ölçü Birim 1"
-                onChange={(selected: any) => setAlisDovizTipiId(selected.value)}
-                options={dovizTipis as Options<any>}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Satış Fiyatı"
-                value={satisFiyati}
-                onChange={(text) => setSatisFiyati(text.target.valueAsNumber)}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <Select
-                defaultValue={dovizTipis.find((x) => x.value == satisDovizTipiId.toString())}
-                placeholder="Ölçü Birim 1"
-                onChange={(selected: any) => setSatisDovizTipiId(selected.value)}
-                options={dovizTipis as Options<any>}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Alış KDV Oranı"
-                value={alisKDVOrani}
-                onChange={(text) => setAlisKDVOrani(text.target.valueAsNumber)}
-              />
-            </div>
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Satış KDV Oranı"
-                value={satisKDVOrani}
-                onChange={(text) => setSatisKDVOrani(text.target.valueAsNumber)}
-              />
-            </div>
-
-            <div className="col-md-12 m-b-20">
-              <div className="form-check mr-sm-2 mb-3">
-                  <input type="checkbox" className="form-check-input" id="checkbox0" value="check" checked={seriTakibiVarMi} onChange={(text) => setSeriTakibiVarMi(text.target.checked)}/>
-                  <label className="form-check-label">Seri takibi var mı ?</label>
+                />
+              </div>
+              <div className="col-lg-6 m-b-20">
+                <div className="col-lg-12">
+                  <label className="form-label"> </label>
+                </div>
+                <Select
+                  defaultValue={dovizTipis.find((x) => x.value == alisDovizTipiId.toString())}
+                  placeholder="Alış Döviz"
+                  onChange={(selected: any) => setAlisDovizTipiId(selected.value)}
+                  options={dovizTipis as Options<any>}
+                />
               </div>
             </div>
 
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="En"
-                value={en}
-                onChange={(text) => setEn(text.target.valueAsNumber)}
-              />
-            </div>            
-            
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Boy"
-                value={boy}
-                onChange={(text) => setBoy(text.target.valueAsNumber)}
-              />
-            </div>            
-            
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Genişlik"
-                value={genislik}
-                onChange={(text) => setGenislik(text.target.valueAsNumber)}
-              />
-            </div>            
-            
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Ağırlık"
-                value={agirlik}
-                onChange={(text) => setAgirlik(text.target.valueAsNumber)}
-              />
-            </div>            
-            
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Asgari Stok Miktarı"
-                value={asgariStokMiktari}
-                onChange={(text) => setAsgariStokMiktari(text.target.valueAsNumber)}
-              />
-            </div>            
-            
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Azami Stok Miktarı"
-                value={azamiStokMiktari}
-                onChange={(text) => setAzamiStokMiktari(text.target.valueAsNumber)}
-              />
-            </div>            
-            
-            <div className="col-md-12 m-b-20">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Minimum Sipariş Miktarı"
-                value={minimumSiparisMiktari}
-                onChange={(text) => setMinimumSiparisMiktari(text.target.valueAsNumber)}
-              />
-            </div>
-            
-            <div className="col-md-12 m-b-20">
-              <CreatableSelect
-                placeholder="Barkodlar"
-                isMulti
-                value={stokBarkods}
-                onChange={(items: any) =>
-                  setStokBarkods(items)
-                }
-              />
+            <div className="row">
+              <div className="col-lg-6 m-b-20">
+                <label className="form-label">Satış Fiyatı</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder=""
+                  value={satisFiyati < 0 ? 0 : satisFiyati}
+                  onChange={(event) => {
+                    const newValue = event.target.valueAsNumber;
+                    setSatisFiyati(newValue < 0 ? 0 : newValue);
+                  }}
+                />
+              </div>
+              <div className="col-lg-6 m-b-50">
+                <div className="col-lg-12">
+                  <label className="form-label"> </label>
+                </div>
+                <Select
+                  defaultValue={dovizTipis.find((x) => x.value == satisDovizTipiId.toString())}
+                  placeholder="Satış Döviz"
+                  onChange={(selected: any) => setSatisDovizTipiId(selected.value)}
+                  options={dovizTipis as Options<any>}
+                />
+              </div>
             </div>
 
-            <div className="col-md-12 m-b-20">
-              <CreatableSelect
-                placeholder="SAP Kodları"
-                isMulti
-                value={sAPKOds}
-                onChange={(items: any) =>
-                  setSAPKods(items)
-                }
-              />
+            <div className="row">
+              <div className="col-lg-6 m-b-20">
+                <label className="form-label">En</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder=""
+                  value={en < 0 ? 0 : en}
+                  onChange={(event) => {
+                    const newValue = event.target.valueAsNumber;
+                    setEn(newValue < 0 ? 0 : newValue);
+                  }}
+                />
+              </div>
+              <div className="col-lg-6 m-b-20">
+                <label className="form-label">Boy</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder=""
+                  value={boy < 0 ? 0 : boy}
+                  onChange={(event) => {
+                    const newValue = event.target.valueAsNumber;
+                    setBoy(newValue < 0 ? 0 : newValue);
+                  }}
+                />
+              </div>
             </div>
-
-            <div className="col-md-12 m-b-20">
-              <CreatableSelect
-                placeholder="Hucreler"
-                isMulti
-                value={hucres}
-                onChange={(items: any) =>
-                  setHucres(items)
-                }
-              />
+            <div className="row">
+              <div className="col-lg-6 m-b-20">
+                <label className="form-label">Genişlik</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder=""
+                  value={genislik < 0 ? 0 : genislik}
+                  onChange={(event) => {
+                    const newValue = event.target.valueAsNumber;
+                    setGenislik(newValue < 0 ? 0 : newValue);
+                  }}
+                />
+              </div>
+              <div className="col-lg-6 m-b-20">
+                <label className="form-label">Ağırlık</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder=""
+                  value={agirlik < 0 ? 0 : agirlik}
+                  onChange={(event) => {
+                    const newValue = event.target.valueAsNumber;
+                    setAgirlik(newValue < 0 ? 0 : newValue);
+                  }}
+                />
+              </div>
             </div>
-
-            
+            <div className="row">
+              <div className="col-lg-6 m-b-20">
+                <label className="form-label">Asgari Sipariş Miktarı</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder=""
+                  value={asgariStokMiktari < 0 ? 0 : asgariStokMiktari}
+                  onChange={(event) => {
+                    const newValue = event.target.valueAsNumber;
+                    setAsgariStokMiktari(newValue < 0 ? 0 : newValue);
+                  }}
+                />
+              </div>
+              <div className="col-lg-6 m-b-20">
+                <label className="form-label">Azami Sipariş Miktarı</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder=""
+                  value={azamiStokMiktari < 0 ? 0 : azamiStokMiktari}
+                  onChange={(event) => {
+                    const newValue = event.target.valueAsNumber;
+                    setAzamiStokMiktari(newValue < 0 ? 0 : newValue);
+                  }}
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-lg-6 m-b-20">
+                <label className="form-label">Minimum Sipariş Miktarı</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder=""
+                  value={minimumSiparisMiktari < 0 ? 0 : minimumSiparisMiktari}
+                  onChange={(event) => {
+                    const newValue = event.target.valueAsNumber;
+                    setMinimumSiparisMiktari(newValue < 0 ? 0 : newValue);
+                  }}
+                />
+              </div>
+              <div className="col-lg-6 m-b-20">
+                <div className="form-check mr-sm-2 mb-3">
+                  <div className="col-lg-12">
+                    <label className="form-label"> </label>
+                  </div>
+                  <input type="checkbox" className="form-check-input"
+                    id="checkbox0"
+                    value="check" checked={seriTakibiVarMi}
+                    onChange={(text) => setSeriTakibiVarMi(text.target.checked)}
+                  />
+                  <label className="form-check-label">Seri takibi var mı ?</label>
+                </div>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-lg-4 m-b-20">
+                <CreatableSelect
+                  placeholder="Barkodlar"
+                  isMulti
+                  value={stokBarkods}
+                  onChange={(items: any) =>
+                    setStokBarkods(items)
+                  }
+                />
+              </div>
+              <div className="col-lg-4 m-b-20">
+                <CreatableSelect
+                  placeholder="SAP Kodları"
+                  isMulti
+                  value={sAPKOds}
+                  onChange={(items: any) =>
+                    setSAPKods(items)
+                  }
+                />
+              </div>
+              <div className="col-lg-4 m-b-20">
+                <CreatableSelect
+                  placeholder="Hucreler"
+                  isMulti
+                  value={hucres}
+                  onChange={(items: any) =>
+                    setHucres(items)
+                  }
+                />
+              </div>
+            </div>
             {/* <div className="col-md-12 m-b-20">
               <div className="fileupload btn btn-primary btn-rounded waves-effect waves-light">
                 <span>
@@ -649,5 +708,6 @@ export default (props: IStokModalProps) => {
         </Button>
       </Modal.Footer>
     </Modal>
+
   );
 };

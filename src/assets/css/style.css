@@ -21741,3 +21741,8 @@ File: scss
     overflow: hidden; }
   .hidden-md-down {
     display: none; } }
+
+
+    .custom-modal .modal-dialog {
+      max-width: 1200px; 
+    }

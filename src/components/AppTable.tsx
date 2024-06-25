@@ -10,7 +10,6 @@ import React, {
 } from "react";
 import { ICrudBaseAPI } from "../utils/types";
 import {
-  DataTableFilterMeta,
   DataTableRowClassNameOptions,
   DataTableRowData,
   DataTableSelectionMultipleChangeEvent,
@@ -20,13 +19,14 @@ import {
   DataTable,
   SortOrder,
 } from 'primereact/datatable';
-import { Column, ColumnBodyOptions, ColumnHeaderOptions, ColumnProps } from 'primereact/column';
+import { Column,  ColumnHeaderOptions, ColumnProps } from 'primereact/column';
 import 'primereact/resources/themes/lara-light-cyan/theme.css';
 import { Button } from "primereact/button";
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { saveAs } from 'file-saver';
 import { transformFilter } from "../utils/transformFilter";
+import { FilterMatchMode } from "primereact/api";
 
 declare module 'jspdf' {
   interface jsPDF {
@@ -69,7 +69,18 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   const [perPage, setPerPage] = useState((props.rowPerPageOptions && props.rowPerPageOptions[0]) || 10);
   const [sortColumn, setSortColumn] = useState<string>('Id');
   const [sortDirection, setSortDirection] = useState<SortOrder>(-1);
-  const [filters, setFilters] = useState<DataTableFilterMeta | undefined>();
+  const [filters, setFilters] = useState(() => {
+    return props.columns
+      .filter(column => column.filter && column.field)
+      .reduce((acc: any, column) => {
+        if(column.field){
+          acc[column.field] = { value: null, matchMode: FilterMatchMode.CONTAINS };
+        }
+        return acc;
+      }, {} as any);
+  });
+  
+
   const exportColumns = props.columns.map((col) => ({ title: col.header, dataKey: col.field }));
 
   const fetchItems = useCallback(async () => {
@@ -162,17 +173,18 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   return (
     <div className="mb-3">
       <DataTable
-      size="small"
-      stripedRows
-      scrollHeight="620px"
-      tableStyle={{ minWidth: '50rem' }}
-      scrollable
+        size="small"
+        stripedRows
+        scrollHeight="620px"
+        tableStyle={{ minWidth: '50rem' }}
+        scrollable
         ref={table}
         rowClassName={props.rowStyles}
         header={header}
         value={data as DataTableValue[]}
         showGridlines
         paginator
+        filters={filters}
         rows={perPage}
         loading={loading}
         dataKey="id"
@@ -193,7 +205,6 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
         }}
         selectionMode={props.rowSelectable ? "multiple" : null}
         selection={selectedItems}
-        globalFilterFields={props.columns.filter(x => x.filter === true).map(x => x.field).filter((field): field is string => field !== undefined)}
       >
         {props.rowSelectable && <Column selectionMode="multiple" headerStyle={{ width: '1rem' }}></Column>}
         {props.columns.map((column, index) => (

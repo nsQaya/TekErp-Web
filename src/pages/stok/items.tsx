@@ -1,6 +1,5 @@
 import { createRef, useCallback,  useState } from "react";
 import AppBreadcrumb from "../../components/AppBreadcrumb";
-import  { TableColumn } from "react-data-table-component";
 import api from "../../utils/api";
 import { IStok } from "../../utils/types/stok/IStok";
 import CreateOrEditModal from "../../modals/stok/createOrEdit";
@@ -9,6 +8,7 @@ import { IStokKartiWithDetail } from "../../utils/types/stok/IStokKartiWithDetai
 import { baseURL } from "../../utils/config";
 import { convertArrayOfObjectsToExcel } from "../../utils/excel";
 import { saveAs } from 'file-saver';
+import { ColumnProps } from "primereact/column";
 
 
 export default () => {
@@ -41,41 +41,52 @@ export default () => {
   },[selectedStokIDS])
 
   
-  const columns: TableColumn<IStokKartiWithDetail>[] = [
+  const columns:  ColumnProps[] = [
     {
-      name: "#",
-      selector: (row: IStokKartiWithDetail) => row.stokKarti.id as number,
+      field: "id",
+      header: "#",
+      sortable: true
+    },
+    {
+      field: "kodu",
+      header:"Kodu",
+      filter:true,
       sortable: true,
     },
     {
-      name: "Kodu",
-      selector: (row: IStokKartiWithDetail) => row.stokKarti.kodu,
+      field: "adi",
+      header:"Adı",
+      filter:true,
       sortable: true,
     },
     {
-      name: "Adı",
-      selector: (row: IStokKartiWithDetail) => row.stokKarti.adi,
+      field: "ingilizceIsim",
+      header:"İngilizce Adı",
+      filter:true,
       sortable: true,
     },
     {
-      name: "İngilizce Adı",
-      selector: (row: IStokKartiWithDetail) => row.stokKarti.ingilizceIsim,
+      field: "stokGrupKodu.adi",
+      header:"Grup Kodu",
+      filter:true,
       sortable: true,
     },
     {
-      name: "Adı",
-      selector: (row: IStokKartiWithDetail) => row.stokKarti.adi,
+      field: "stokKod1.adi",
+      header:"Kod 1",
+      filter:true,
       sortable: true,
     },
     {
-      name: "işlemler",
-      cell: (row: IStokKartiWithDetail) => {
+      header: "işlemler",
+      style: {minWidth:"150px"},
+      body: (row) => {
         return (
           <>
-            <button className="btn btn-info ms-1" onClick={(e)=>[e.preventDefault(),setSelectedItem(row.stokKarti), setModalShowing(true)]}>
+            <button className="btn btn-info ms-1" onClick={(e)=>[e.preventDefault(),setSelectedItem(row), setModalShowing(true)]}>
               <i className="ti-pencil"></i>
             </button>
-            <button className="btn btn-danger ms-1" onClick={(e)=>[e.preventDefault(), deleteItem(row.stokKarti)]}>
+            <button className="btn btn-danger ms-1" onClick={(e)=>[e.preventDefault(), deleteItem(row)]}>
               <i className="ti-trash"></i>
             </button>
           </>
@@ -87,7 +98,7 @@ export default () => {
   const onExport= useCallback(()=>{
     if(!myTable.current?.data) return;
 
-    const myColumns= columns.filter(x=>x.name!="işlemler");
+    const myColumns= columns.filter(x=>x.header!="işlemler");
     let blob = convertArrayOfObjectsToExcel<IStokKartiWithDetail>(myColumns, myTable.current.data);
     saveAs(blob, 'data.xlsx');
   },[myTable])
@@ -140,6 +151,7 @@ export default () => {
                 <AppTable
                     baseApi={api.stokWithDetail}
                     columns={columns}
+
                     key={'Stoklar'}
                     ref={myTable}
                     rowSelectable={true}

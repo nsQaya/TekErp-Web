@@ -1,6 +1,5 @@
 import { AxiosResponse } from "axios";
-import { SortOrder } from "primereact/datatable";
-import { DynamicQuery, TransformedFilter } from "./transformFilter";
+import { DynamicQuery } from "./transformFilter";
 
 
 
@@ -46,6 +45,7 @@ export interface ICrudBaseAPI<T>{
   getAllForGrid(page: number, take: number, dynamicQuery:DynamicQuery): Promise<{ data: { value: { items: T[], count: number } } }>;
   getAll(page: number, take: number): Promise<{ data: { value: { items: T[], count: number } } }>;
   get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
+  getByKod: (id: string) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   create: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   update: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   delete: (id: number) => Promise<AxiosResponse<IBaseResponseValue<IEntity>, any>>

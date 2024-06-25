@@ -1,3 +1,4 @@
+import { IStokKod } from "./IStokKod";
 
 export interface IStok {
   id?: number;
@@ -5,11 +6,17 @@ export interface IStok {
   adi: string;
   ingilizceIsim: string;
   stokGrupKoduId: any;
+  stokGrupKodu:IStokKod;
   stokKod1Id: any;
+  stokKod1:IStokKod;
   stokKod2Id: any;
+  stokKod2:IStokKod;
   stokKod3Id: any;
+  stokKod3:IStokKod;
   stokKod4Id: any;
+  stokKod4:IStokKod;
   stokKod5Id: any;
+  stokKod5:IStokKod;
   stokOlcuBirim1Id: number;
   stokOlcuBirim2Id: any;
   olcuBr2Pay: number;

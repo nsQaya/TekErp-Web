@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
-import { IBaseResponseValue, IPagedResponse } from "../types";
-import { IIhtiyacPlanlama } from "../types/planlama/IIhtiyacPlanlama";
+import { IBaseResponseValue, IPagedResponse } from "../../types";
+import { IIhtiyacPlanlama } from "../../types/planlama/IIhtiyacPlanlama";
 
 
 

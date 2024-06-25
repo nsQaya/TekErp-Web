@@ -5,9 +5,11 @@ import { IBelge } from "../../types/fatura/IBelge";
 
 
 
+const controller="belges";
+
 export default ($axios: AxiosInstance) => ({
-    getAll(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IBelge>>>(`/Belges/GetListForGrid`, {
+    getAllForGrid(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
+        return $axios.get<IBaseResponseValue<IPagedResponse<IBelge>>>(`/${controller}/GetListForGrid`, {
             params: {
                 pageIndex: page,
                 pageSize: take,
@@ -16,16 +18,24 @@ export default ($axios: AxiosInstance) => ({
             }
         });
     },
+    getAll(page: number, take: number){
+        return $axios.get<IBaseResponseValue<IPagedResponse<IBelge>>>(`/${controller}`, {
+            params: {
+                pageIndex: page,
+                pageSize: take
+            }
+        });
+    },
     create(params: Partial<IBelge>){
-        return $axios.post<IBaseResponseValue<IBelge>>(`/Belges`, params);
+        return $axios.post<IBaseResponseValue<IBelge>>(`/${controller}`, params);
     },
     update(params: Partial<IBelge>){
-        return $axios.put<IBaseResponseValue<IBelge>>(`/Belges`, params);
+        return $axios.put<IBaseResponseValue<IBelge>>(`/${controller}`, params);
     },
     delete(id: number){
-        return $axios.delete<IBaseResponseValue<IBelge>>(`/Belges/${id}`);
+        return $axios.delete<IBaseResponseValue<IBelge>>(`/${controller}/${id}`);
     },
     get(id: number){
-        return $axios.get<IBaseResponseValue<IBelge>>(`/Belges/${id}`);
+        return $axios.get<IBaseResponseValue<IBelge>>(`/${controller}/${id}`);
     }
 });

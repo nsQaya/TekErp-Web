@@ -99,6 +99,8 @@ function mapMatchModeToOperator(matchMode: string): string {
           return "contains";
       case "endsWith":
           return "endswith";
+      case "gt":
+          return "gt";
       // Daha fazla eşleşme modu eklemek isterseniz buraya ekleyebilirsiniz
       default:
           return "eq";

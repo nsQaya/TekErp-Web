@@ -1,14 +1,21 @@
 import { AxiosInstance, AxiosResponse } from "axios";
 import { IBaseResponseValue, ICrudBaseAPI, IPagedResponse } from "../types";
 import { IStok } from "../types/stok/IStok";
+import { DynamicQuery } from "../transformFilter";
+import { IStokKod } from "../types/stok/IStokKod";
+
+const controller="StokKartis";
 
 export interface IStokAPI extends ICrudBaseAPI<IStok> {
     getBarkod: (ids: number[]) => AxiosResponse<IBaseResponseValue<{url: string}>>
 }
 
 export default ($axios: AxiosInstance) => ({
+    getAllForGrid(page: number, take: number,dynamicQuery:DynamicQuery  ){
+        return $axios.post<IBaseResponseValue<IPagedResponse<IStok>>>(`/${controller}/GetListForGrid?PageIndex=${page}&PageSize=${take}`, dynamicQuery );
+    },
     getAll(page: number, take: number){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IStok>>>(`/StokKartis`, {
+        return $axios.get<IBaseResponseValue<IPagedResponse<IStok>>>(`/${controller}`, {
             params: {
                 pageIndex: page,
                 pageSize: take,
@@ -16,7 +23,10 @@ export default ($axios: AxiosInstance) => ({
         });
     },
     getBarkod(ids: number[]){
-        return $axios.get<IBaseResponseValue<{url: string}>>(`/StokKartis/GetStokKartiBarkodPdfUrl?stokIds=${ids.join('&stokIds=')}`);
+        return $axios.get<IBaseResponseValue<{url: string}>>(`/${controller}/GetStokKartiBarkodPdfUrl?stokIds=${ids.join('&stokIds=')}`);
+    },
+    getByKod(kod: string){
+        return $axios.get<IBaseResponseValue<IStokKod>>(`/${controller}/GetByKod?Kod=${kod}`);
     }
 
 });

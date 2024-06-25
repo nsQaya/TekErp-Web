@@ -25,8 +25,8 @@ import stokGrupKod from "./stokGrupKod";
 import stokOlcuBirim from "./tanimlamalar/stokOlcuBirim";
 import dovizTipi from "./tanimlamalar/dovizTipi";
 import stokWithDetail from './stokWithDetail';
-import ihtiyacPlanlama from "./ihtiyacPlanlama";
-import ihtiyacPlanlamaRapor from "./ihtiyacPlanlamaRapor";
+import ihtiyacPlanlama from "./fatura/ihtiyacPlanlama";
+import ihtiyacPlanlamaRapor from "./fatura/ihtiyacPlanlamaRapor";
 import { IIhtiyacPlanlama } from "../types/planlama/IIhtiyacPlanlama";
 import { IAmbarFisi } from "../types/fatura/IAmbarFisi";
 import ambarCikisFisi from "./fatura/ambarCikisFisi";
@@ -41,10 +41,12 @@ import proje from "./tanimlamalar/proje";
 import { IProje } from "../types/tanimlamalar/IProje";
 import unite from "./tanimlamalar/unite";
 import { IUnite } from "../types/tanimlamalar/IUnite";
+import { IStokHareket } from "../types/stok/IStokHareket";
+import stokHareket from "../api/stokHareket";
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
-  timeout: 30000,
+  timeout: 0,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json; charset=utf-8",
@@ -113,6 +115,7 @@ const repositories = {
   stokKod4: stokKod(instance, 4) as unknown as ICrudBaseAPI<IStokKod>,
   stokKod5: stokKod(instance, 5) as unknown as ICrudBaseAPI<IStokKod>,
   stokOlcuBirim: stokOlcuBirim(instance) as unknown as ICrudBaseAPI<IStokOlcuBirim>,
+  stokHareket:stokHareket(instance) as unknown as ICrudBaseAPI<IStokHareket>,
 
   ulke: ulke(instance) as unknown as ICrudBaseAPI<IUlke>,
   il: il(instance) as unknown as ICrudBaseAPI<IIl>,

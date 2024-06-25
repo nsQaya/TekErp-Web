@@ -1,15 +1,16 @@
 import { AxiosInstance } from "axios";
 import { SortOrder } from "react-data-table-component";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
-import { IAmbarFisi } from "../../types/fatura/IAmbarFisi";
+import { IStokHareket } from "../../types/fatura/IStokHareket";
 
 
 
-const controller="AmbarFisis";
+
+const controller="stokHarekets";
 
 export default ($axios: AxiosInstance) => ({
     getAllForGrid(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IAmbarFisi>>>(`/${controller}/GetListForGrid`, {
+        return $axios.get<IBaseResponseValue<IPagedResponse<IStokHareket>>>(`/${controller}/GetListForGrid`, {
             params: {
                 pageIndex: page,
                 pageSize: take,
@@ -19,23 +20,23 @@ export default ($axios: AxiosInstance) => ({
         });
     },
     getAll(page: number, take: number){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IAmbarFisi>>>(`/${controller}`, {
+        return $axios.get<IBaseResponseValue<IPagedResponse<IStokHareket>>>(`/${controller}`, {
             params: {
                 pageIndex: page,
                 pageSize: take
             }
         });
     },
-    create(params: Partial<IAmbarFisi>){
-        return $axios.post<IBaseResponseValue<IAmbarFisi>>(`/${controller}`, params);
+    create(params: Partial<IStokHareket>){
+        return $axios.post<IBaseResponseValue<IStokHareket>>(`/${controller}`, params);
     },
-    update(params: Partial<IAmbarFisi>){
-        return $axios.put<IBaseResponseValue<IAmbarFisi>>(`/${controller}`, params);
+    update(params: Partial<IStokHareket>){
+        return $axios.put<IBaseResponseValue<IStokHareket>>(`/${controller}`, params);
     },
     delete(id: number){
-        return $axios.delete<IBaseResponseValue<IAmbarFisi>>(`/${controller}/${id}`);
+        return $axios.delete<IBaseResponseValue<IStokHareket>>(`/${controller}/${id}`);
     },
     get(id: number){
-        return $axios.get<IBaseResponseValue<IAmbarFisi>>(`/${controller}/${id}`);
+        return $axios.get<IBaseResponseValue<IStokHareket>>(`/${controller}/${id}`);
     }
 });

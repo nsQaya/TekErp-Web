@@ -25,7 +25,7 @@ export default () => {
 
   const deleteItem = useCallback(async (item: IUlke) => {
     if (!window.confirm("Emin misin ?")) return;
-    await api.il.delete(item.id as number);
+    await api.ulke.delete(item.id as number);
     myTable.current?.refresh();
   }, [])
 

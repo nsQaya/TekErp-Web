@@ -2,7 +2,6 @@ import { AxiosInstance } from "axios";
 
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { IUlke } from "../../types/tanimlamalar/IUlke";
-import { SortOrder } from "react-data-table-component";
 import { DynamicQuery } from "../../transformFilter";
 
 const controller="ulkes";

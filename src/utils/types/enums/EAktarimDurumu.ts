@@ -1,4 +1,4 @@
-export enum aktarimDurumu
+export enum EAktarimDurumu
 {
     AktarimBekliyor=0, 
 

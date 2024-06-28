@@ -1,17 +1,17 @@
 import { createRef } from "react";
 import AppBreadcrumb from "../../components/AppBreadcrumb";
-import { TableColumn } from "react-data-table-component";
 import api from "../../utils/api/index";
 import { IIhtiyacPlanlamaRapor } from "../../utils/types/planlama/IIhtiyacPlanlamaRapor";
 import AppTable, { ITableRef } from "../../components/AppTable";
 import { useNavigate } from "react-router-dom";
+import { ColumnProps } from "primereact/column";
 
 export default () => {
   const myTable = createRef<ITableRef<IIhtiyacPlanlamaRapor>>();
 
   const navigate= useNavigate();
 
-  const columns: TableColumn<IIhtiyacPlanlamaRapor>[] = [
+  const columns:  ColumnProps[] = [
     // {
     //   name: "#",
     //   selector: (row) => row.id ?? 0,
@@ -22,221 +22,178 @@ export default () => {
     // },
     //},
     {
-      name: "Tarih",
-      selector: (row) =>
-        row.tarih
-          ? new Date(row.tarih).toLocaleDateString("tr-TR", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            })
-          : "",
-      sortable: false,
-      width: "80px",
+      header: "Tarih",
+      field: "tarih",
+      body: (row) => row.tarih
+        ? new Date(row.tarih).toLocaleDateString("tr-TR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        : "",
+      sortable: true,
+      style: {
+        fontSize: "9px",
+      },
+    
+    },
+    {
+      header: "Proje Kodu",
+      field: "projeKodu",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Proje Kodu",
-      selector: (row) => row.projeKodu ?? "",
-      sortable: false,
-      width: "70px",
+      header: "Proje Açıklama",
+      field: "projeAciklama",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Proje Açıklama",
-      selector: (row) => row.projeAciklama ?? "",
-      sortable: false,
-      width: "100px",
+      header: "Plasiyer Kodu",
+      field: "plasiyerKodu",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Plasiyer Kodu",
-      selector: (row) => row.plasiyerKodu ?? "",
-      sortable: false,
-      width: "70px",
+      header: "Plasiyer Açıklama",
+      field: "plasiyerAciklama",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Plasiyer Açıklama",
-      selector: (row) => row.plasiyerAciklama ?? "",
-      sortable: false,
-      width: "100px",
+      header: "Mamül Adı",
+      field: "mamulAdi",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Mamül Adı",
-      selector: (row) => row.mamulAdi ?? "",
-      sortable: false,
-      width: "100px",
+      header: "Stok Kodu",
+      field: "stokKodu",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Stok Kodu",
-      selector: (row) => row.stokKodu ?? "",
-      sortable: false,
-      width: "100px",
+      header: "Stok Adı",
+      field: "stokAdi",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Stok Adı",
-      selector: (row) => row.stokAdi ?? "",
-      sortable: false,
-      width: "250px",
+      header: "Miktar",
+      field: "miktar",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Miktar",
-      selector: (row) => row.miktar ?? 0,
-      sortable: false,
-      width: "50px",
+      header: "Ölçü Birimi",
+      field: "olcuBirim",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Ölçü Birimi",
-      selector: (row) => row.olcuBirim ?? 0,
-      sortable: false,
-      width: "70px",
+      header: "Belge No",
+      field: "belgeNo",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Belge No",
-      selector: (row) => row.belgeNo ?? "",
-      sortable: false,
-      width: "120px",
+      header: "Çıkış Miktar",
+      field: "cikisMiktar",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Çıkış Miktar",
-      selector: (row) => row.cikisMiktar ?? 0,
-      sortable: false,
-      width: "50px",
+      header: "Toplam İhtiyaç",
+      field: "yuruyenIhtiyac",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Toplam İhtiyaç",
-      selector: (row) => row.yuruyenIhtiyac ?? 0,
-      sortable: false,
-      width: "50px",
+      header: "Bakiye",
+      field: "bakiye",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Bakiye",
-      selector: (row) => row.bakiye ?? 0,
-      sortable: false,
-      width: "50px",
+      header: "Toplam Talep Miktarı",
+      field: "stokTalepMiktari",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Toplam Talep Miktarı",
-      selector: (row) => row.stokTalepMiktari ?? 0,
-      sortable: false,
-      width: "50px",
+      header: "Toplam Sipariş Miktarı",
+      field: "stokSiparisMiktari",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
     {
-      name: "Toplam Sipariş Miktarı",
-      selector: (row) => row.stokSiparisMiktari ?? 0,
-      sortable: false,
-      width: "50px",
+      header: "Net Gereksinim",
+      field: "yuruyenBakiye",
+      sortable: true,
       style: {
         fontSize: "9px",
       },
     },
-    {
-      name: "Net Gereksinim",
-      selector: (row) => row.yuruyenBakiye ?? 0,
-      sortable: false,
-      width: "50px",
-      style: {
-        fontSize: "9px",
-      },
-    },
-    {
-      name: "işlemler",
-      cell: (row) => {
-        return (
-          <>
-            <button className="btn btn-warning ms-1" onClick={(e)=>[e.preventDefault(), navigate(`/fatura/ambarfisiekle?proje=${row.projeKodu}&unit=${row.plasiyerKodu}`)]}>
-              <i className="ti-eye"></i>
-            </button>
-          </>
-        );
-      },
-    },
+    // {
+    //   name: "işlemler",
+    //   cell: (row) => {
+    //     return (
+    //       <>
+    //         <button className="btn btn-warning ms-1" onClick={(e)=>[e.preventDefault(), navigate(`/fatura/ambarfisiekle?proje=${row.projeKodu}&unit=${row.plasiyerKodu}`)]}>
+    //           <i className="ti-eye"></i>
+    //         </button>
+    //       </>
+    //     );
+    //   },
+    // },
   ];
 
-  const conditionalRowStyles = [
-    {
-      when: (row: IIhtiyacPlanlamaRapor) =>
-        row.yuruyenBakiye > 0,
-      style: {
-        backgroundColor: "#01c0c8", //AcikYesil
-        color: "white",
-      },
-    },
-    {
-      when: (row: IIhtiyacPlanlamaRapor) =>
-         row.bakiye < row.yuruyenIhtiyac && row.bakiye+row.stokSiparisMiktari+row.stokTalepMiktari >= row.yuruyenBakiye,
-      style: {
-        backgroundColor: "#03a9f3", //Mavi
-        color: "white",
-      },
-    },
-    {
-      when: (row: IIhtiyacPlanlamaRapor) =>
-         row.yuruyenIhtiyac < 0 && row.stokSiparisMiktari+row.stokTalepMiktari< row.yuruyenBakiye,
-      style: {
-        backgroundColor: "#e46a76", //Kırmızı
-        color: "white",
-      },
-    },
-    {
-      when: (row: IIhtiyacPlanlamaRapor) =>
-         row.cikisMiktar > 0 && row.cikisMiktar <= row.miktar && row.belgeNo != undefined ,
-      style: {
-        backgroundColor: "#e46a76", //Sarı
-        color: "white",
-      },
-    },
-    {
-      when: (row: IIhtiyacPlanlamaRapor) =>
-         row.miktar <= row.cikisMiktar ,
-      style: {
-        backgroundColor: "#00c292", // Koyu Yeşil
-        color: "white",
-      },
+  const rowStyles  = (data: IIhtiyacPlanlamaRapor) => {
+    if (data.yuruyenBakiye > 0) {
+      return 'row-acik-yesil';
+    } else if (data.bakiye < data.yuruyenIhtiyac && data.bakiye + data.stokSiparisMiktari + data.stokTalepMiktari >= data.yuruyenBakiye) {
+      return 'row-mavi';
+    } else if (data.yuruyenIhtiyac < 0 && data.stokSiparisMiktari + data.stokTalepMiktari < data.yuruyenBakiye) {
+      return 'row-kirmizi';
+    } else if (data.cikisMiktar > 0 && data.cikisMiktar <= data.miktar && data.belgeNo !== undefined) {
+      return 'row-sari';
+    } else if (data.miktar <= data.cikisMiktar) {
+      return 'row-koyu-yesil';
+    } else {
+      return '';
     }
-  ];
+  };
 
   return (
     <div className="container-fluid">
@@ -245,19 +202,37 @@ export default () => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Data Export</h4>
-              <h6 className="card-subtitle">
-                Export data to Copy, CSV, Excel, PDF & Print
-              </h6>
               <div className="table-responsive m-t-40">
-                <AppTable
+              <AppTable
                   baseApi={api.ihtiyacPlanlamaRapor}
                   columns={columns}
                   key={"ihtiyacPlanlama"}
                   ref={myTable}
                   rowSelectable={false}
-                  rowStyles={conditionalRowStyles}
-                  rowPerPageOptions={[10, 50, 100,250,500,1000,10000]}
+                  rowStyles={rowStyles}
+                  // rowStyles={conditionalRowStyles}
+                  rowPerPageOptions={[10, 50, 100, 250, 500, 1000, 10000]}
+                  appendHeader={() => {
+                    return (
+                      <>
+                      <button
+                        type="button"
+                        className="btn btn-info btn-rounded m-t-10 float-end text-white"
+                        onClick={(e)=>[e.preventDefault(), navigate(`/fatura/ambarcikisfisi`)]}
+                        >
+                      Ambar Çıkış Fişi
+                      </button>
+                      <button
+                      type="button"
+                      disabled
+                      className="btn btn-info btn-rounded m-t-10 float-end text-white"
+                      onClick={(e)=>[e.preventDefault(), navigate(`/fatura/ambarcikisfisi`)]}
+                      >
+                    Depolar Arası Transfer
+                    </button>
+                    </>
+                    );
+                  }}
                 />
               </div>
             </div>

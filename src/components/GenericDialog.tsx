@@ -76,13 +76,13 @@ const GenericDialog: React.FC<GenericDialogProps> = (props) => {
 
   const handleConfirm = () => {
     if (selectedItem) {
-        props.onSelect(selectedItem[props.returnField]);
+      props.onSelect({ Id: selectedItem.id, [props.returnField]: selectedItem[props.returnField] });
         props.onHide();
     }
   };
 
   const handleRowDoubleClick = (e: any) => {
-    props.onSelect(e.data[props.returnField]);
+    props.onSelect({ Id: e.data.id, [props.returnField]: e.data[props.returnField] });
     props.onHide();
   };
 

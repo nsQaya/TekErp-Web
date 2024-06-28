@@ -8,7 +8,7 @@ import StokRehberDialog from "../../components/Rehber/StokRehberDialog";
 import { Dropdown } from "primereact/dropdown";
 import ProjeRehberDialog from "../../components/Rehber/ProjeRehberDialog";
 import UniteRehberDialog from "../../components/Rehber/UniteRehberDialog";
-
+import { Divider } from "primereact/divider";
 import { InputNumber } from "primereact/inputnumber";
 import { transformFilter } from "../../utils/transformFilter";
 import api from "../../utils/api";
@@ -18,31 +18,28 @@ import { useSearchParams } from "react-router-dom";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { EAmbarHareketTur } from "../../utils/types/enums/EAmbarHareketTur";
-import { EAmbarFisiCikisYeri } from "../../utils/types/enums/EAmbarFisiCikisYeri";
-import { EBelgeTip } from "../../utils/types/enums/EBelgeTip";
 import { IAmbarFisi } from "../../utils/types/fatura/IAmbarFisi";
+import { EBelgeTip } from "../../utils/types/enums/eBelgeTip";
+import { EAmbarFisiCikisYeri } from "../../utils/types/enums/EAmbarFisiCikisYeri";
 import { IStokHareket } from "../../utils/types/fatura/IStokHareket";
 
-
-
-// Form verileri için bir tip tanımı
 type FormData = {
   seri?: string;
   numara?: string;
   tarih: Date;
-  hareketTuru: EAmbarHareketTur;
-  cikisYeri: number;
-
-  cikisKoduId:number;
-  cikisKodu:string;
-
+  hareketTuruId: EAmbarHareketTur;
+  hareketTuru?: string;
+  cikisYeriId: number;
+  cikisYeri: EAmbarFisiCikisYeri;
+  cikisKodId?: number;
+  cikisKod?: string;
   aciklama1?: string;
   aciklama2?: string;
   aciklama3?: string;
-  projeKoduId: number;
-  projeKodu: string;
-  uniteKoduId: number;
-  uniteKodu: string;
+  projeKoduId?: number;
+  projeKodu?: string;
+  uniteKoduId?: number;
+  uniteKodu?: string;
   ozelKod1Id?: number;
   ozelKod1?: string;
   eIrsaliye?: boolean;
@@ -55,11 +52,8 @@ type FormData = {
   hucreKoduId?: number;
   hucreKodu?: string;
   bakiye?: number;
-  olcuBrId:number;
-  olcuBr:string;
 };
 
-// Grid verileri için bir tip tanımı
 type GridData = {
   id: number;
   stokKoduId: number;
@@ -71,8 +65,6 @@ type GridData = {
   hucreKoduId?: number;
   hucreKodu?: string;
   bakiye?: number;
-  olcuBrId:number;
-  olcuBr:string;
 };
 
 const App = () => {
@@ -82,11 +74,12 @@ const App = () => {
     seri: "",
     numara: "",
     tarih: currentDate,
-    hareketTuru: EAmbarHareketTur.Devir,
+    hareketTuruId: EAmbarHareketTur.Devir,
+    hareketTuru: "",
+    cikisYeriId: 0,
     cikisYeri: EAmbarFisiCikisYeri.StokKodu,
-
-    cikisKodu:"",
-    cikisKoduId: 0,
+    cikisKodId: 0,
+    cikisKod: "",
     aciklama1: "",
     aciklama2: "",
     aciklama3: "",
@@ -105,15 +98,13 @@ const App = () => {
     fiyat: 0,
     hucreKoduId: 0,
     hucreKodu: "",
-    olcuBrId:0,
-    olcuBr:""
   });
 
   const [dialogVisible, setDialogVisible] = useState({
     proje: false,
     unite: false,
     stok: false,
-    cikisKodu: false,
+    cikisYeri: false,
   });
 
   const [gridData, setGridData] = useState<GridData[]>([]);
@@ -121,7 +112,6 @@ const App = () => {
   const [visible, setVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<GridData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [loadingGetir, setLoadingGetir] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -129,70 +119,64 @@ const App = () => {
   };
   const miktarRef = useRef<any>(null);
 
-  //stok getirme, gridden stok düzeltme, stok kodu okutunca bilgilerini getirme işlemleri
-  const handleKeyPress = useCallback(async (stokKodu: string) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      stokAdi: "",
-    }));
+  const handleKeyPress = useCallback(
+    async (stokKodu: string) => {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        stokAdi: "",
+      }));
 
-    try {
-      const response = await api.stok.getByKod(stokKodu);
-      if (response.status) {
-        if (
-          response.data &&
-          response.data.value.adi &&
-          response.data.value.kodu === stokKodu
-        ) {
-          const alreadyHas = gridData.find((x) => x.stokKodu == stokKodu);
-          const alreadyHasgMiktar = alreadyHas ? alreadyHas.miktar : 0;
-          const alreadyHasgIstenilenMiktar = alreadyHas
-            ? alreadyHas.istenilenMiktar
-            : 0;
+      try {
+        const response = await api.stok.getByKod(stokKodu);
+        if (response.status) {
+          if (
+            response.data &&
+            response.data.value.adi &&
+            response.data.value.kodu === stokKodu
+          ) {
+            const alreadyHas = gridData.find((x) => x.stokKodu == stokKodu);
+            const alreadyHasgMiktar = alreadyHas ? alreadyHas.miktar : 0;
+            const alreadyHasgIstenilenMiktar = alreadyHas
+              ? alreadyHas.istenilenMiktar
+              : 0;
 
-          setFormData((prevFormData) => ({
-            ...prevFormData,
-            stokAdi: response.data.value.adi!,
-            olcuBrId:response.data.value.stokOlcuBirim1Id,
-            olcuBr:response.data.value.stokOlcuBirim1.simge,
-            miktar: alreadyHasgMiktar!,
-            istenilenMiktar: alreadyHasgIstenilenMiktar!,
-          }));
+            setFormData((prevFormData) => ({
+              ...prevFormData,
+              stokAdi: response.data.value.adi,
+              miktar: alreadyHasgMiktar,
+              istenilenMiktar: alreadyHasgIstenilenMiktar,
+            }));
 
-          if (miktarRef.current) {
-            const inputElement = miktarRef.current.getInput();
-            if (inputElement) {
-              inputElement.focus();
-              inputElement.select();
+            if (miktarRef.current) {
+              const inputElement = miktarRef.current.getInput();
+              if (inputElement) {
+                inputElement.focus();
+                inputElement.select();
+              }
             }
           }
         }
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }, []);
+    },
+    [gridData]
+  );
 
-  //rehber işlemleri
   const handleDialogSelect = useCallback(
-    (fieldName: string, dialogFieldName:string, selectedValue: {Id:any,[key:string]:any}) => {
+    (fieldName: string, selectedValue: any) => {
       setFormData((prevFormData) => {
-        const newFormData = { 
-          ...prevFormData, 
-          [fieldName]: selectedValue[dialogFieldName] ,
-          [`${fieldName}Id`]:selectedValue.Id
-        };
+        const newFormData = { ...prevFormData, [fieldName]: selectedValue };
         if (fieldName === "stokKodu") {
-          handleKeyPress(selectedValue[fieldName]);
+          handleKeyPress(selectedValue);
         }
         return newFormData;
       });
     },
     [handleKeyPress]
   );
-  //ihtiyaç planlama raporundan getirilen bilgiler
+
   const handleGetir = async () => {
-    setLoadingGetir(true);
     const sortColumn = "Id";
     const sortDirection = 1;
 
@@ -209,7 +193,7 @@ const App = () => {
         9999,
         dynamicQuery
       );
-
+      console.log(response.data);
 
       const data = response.data.value;
       const maxId =
@@ -219,49 +203,35 @@ const App = () => {
         projeKodu: item.projeKodu,
         uniteKodu: item.plasiyerKodu,
         numara: item.belgeNo,
-        stokKoduId: item.stokKoduId,
+        stokKoduId:item.stokKoduId,
         stokKodu: item.stokKodu,
         stokAdi: item.stokAdi,
         miktar: 0,
         istenilenMiktar: item.miktar,
         bakiye: item.bakiye,
-        olcuBrId:item.olcuBrId,
-        olcuBr:item.olcuBr
       }));
 
       setGridData(newGridData);
     } catch (error) {
       console.error(error);
-    }finally{
-      setLoadingGetir(false);
     }
   };
 
-  //gride doldurma işlemleri
   const handleAddToGrid = useCallback(async () => {
     var nStoK = formData.stokKodu;
 
     if (!nStoK || formData.miktar === 0) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Hata",
-        detail: "Stok Kodu ve Miktar alanlarını doldurmalısınız.",
-        life: 3000,
-      });
+      alert("Stok Kodu ve Miktar alanlarını doldurmalısınız.");
       return;
     }
 
     var alreadyHas = gridData.find((x) => x.stokKodu == nStoK);
+    alert(Number(formData.miktar));
+    alert(Number(alreadyHas?.istenilenMiktar));
 
     if (alreadyHas) {
       if (Number(formData.miktar) > Number(alreadyHas.istenilenMiktar)) {
-        toast.current?.show({
-          severity: "error",
-          summary: "Hata",
-          detail: "Var olan miktardan fazla çıkış ekleyemezsin.",
-          life: 3000,
-        });
-        return;
+        return alert("Var olan miktardan fazla çıkış ekleyemezsin.");
       }
 
       setGridData((prevGridData) =>
@@ -269,9 +239,7 @@ const App = () => {
           item.stokKodu === nStoK
             ? {
                 ...item,
-                miktar:
-                  // item.miktar! +
-                  formData.miktar!,
+                miktar: formData.miktar!,
               }
             : item
         )
@@ -282,38 +250,43 @@ const App = () => {
 
       const newGridData: GridData = {
         id: maxId + 1,
-        stokKoduId: formData.stokKoduId,
+        stokKoduId:formData.stokKoduId,
         stokKodu: formData.stokKodu,
         stokAdi: formData.stokAdi,
         miktar: formData.miktar,
         istenilenMiktar: 0,
         bakiye: 0,
-        olcuBrId:formData.olcuBrId,
-        olcuBr:formData.olcuBr
       };
       setGridData((prevGridData) => [...prevGridData, newGridData]);
     }
 
-    document.getElementById('getirButton')!.hidden = true;
-    // var {data} =  await api.stokHareket.create({
-    //   kod: formData.stokKodu,
-    //   miktar: formData.miktar,
-    // });
-
-    // var newAdded= data.value as GridData;
-    // setGridData((prevGridData) => [...prevGridData, newAdded]);
-    //setGridData([...gridData, newAdded ]);
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      stokKoduId:0,
+    setFormData({
+      seri: "",
+      numara: "",
+      tarih: currentDate,
+      hareketTuruId: EAmbarHareketTur.Devir,
+      hareketTuru: "",
+      cikisYeriId: 0,
+      cikisYeri: EAmbarFisiCikisYeri.StokKodu,
+      cikisKodId: 0,
+      cikisKod: "",
+      aciklama1: "",
+      aciklama2: "",
+      aciklama3: "",
+      ozelKod1Id: 0,
+      ozelKod1: "",
+      eIrsaliye: false,
+      stokKoduId: 0,
       stokKodu: "",
       stokAdi: "",
       miktar: 0,
       istenilenMiktar: 0,
-    }));
+      fiyat: 0,
+      hucreKoduId: 0,
+      hucreKodu: "",
+    });
   }, [formData, gridData]);
-  //Silme onaylaması yapıldıktan sonra
+
   const confirmDelete = useCallback(() => {
     if (selectedItem) {
       deleteItem(selectedItem);
@@ -321,27 +294,11 @@ const App = () => {
     }
   }, [selectedItem]);
 
-  //gridden silme işlemi
   const deleteItem = useCallback(async (item: GridData) => {
     try {
-      // if (item.miktar != 0) {
-      //   await api.stokHareket.delete(item.id as number);
-      // } stoktan silmeye gerek yok, hepsini tek seferde kaydedeceğim ama daha sonra düzeltilmesi gerekiyor.
       setGridData((prevGridData) =>
-        {
-          const newGridData =  prevGridData.filter((i) => i.id !== item.id);
-
-          if (newGridData.length === 0) {
-            document.getElementById('getirButton')!.hidden = false;
-          }
-          return newGridData;
-        }
-      
+        prevGridData.filter((i) => i.id !== item.id)
       );
-
-      
-
-
       toast.current?.show({
         severity: "success",
         summary: "Başarılı",
@@ -359,106 +316,45 @@ const App = () => {
     }
   }, []);
 
-  //validasyon işlemleri
-  const validateForm = () => {
-    if (!formData.numara) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Hata",
-        detail: "Numara alanı boş olamaz",
-        life: 3000,
-      });
-      return false;
-    }
-
-    if (!formData.hareketTuru) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Hata",
-        detail: "Hareket Türü seçilmelidir",
-        life: 3000,
-      });
-      return false;
-    }
-
-    // Diğer validation kontrolleri burada yapılabilir
-
-    return true;
-  };
-
-  //bütün belgeyi backende gönderiyor.
   const handleSave = async () => {
-    if (!validateForm()) {
-      return;
-    }
     setLoading(true);
     try {
       const belgeResponse = await api.belge.create({
         belgeTip: EBelgeTip.AmbarCikisFisi,
-        no: formData.numara,
+        no: formData.seri,
         tarih: formData.tarih,
         aciklama1: formData.aciklama1,
         aciklama2: formData.aciklama2,
         aciklama3: formData.aciklama3,
-        tamamlandi: false,
       });
 
       const belgeId = belgeResponse.data.value.id;
-      !belgeResponse.data.status
-
-      if (!belgeResponse.data.status) {
-        throw new Error( (((belgeResponse.data.errors && belgeResponse.data.errors[0].Errors ) 
-        && belgeResponse.data.errors[0].Errors[0]) || "Belge oluştururken hata oldu"));
-      }
 
       const ambarFisiData: IAmbarFisi = {
         belgeId: belgeId!,
-        ambarHareketTur:formData.hareketTuru,
+        ambarHareketTur: formData.hareketTuruId,
+        cikisYeriId: formData.cikisYeriId,
         cikisYeri: formData.cikisYeri,
-        cikisYeriId:formData.cikisKoduId
       };
-      const ambarFisiResponse = await api.ambarFisi.create(ambarFisiData);
+      await api.ambarFisi.create(ambarFisiData);
 
-      if (!ambarFisiResponse.data.status) {
-        throw new Error( (((ambarFisiResponse.data.errors && ambarFisiResponse.data.errors[0].Errors ) 
-        && ambarFisiResponse.data.errors[0].Errors[0]) || "AmbarFişi oluştururken hata oldu"));
-      }
+      const stokHareketData:IStokHareket[] = gridData.map((item, index) => ({
+        belgeId: belgeId!,
+        stokKartiId: item.stokKoduId,
+        miktar: item.miktar,
+        fiyatTL: item.fiyat,
+        hucreId: item.hucreKoduId,
+        aciklama1: formData.aciklama1,
+        aciklama2: formData.aciklama2,
+        aciklama3: formData.aciklama3,
+        projeId: formData.projeKoduId,
+        uniteId: formData.uniteKoduId,
+        sira: index + 1,
+        girisCikis:"C",
+        olcuBirimId:1,
 
-      const stokHareketData: IStokHareket[] = gridData
-        .filter((item) => item.miktar > 0)
-        .map((item, index) => ({
-          belgeId: belgeId!,
-          stokKartiId: item.stokKoduId,
-          miktar: item.miktar,
-          fiyatTL: item.fiyat,
-          hucreId: item.hucreKoduId,
-          aciklama1: formData.aciklama1,
-          aciklama2: formData.aciklama2,
-          aciklama3: formData.aciklama3,
-          projeId: formData.projeKoduId,
-          uniteId: formData.uniteKoduId,
-          sira: index + 1,
-          girisCikis: "C",
-          olcuBirimId: item.olcuBrId,
-        }));
-
-      for (const stokHareket of stokHareketData) {
-        const stokHareketResponse =await api.stokHareket.create(stokHareket);
-        if (!stokHareketResponse.data.status) {
-          throw new Error( (((stokHareketResponse.data.errors && stokHareketResponse.data.errors[0].Errors ) 
-          && stokHareketResponse.data.errors[0].Errors[0]) || "StokHareket oluştururken hata oldu"));
-        }
-      }
-
-      const belgeUpdateResponse =await api.belge.update({
-        id: belgeId,
-        tamamlandi: true,
-      });
-
-      if (!belgeUpdateResponse.data.status) {
-        throw new Error( (((belgeUpdateResponse.data.errors && belgeUpdateResponse.data.errors[0].Errors ) 
-        && belgeUpdateResponse.data.errors[0].Errors[0]) || "Belge güncellenirken oluştururken hata oldu"));
-      }
+      }));
+      await api.stokHareket.create(stokHareketData);
 
       toast.current?.show({
         severity: "success",
@@ -466,11 +362,11 @@ const App = () => {
         detail: "Veriler başarıyla kaydedildi",
         life: 3000,
       });
-    } catch (error:any) {
+    } catch (error) {
       toast.current?.show({
-        severity: "error", 
+        severity: "error",
         summary: "Hata",
-        detail: error.message || "Veriler kaydedilemedi",
+        detail: "Veriler kaydedilemedi",
         life: 3000,
       });
       console.error("Error saving data:", error);
@@ -479,14 +375,12 @@ const App = () => {
     }
   };
 
-  //belge düzenleme için, belge id sini alma
   let [searchParams, _] = useSearchParams();
   const belgeId = useMemo(
     () => String(searchParams.get("belgeId")),
     [searchParams]
   );
 
-  //html içeriği
   return (
     <div className="container-fluid">
       <Toast ref={toast} />
@@ -528,7 +422,7 @@ const App = () => {
                     setDialogVisible({ ...dialogVisible, proje: false })
                   }
                   onSelect={(selectedValue) =>
-                    handleDialogSelect("projeKodu","kodu", selectedValue)
+                    handleDialogSelect("projeKodu", selectedValue)
                   }
                 />
               </div>
@@ -562,7 +456,7 @@ const App = () => {
                     setDialogVisible({ ...dialogVisible, unite: false })
                   }
                   onSelect={(selectedValue) =>
-                    handleDialogSelect("uniteKodu","kodu", selectedValue)
+                    handleDialogSelect("uniteKodu", selectedValue)
                   }
                 />
               </div>
@@ -576,7 +470,7 @@ const App = () => {
           </div>
           <div className="col-md-3 col-sm-6 mt-4">
             <div className="p-inputgroup">
-            <Button id="getirButton" label="Getir" onClick={handleGetir} />
+              <Button label="Getir" onClick={handleGetir} />
             </div>
           </div>
           <div className="col-md-3 col-sm-6 mt-4">
@@ -621,19 +515,12 @@ const App = () => {
                     <Dropdown
                       showClear
                       placeholder="Hareket Türü"
-                      value={formData.hareketTuru}
-                      options={Object.values(EAmbarHareketTur)
-                        .filter((value) => typeof value === "number")
-                        .map((value) => ({
-                          label:
-                            EAmbarHareketTur[
-                              value as keyof typeof EAmbarHareketTur
-                            ],
-                          value: value,
-                        }))}
-                      onChange={(e) =>
-                        setFormData({ ...formData, hareketTuru: e.value })
-                      }
+                      value={formData.hareketTuruId}
+                      options={Object.values(EAmbarHareketTur).map((value) => ({
+                        label: EAmbarHareketTur[Number(value)],
+                        value: value,
+                      }))}
+                      onChange={(e) => setFormData({ ...formData, hareketTuruId: e.value })}
                       style={{ width: "100%" }}
                     />
                     <label htmlFor="hareketTuru">Hareket Türü</label>
@@ -645,20 +532,7 @@ const App = () => {
                   <FloatLabel>
                     <Dropdown
                       showClear
-                      placeholder="Çıkış Yeri"
-                      value={formData.cikisYeri}
-                      options={Object.values(EAmbarFisiCikisYeri)
-                        .filter((value) => typeof value === "number")
-                        .map((value) => ({
-                          label:
-                            EAmbarFisiCikisYeri[
-                              value as keyof typeof EAmbarFisiCikisYeri
-                            ],
-                          value: value,
-                        }))}
-                      onChange={(e) =>
-                        setFormData({ ...formData, cikisYeri: e.value })
-                      }
+                      placeholder="Çıkış Yer"
                       style={{ width: "100%" }}
                     />
                     <label htmlFor="cikisYeri">Çıkış Yeri</label>
@@ -668,35 +542,35 @@ const App = () => {
 
               <div className="col-md-3 col-sm-6 mt-4">
                 <FloatLabel>
-                  <label htmlFor="cikisYeriId">Çıkış Kodu</label>
+                  <label htmlFor="cikisYeri">Çıkış Yeri</label>
                   <div className="p-inputgroup">
                     <InputText
-                      id="cikisKodu"
-                      name="cikisKodu"
-                      value={formData.cikisKodu?.toString()}
+                      id="cikisYeri"
+                      name="cikisYeri"
+                      value={formData.cikisYeri.toString()}
                       readOnly
                     />
                     <Button
                       label="..."
                       onClick={() =>
-                        setDialogVisible({ ...dialogVisible, cikisKodu: true })
+                        setDialogVisible({ ...dialogVisible, cikisYeri: true })
                       }
                     />
                     <StokRehberDialog
-                      isVisible={dialogVisible.cikisKodu}
+                      isVisible={dialogVisible.cikisYeri}
                       onHide={() =>
-                        setDialogVisible({ ...dialogVisible, cikisKodu: false })
+                        setDialogVisible({ ...dialogVisible, cikisYeri: false })
                       }
                       onSelect={(selectedValue) =>
-                        handleDialogSelect("cikisKodu","kodu", selectedValue)
+                        handleDialogSelect("cikisYeri", selectedValue)
                       }
                     />
                   </div>
                   <InputText
-                    id="cikisKoduId"
-                    name="cikisKoduId"
-                    value={formData.cikisKoduId?.toString()}
-                    //type="hidden"
+                    id="cikisYeriId"
+                    name="cikisYeriId"
+                    value={formData.cikisYeriId?.toString()}
+                    type="hidden"
                   />
                 </FloatLabel>
               </div>
@@ -772,10 +646,11 @@ const App = () => {
                 </div>
               </div>
             </div>
+            <Divider />
           </AccordionTab>
         </Accordion>
         <div className="row">
-          <div className="col-md-3 col-sm-6 mt-4">
+          <div className="col-md-2 col-sm-6 mt-4">
             <FloatLabel>
               <label htmlFor="stokKodu">Stok Kodu</label>
               <div className="p-inputgroup">
@@ -802,7 +677,7 @@ const App = () => {
                     setDialogVisible({ ...dialogVisible, stok: false })
                   }
                   onSelect={(selectedValue) => {
-                    handleDialogSelect("stokKodu","kodu", selectedValue);
+                    handleDialogSelect("stokKodu", selectedValue);
                   }}
                 />
               </div>
@@ -825,7 +700,7 @@ const App = () => {
               />
             </FloatLabel>
           </div>
-          <div className="col-md-2 col-sm-6 mt-4">
+          <div className="col-md-1 col-sm-6 mt-4">
             <FloatLabel>
               <label htmlFor="miktar">İstenilen Miktar</label>
               <InputNumber
@@ -885,7 +760,6 @@ const App = () => {
             stripedRows
             value={gridData}
             rows={100}
-            loading={loadingGetir}
             dataKey="id"
             scrollable
             scrollHeight="450px"
@@ -905,13 +779,7 @@ const App = () => {
                     className="btn btn-info ms-1"
                     onClick={() => {
                       setSelectedItem(rowData);
-                      setFormData((prevFormData) => ({
-                        ...prevFormData,
-                        stokKodu: rowData.stokKodu,
-                        stokAdi: rowData.stokAdi,
-                        miktar: rowData.miktar,
-                        istenilenMiktar: rowData.istenilenMiktar,
-                      }));
+                      setFormData(rowData);
                     }}
                   >
                     <i className="ti-pencil"></i>
@@ -935,4 +803,6 @@ const App = () => {
     </div>
   );
 };
+
 export default App;
+

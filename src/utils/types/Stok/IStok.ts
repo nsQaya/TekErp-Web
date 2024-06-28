@@ -1,3 +1,4 @@
+import { IStokOlcuBirim } from "../tanimlamalar/IStokOlcuBirim";
 import { IStokKod } from "./IStokKod";
 
 export interface IStok {
@@ -18,10 +19,13 @@ export interface IStok {
   stokKod5Id: any;
   stokKod5:IStokKod;
   stokOlcuBirim1Id: number;
+  stokOlcuBirim1:IStokOlcuBirim;
   stokOlcuBirim2Id: any;
+  stokOlcuBirim2:IStokOlcuBirim;
   olcuBr2Pay: number;
   olcuBr2Payda: number;
   stokOlcuBirim3Id: any;
+  stokOlcuBirim3:IStokOlcuBirim;
   olcuBr3Pay: number;
   olcuBr3Payda: number;
   alisDovizTipiId: number;

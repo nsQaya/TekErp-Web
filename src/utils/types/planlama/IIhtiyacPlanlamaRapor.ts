@@ -6,7 +6,8 @@ export interface IIhtiyacPlanlamaRapor {
     plasiyerKodu?:string,
     plasiyerAciklama?:string,
     mamulAdi?:string,
-    stokKodu?:string,
+    stokKoduId:number,
+    stokKodu:string,
     stokAdi?:string,
     miktar:number,
     olcuBirim?:string,
@@ -17,5 +18,7 @@ export interface IIhtiyacPlanlamaRapor {
     stokTalepMiktari:number,
     stokSiparisMiktari:number,
     toplamIhtiyac:number,
-    yuruyenBakiye:number
+    yuruyenBakiye:number,
+    olcuBrId:number,
+    olcuBr:string,
 }

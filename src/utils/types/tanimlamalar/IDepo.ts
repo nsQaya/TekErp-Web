@@ -1,7 +1,7 @@
-import { aktarimDurumu } from "../enums/aktarimDurumu";
+import { EAktarimDurumu } from "../enums/EAktarimDurumu";
 
 export interface IDepo {
   id?: number;
   kodu: string;
-  aktarimDurumu:aktarimDurumu;
+  aktarimDurumu:EAktarimDurumu;
 }

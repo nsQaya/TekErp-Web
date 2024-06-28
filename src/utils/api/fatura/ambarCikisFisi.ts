@@ -1,22 +1,15 @@
 import { AxiosInstance } from "axios";
-import { SortOrder } from "react-data-table-component";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { IAmbarFisi } from "../../types/fatura/IAmbarFisi";
+import { DynamicQuery } from "../../transformFilter";
 
 
 
 const controller="AmbarFisis";
 
 export default ($axios: AxiosInstance) => ({
-    getAllForGrid(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IAmbarFisi>>>(`/${controller}/GetListForGrid`, {
-            params: {
-                pageIndex: page,
-                pageSize: take,
-                sortColumn: sortColumn, // Sıralama sütunu
-                sortDirection: sortDirection, // Sıralama yönü
-            }
-        });
+    getAllForGrid(page: number, take: number,dynamicQuery:DynamicQuery  ){
+        return $axios.post<IBaseResponseValue<IPagedResponse<IAmbarFisi>>>(`/${controller}/GetListForGrid?PageIndex=${page}&PageSize=${take}`, dynamicQuery );
     },
     getAll(page: number, take: number){
         return $axios.get<IBaseResponseValue<IPagedResponse<IAmbarFisi>>>(`/${controller}`, {

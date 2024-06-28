@@ -1,13 +1,15 @@
-import { ambarFisiCikisYeri } from "../enums/ambarFisiCikisYeri"
-import { ambarHareketTur } from "../enums/ambarHareketTur"
+
+import { EAmbarFisiCikisYeri } from "../enums/EAmbarFisiCikisYeri"
+import { EAmbarHareketTur } from "../enums/EAmbarHareketTur"
+
 import { IBelge } from "./IBelge"
 
 export interface IAmbarFisi
 {
     id?:number,
-    belge:IBelge,
+    belge?:IBelge,
     belgeId:number,
-    ambarHareketTur:ambarHareketTur,
-    cikisYeri:ambarFisiCikisYeri,
+    ambarHareketTur:EAmbarHareketTur,
+    cikisYeri:EAmbarFisiCikisYeri,
     cikisYeriId:number
 }

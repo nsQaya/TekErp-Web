@@ -1,4 +1,4 @@
-export enum ambarFisiCikisYeri{
+export enum EAmbarFisiCikisYeri{
     MasrafMerkezi=0,
     StokKodu=1,
     AnaMamulGrubu=2,

@@ -1,20 +1,21 @@
 import { AxiosInstance } from "axios";
-import { SortOrder } from "react-data-table-component";
-import { IStokHareket } from "../types/stok/IStokHareket";
+import { IStokHareket } from "../types/fatura/IStokHareket";
 import { IBaseResponseValue, IPagedResponse } from "../types";
+import { DynamicQuery } from "../transformFilter";
 
 
 
-const controller="stokHareket";
+const controller="stokHarekets";
 
 export default ($axios: AxiosInstance) => ({
-    getAll(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
+    getAllForGrid(page: number, take: number,dynamicQuery:DynamicQuery  ){
+        return $axios.post<IBaseResponseValue<IPagedResponse<IStokHareket>>>(`/${controller}/GetListForGrid?PageIndex=${page}&PageSize=${take}`, dynamicQuery );
+    },
+    getAll(page: number, take: number){
         return $axios.get<IBaseResponseValue<IPagedResponse<IStokHareket>>>(`/${controller}`, {
             params: {
                 pageIndex: page,
-                pageSize: take,
-                sortColumn: sortColumn, // Sıralama sütunu
-                sortDirection: sortDirection, // Sıralama yönü
+                pageSize: take
             }
         });
     },

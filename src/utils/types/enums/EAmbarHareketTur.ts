@@ -1,4 +1,4 @@
-export enum ambarHareketTur{
+export enum EAmbarHareketTur{
     Devir=0,
     Depolar=1,
     Uretim=2,

@@ -1,8 +1,9 @@
-import { aktarimDurumu } from "../enums/aktarimDurumu";
+import { EAktarimDurumu } from "../enums/EAktarimDurumu";
+
 
 export interface IProje {
   id?: number;
   kodu: string;
   aciklama: string;
-  aktarimDurumu:aktarimDurumu;
+  aktarimDurumu:EAktarimDurumu;
 }

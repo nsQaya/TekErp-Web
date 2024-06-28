@@ -107,13 +107,7 @@ export default () => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Data Export</h4>
-              <h6 className="card-subtitle">
-                Export data to Copy, CSV, Excel, PDF & Print
-              </h6>
-
               <div className="table-responsive m-t-50">
-
                 <AppTable
                   baseApi={api.ulke}
                   columns={columns}

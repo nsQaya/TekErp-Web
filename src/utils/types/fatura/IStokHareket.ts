@@ -1,19 +1,19 @@
 export interface IStokHareket {
-    belgeId?:number;
-    stokKartiId?:number;
+    belgeId:number;
+    stokKartiId:number;
     miktar:number;
     fiyatTL?:number;
     fiyatDoviz?:number;
     fiyatDovizTipId?:number;
-    olcuBirimId?:number;
+    olcuBirimId:number;
     hucreId?:number;
-    girisCikis?:string;
+    girisCikis:string;
     aciklama1?:string;
     aciklama2?:string;
     aciklama3?:string;
     projeId?:number;
     uniteId?:number;
     masrafStokKartiId?:number;
-    sira?:number;
+    sira:number;
     seriKodu?:string;
 }

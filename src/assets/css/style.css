@@ -21746,3 +21746,30 @@ File: scss
     .custom-modal .modal-dialog {
       max-width: 1200px; 
     }
+
+
+    .row-acik-yesil {
+      background-color: #01c0c8;
+      color: white;
+    }
+    
+    .row-mavi {
+      background-color: #03a9f3;
+      color: white;
+    }
+    
+    .row-kirmizi {
+      background-color: #e46a76;
+      color: white;
+    }
+    
+    .row-sari {
+      background-color: #f1c40f;
+      color: white;
+    }
+    
+    .row-koyu-yesil {
+      background-color: #00c292;
+      color: white;
+    }
+    

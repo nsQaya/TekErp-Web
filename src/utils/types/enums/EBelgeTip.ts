@@ -1,4 +1,4 @@
-export enum belgeTip{
+export enum EBelgeTip{
     StokKarti=100,
     StokGrupKodu=101,
     StokKod1=102,

@@ -7,5 +7,10 @@ export default {
     endsWith: "Biten",
     equals: "Eşit",
     notEquals: "Eşit Olmayan",
-    noFilter: "Filtresiz"
+    noFilter: "Filtresiz",
+    dateIs:"Eşit",
+    dateIsNot:"Eşit Olmayan",
+    dateBefore:"Önce",
+    dateAfter:"Sonra",
+    dateFormat:"yyyy/MM/dd"
 } as LocaleOptions

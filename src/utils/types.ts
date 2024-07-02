@@ -44,6 +44,7 @@ export interface ICrudBaseAPI<T>{
   // getAll: (page: number, take: number)=> Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>
   getAllForGrid(page: number, take: number, dynamicQuery:DynamicQuery): Promise<{ data: { value: { items: T[], count: number } } }>;
   getAll(page: number, take: number): Promise<{ data: { value: { items: T[], count: number } } }>;
+  getListByBelgeId(id: number): Promise<{ data: { value: { items: T[], count: number } } }>;
   get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   getByKod: (id: string) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   create: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>

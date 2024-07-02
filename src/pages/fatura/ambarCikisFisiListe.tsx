@@ -31,15 +31,17 @@ export default () => {
       header: "Belge No",
       sortable: true,
       filter: true
+      
     },
     {
       header: "Tarih",
       field: "belge.tarih",
-      sortable: false,
+      dataType:"date",
+      sortable: true,
       filter: true,
       body: (row: IAmbarFisi) =>
-        row.belge.tarih
-          ? new Date(row.belge.tarih).toLocaleDateString("tr-TR", {
+        row.belge!.tarih
+          ? new Date(row.belge!.tarih).toLocaleDateString("tr-TR", {
               day: "2-digit",
               month: "2-digit",
               year: "numeric",

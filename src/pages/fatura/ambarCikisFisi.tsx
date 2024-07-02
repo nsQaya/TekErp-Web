@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { DataTable } from "primereact/datatable";
@@ -23,8 +29,6 @@ import { EBelgeTip } from "../../utils/types/enums/EBelgeTip";
 import { IAmbarFisi } from "../../utils/types/fatura/IAmbarFisi";
 import { IStokHareket } from "../../utils/types/fatura/IStokHareket";
 
-
-
 // Form verileri için bir tip tanımı
 type FormData = {
   seri?: string;
@@ -33,8 +37,8 @@ type FormData = {
   hareketTuru: EAmbarHareketTur;
   cikisYeri: number;
 
-  cikisKoduId:number;
-  cikisKodu:string;
+  cikisYeriId: number;
+  cikisYeriKodu: string;
 
   aciklama1?: string;
   aciklama2?: string;
@@ -55,8 +59,8 @@ type FormData = {
   hucreKoduId?: number;
   hucreKodu?: string;
   bakiye?: number;
-  olcuBrId:number;
-  olcuBr:string;
+  olcuBrId: number;
+  olcuBr: string;
 };
 
 // Grid verileri için bir tip tanımı
@@ -71,8 +75,8 @@ type GridData = {
   hucreKoduId?: number;
   hucreKodu?: string;
   bakiye?: number;
-  olcuBrId:number;
-  olcuBr:string;
+  olcuBrId: number;
+  olcuBr: string;
 };
 
 const App = () => {
@@ -85,8 +89,8 @@ const App = () => {
     hareketTuru: EAmbarHareketTur.Devir,
     cikisYeri: EAmbarFisiCikisYeri.StokKodu,
 
-    cikisKodu:"",
-    cikisKoduId: 0,
+    cikisYeriKodu: "",
+    cikisYeriId: 0,
     aciklama1: "",
     aciklama2: "",
     aciklama3: "",
@@ -105,15 +109,15 @@ const App = () => {
     fiyat: 0,
     hucreKoduId: 0,
     hucreKodu: "",
-    olcuBrId:0,
-    olcuBr:""
+    olcuBrId: 0,
+    olcuBr: "",
   });
 
   const [dialogVisible, setDialogVisible] = useState({
     proje: false,
     unite: false,
     stok: false,
-    cikisKodu: false,
+    cikisKoduDialog: false,
   });
 
   const [gridData, setGridData] = useState<GridData[]>([]);
@@ -122,6 +126,15 @@ const App = () => {
   const [selectedItem, setSelectedItem] = useState<GridData | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingGetir, setLoadingGetir] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  //belge düzenleme için, belge id sini alma
+  const belgeId = useMemo(
+    () => Number(searchParams.get("belgeId")),
+    [searchParams]
+  );
+
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -153,8 +166,8 @@ const App = () => {
           setFormData((prevFormData) => ({
             ...prevFormData,
             stokAdi: response.data.value.adi!,
-            olcuBrId:response.data.value.stokOlcuBirim1Id,
-            olcuBr:response.data.value.stokOlcuBirim1.simge,
+            olcuBrId: response.data.value.stokOlcuBirim1Id,
+            olcuBr: response.data.value.stokOlcuBirim1.simge,
             miktar: alreadyHasgMiktar!,
             istenilenMiktar: alreadyHasgIstenilenMiktar!,
           }));
@@ -175,12 +188,16 @@ const App = () => {
 
   //rehber işlemleri
   const handleDialogSelect = useCallback(
-    (fieldName: string, dialogFieldName:string, selectedValue: {Id:any,[key:string]:any}) => {
+    (
+      fieldName: string,
+      dialogFieldName: string,
+      selectedValue: { Id: any; [key: string]: any }
+    ) => {
       setFormData((prevFormData) => {
-        const newFormData = { 
-          ...prevFormData, 
-          [fieldName]: selectedValue[dialogFieldName] ,
-          [`${fieldName}Id`]:selectedValue.Id
+        const newFormData = {
+          ...prevFormData,
+          [fieldName]: selectedValue[dialogFieldName],
+          [`${fieldName}Id`]: selectedValue.Id,
         };
         if (fieldName === "stokKodu") {
           handleKeyPress(selectedValue[fieldName]);
@@ -210,7 +227,6 @@ const App = () => {
         dynamicQuery
       );
 
-
       const data = response.data.value;
       const maxId =
         gridData.length > 0 ? Math.max(...gridData.map((item) => item.id)) : 0;
@@ -225,14 +241,14 @@ const App = () => {
         miktar: 0,
         istenilenMiktar: item.miktar,
         bakiye: item.bakiye,
-        olcuBrId:item.olcuBrId,
-        olcuBr:item.olcuBr
+        olcuBrId: item.olcuBrId,
+        olcuBr: item.olcuBr,
       }));
 
       setGridData(newGridData);
     } catch (error) {
       console.error(error);
-    }finally{
+    } finally {
       setLoadingGetir(false);
     }
   };
@@ -288,13 +304,13 @@ const App = () => {
         miktar: formData.miktar,
         istenilenMiktar: 0,
         bakiye: 0,
-        olcuBrId:formData.olcuBrId,
-        olcuBr:formData.olcuBr
+        olcuBrId: formData.olcuBrId,
+        olcuBr: formData.olcuBr,
       };
       setGridData((prevGridData) => [...prevGridData, newGridData]);
     }
 
-    document.getElementById('getirButton')!.hidden = true;
+    document.getElementById("getirButton")!.hidden = true;
     // var {data} =  await api.stokHareket.create({
     //   kod: formData.stokKodu,
     //   miktar: formData.miktar,
@@ -306,7 +322,7 @@ const App = () => {
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      stokKoduId:0,
+      stokKoduId: 0,
       stokKodu: "",
       stokAdi: "",
       miktar: 0,
@@ -327,20 +343,14 @@ const App = () => {
       // if (item.miktar != 0) {
       //   await api.stokHareket.delete(item.id as number);
       // } stoktan silmeye gerek yok, hepsini tek seferde kaydedeceğim ama daha sonra düzeltilmesi gerekiyor.
-      setGridData((prevGridData) =>
-        {
-          const newGridData =  prevGridData.filter((i) => i.id !== item.id);
+      setGridData((prevGridData) => {
+        const newGridData = prevGridData.filter((i) => i.id !== item.id);
 
-          if (newGridData.length === 0) {
-            document.getElementById('getirButton')!.hidden = false;
-          }
-          return newGridData;
+        if (newGridData.length === 0) {
+          document.getElementById("getirButton")!.hidden = false;
         }
-      
-      );
-
-      
-
+        return newGridData;
+      });
 
       toast.current?.show({
         severity: "success",
@@ -404,24 +414,32 @@ const App = () => {
       });
 
       const belgeId = belgeResponse.data.value.id;
-      !belgeResponse.data.status
+      !belgeResponse.data.status;
 
       if (!belgeResponse.data.status) {
-        throw new Error( (((belgeResponse.data.errors && belgeResponse.data.errors[0].Errors ) 
-        && belgeResponse.data.errors[0].Errors[0]) || "Belge oluştururken hata oldu"));
+        throw new Error(
+          (belgeResponse.data.errors &&
+            belgeResponse.data.errors[0].Errors &&
+            belgeResponse.data.errors[0].Errors[0]) ||
+            "Belge oluştururken hata oldu"
+        );
       }
 
       const ambarFisiData: IAmbarFisi = {
         belgeId: belgeId!,
-        ambarHareketTur:formData.hareketTuru,
+        ambarHareketTur: formData.hareketTuru,
         cikisYeri: formData.cikisYeri,
-        cikisYeriId:formData.cikisKoduId
+        cikisYeriId: formData.cikisYeriId,
       };
       const ambarFisiResponse = await api.ambarFisi.create(ambarFisiData);
 
       if (!ambarFisiResponse.data.status) {
-        throw new Error( (((ambarFisiResponse.data.errors && ambarFisiResponse.data.errors[0].Errors ) 
-        && ambarFisiResponse.data.errors[0].Errors[0]) || "AmbarFişi oluştururken hata oldu"));
+        throw new Error(
+          (ambarFisiResponse.data.errors &&
+            ambarFisiResponse.data.errors[0].Errors &&
+            ambarFisiResponse.data.errors[0].Errors[0]) ||
+            "AmbarFişi oluştururken hata oldu"
+        );
       }
 
       const stokHareketData: IStokHareket[] = gridData
@@ -443,21 +461,29 @@ const App = () => {
         }));
 
       for (const stokHareket of stokHareketData) {
-        const stokHareketResponse =await api.stokHareket.create(stokHareket);
+        const stokHareketResponse = await api.stokHareket.create(stokHareket);
         if (!stokHareketResponse.data.status) {
-          throw new Error( (((stokHareketResponse.data.errors && stokHareketResponse.data.errors[0].Errors ) 
-          && stokHareketResponse.data.errors[0].Errors[0]) || "StokHareket oluştururken hata oldu"));
+          throw new Error(
+            (stokHareketResponse.data.errors &&
+              stokHareketResponse.data.errors[0].Errors &&
+              stokHareketResponse.data.errors[0].Errors[0]) ||
+              "StokHareket oluştururken hata oldu"
+          );
         }
       }
 
-      const belgeUpdateResponse =await api.belge.update({
+      const belgeUpdateResponse = await api.belge.update({
         id: belgeId,
         tamamlandi: true,
       });
 
       if (!belgeUpdateResponse.data.status) {
-        throw new Error( (((belgeUpdateResponse.data.errors && belgeUpdateResponse.data.errors[0].Errors ) 
-        && belgeUpdateResponse.data.errors[0].Errors[0]) || "Belge güncellenirken oluştururken hata oldu"));
+        throw new Error(
+          (belgeUpdateResponse.data.errors &&
+            belgeUpdateResponse.data.errors[0].Errors &&
+            belgeUpdateResponse.data.errors[0].Errors[0]) ||
+            "Belge güncellenirken oluştururken hata oldu"
+        );
       }
 
       toast.current?.show({
@@ -466,9 +492,9 @@ const App = () => {
         detail: "Veriler başarıyla kaydedildi",
         life: 3000,
       });
-    } catch (error:any) {
+    } catch (error: any) {
       toast.current?.show({
-        severity: "error", 
+        severity: "error",
         summary: "Hata",
         detail: error.message || "Veriler kaydedilemedi",
         life: 3000,
@@ -478,13 +504,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
-  //belge düzenleme için, belge id sini alma
-  let [searchParams, _] = useSearchParams();
-  const belgeId = useMemo(
-    () => String(searchParams.get("belgeId")),
-    [searchParams]
-  );
 
   //html içeriği
   return (
@@ -528,7 +547,7 @@ const App = () => {
                     setDialogVisible({ ...dialogVisible, proje: false })
                   }
                   onSelect={(selectedValue) =>
-                    handleDialogSelect("projeKodu","kodu", selectedValue)
+                    handleDialogSelect("projeKodu", "kodu", selectedValue)
                   }
                 />
               </div>
@@ -562,7 +581,7 @@ const App = () => {
                     setDialogVisible({ ...dialogVisible, unite: false })
                   }
                   onSelect={(selectedValue) =>
-                    handleDialogSelect("uniteKodu","kodu", selectedValue)
+                    handleDialogSelect("uniteKodu", "kodu", selectedValue)
                   }
                 />
               </div>
@@ -576,7 +595,7 @@ const App = () => {
           </div>
           <div className="col-md-3 col-sm-6 mt-4">
             <div className="p-inputgroup">
-            <Button id="getirButton" label="Getir" onClick={handleGetir} />
+              <Button id="getirButton" label="Getir" onClick={handleGetir} />
             </div>
           </div>
           <div className="col-md-3 col-sm-6 mt-4">
@@ -668,34 +687,34 @@ const App = () => {
 
               <div className="col-md-3 col-sm-6 mt-4">
                 <FloatLabel>
-                  <label htmlFor="cikisYeriId">Çıkış Kodu</label>
+                  <label htmlFor="cikisYeriId">Çıkış Yeri Kodu</label>
                   <div className="p-inputgroup">
                     <InputText
-                      id="cikisKodu"
-                      name="cikisKodu"
-                      value={formData.cikisKodu?.toString()}
+                      id="cikisYeriKodu"
+                      name="cikisYeriKodu"
+                      value={formData.cikisYeriKodu?.toString()}
                       readOnly
                     />
                     <Button
                       label="..."
                       onClick={() =>
-                        setDialogVisible({ ...dialogVisible, cikisKodu: true })
+                        setDialogVisible({ ...dialogVisible, cikisKoduDialog: true })
                       }
                     />
                     <StokRehberDialog
-                      isVisible={dialogVisible.cikisKodu}
+                      isVisible={dialogVisible.cikisKoduDialog}
                       onHide={() =>
-                        setDialogVisible({ ...dialogVisible, cikisKodu: false })
+                        setDialogVisible({ ...dialogVisible, cikisKoduDialog: false })
                       }
                       onSelect={(selectedValue) =>
-                        handleDialogSelect("cikisKodu","kodu", selectedValue)
+                        handleDialogSelect("cikisYeriKodu", "kodu", selectedValue)
                       }
                     />
                   </div>
                   <InputText
-                    id="cikisKoduId"
-                    name="cikisKoduId"
-                    value={formData.cikisKoduId?.toString()}
+                    id="cikisYeriId"
+                    name="cikisYeriId"
+                    value={formData.cikisYeriId?.toString()}
                     //type="hidden"
                   />
                 </FloatLabel>
@@ -802,7 +821,7 @@ const App = () => {
                     setDialogVisible({ ...dialogVisible, stok: false })
                   }
                   onSelect={(selectedValue) => {
-                    handleDialogSelect("stokKodu","kodu", selectedValue);
+                    handleDialogSelect("stokKodu", "kodu", selectedValue);
                   }}
                 />
               </div>

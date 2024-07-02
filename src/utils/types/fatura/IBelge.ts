@@ -5,6 +5,7 @@ import { EBelgeTip } from "../enums/EBelgeTip";
 export  interface IBelge{
     id?:number,
     belgeTip:EBelgeTip,
+    seri:string,
     no:string,
     tarih:Date,
     aciklama1?:string,

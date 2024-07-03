@@ -58,8 +58,8 @@ type FormDataDetay = {
   miktar: number;
   istenilenMiktar?: number;
   fiyat?: number;
-  hucreKoduId?: number;
-  hucreKodu?: string;
+  hucreKoduId: number;
+  hucreKodu: string;
   bakiye?: number;
   olcuBrId: number;
   olcuBr: string;
@@ -83,7 +83,7 @@ type GridData = {
 
 const App = () => {
   const currentDate = new Date();
-  currentDate.setHours(3,0,0,0);
+  currentDate.setHours(3, 0, 0, 0);
 
   const [formDataBaslik, setFormDataBaslik] = useState<FormDataBaslik>({
     seri: "",
@@ -135,6 +135,22 @@ const App = () => {
     { label: string; value: string }[]
   >([]);
 
+  const formDataBaslikRef = useRef(formDataBaslik);
+  const formDataDetayRef = useRef(formDataDetay);
+  const gridDataRef = useRef(gridData);
+
+  useEffect(() => {
+    formDataBaslikRef.current = formDataBaslik;
+  }, [formDataBaslik]);
+
+  useEffect(() => {
+    formDataDetayRef.current = formDataDetay;
+  }, [formDataDetay]);
+
+  useEffect(() => {
+    gridDataRef.current = gridData;
+  }, [gridData]);
+
   useEffect(() => {
     const fetchSeriOptions = async () => {
       try {
@@ -154,22 +170,43 @@ const App = () => {
     fetchSeriOptions();
   }, []);
 
-  const handleSeriChange = async (e: { value: any }) => {
+  const setFormDataBaslikAndRef = (update:any) => {
+    setFormDataBaslik((prev) => {
+      const updatedFormData = typeof update === "function" ? update(prev) : update;
+      formDataBaslikRef.current = updatedFormData;
+      return updatedFormData;
+    });
+  };
+
+  const setFormDataDetayAndRef = (update:any) => {
+    setFormDataDetay((prev) => {
+      const updatedFormData = typeof update === "function" ? update(prev) : update;
+      formDataDetayRef.current = updatedFormData;
+      return updatedFormData;
+    });
+  };
+
+  const setGridDataAndRef = (update:any) => {
+    setGridData((prev) => {
+      const updatedGridData = typeof update === "function" ? update(prev) : update;
+      gridDataRef.current = updatedGridData;
+      return updatedGridData;
+    });
+  };
+
+  const handleSeriChange = async (e: { value: any; }) => {
     const selectedSeri = e.value;
-    setFormDataBaslik((prevFormDataBaslik) => ({
+    setFormDataBaslikAndRef((prevFormDataBaslik: any) => ({
       ...prevFormDataBaslik,
       seri: selectedSeri,
-      numara:"",
+      numara: "",
     }));
 
     if (selectedSeri) {
       try {
-        const response = await api.belgeNo.getBySeri(
-          selectedSeri,
-          EBelgeTip.AmbarCikisFisi
-        );
+        const response = await api.belgeNo.getBySeri(selectedSeri, EBelgeTip.AmbarCikisFisi);
         if (response.data.status) {
-          setFormDataBaslik((prevFormDataBaslik) => ({
+          setFormDataBaslikAndRef((prevFormDataBaslik: any) => ({
             ...prevFormDataBaslik,
             numara: response.data.value.belgeNo,
           }));
@@ -180,15 +217,11 @@ const App = () => {
         console.error("Error fetching data:", error);
       }
     }
-
   };
 
   const [searchParams] = useSearchParams();
   //belge düzenleme için, belge id sini alma
-  const belgeId = useMemo(
-    () => Number(searchParams.get("belgeId")),
-    [searchParams]
-  );
+  const belgeId = useMemo(() => Number(searchParams.get("belgeId")), [searchParams]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -197,7 +230,7 @@ const App = () => {
         if (response.data.status) {
           const ambarFisi = response.data.value;
           const belge = ambarFisi.belge!;
-          setFormDataBaslik({
+          setFormDataBaslikAndRef({
             seri: belge.seri,
             numara: belge.no,
             tarih: currentDate,
@@ -212,28 +245,25 @@ const App = () => {
 
           const gridResponse = await api.stokHareket.getListByBelgeId(belgeId);
           if (gridResponse.data.value) {
-            setGridData(
-              gridResponse.data.value.items.map(
-                (item: IStokHareket, index: number) => ({
-                  id: item.id,
-                  stokKartiId: item.stokKartiId,
-                  stokKodu: item.stokKarti!.kodu,
-                  stokAdi: item.stokKarti!.adi,
-                  miktar: item.miktar,
-                  istenilenMiktar: item.istenilenMiktar,
-                  fiyat: item.fiyatTL,
-                  hucreKoduId: item.hucreId,
-                  hucreKodu: item.hucre?.kodu,
-                  bakiye: item.bakiye,
-                  olcuBirimId: item.olcuBirimId,
-                  olcuBr: item.olcuBirim?.simge,
-                })
-              )
+            setGridDataAndRef(
+              gridResponse.data.value.items.map((item: IStokHareket, index: number) => ({
+                id: item.id,
+                stokKartiId: item.stokKartiId,
+                stokKodu: item.stokKarti!.kodu,
+                stokAdi: item.stokKarti!.adi,
+                miktar: item.miktar,
+                istenilenMiktar: item.istenilenMiktar,
+                fiyat: item.fiyatTL,
+                hucreKoduId: item.hucreId,
+                hucreKodu: item.hucre?.kodu,
+                bakiye: item.bakiye,
+                olcuBirimId: item.olcuBirimId,
+                olcuBr: item.olcuBirim?.simge,
+              }))
             );
 
             //Herhangi bir stoktan veri almak için
-
-            setFormDataDetay({
+            setFormDataDetayAndRef({
               projeKoduId: gridResponse.data.value.items[0].projeId,
               projeKodu: gridResponse.data.value.items[0].proje?.kodu,
               uniteKoduId: gridResponse.data.value.items[0].uniteId,
@@ -259,20 +289,20 @@ const App = () => {
 
   const handleInputChangeBaslik = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormDataBaslik({ ...formDataBaslik, [name]: value });
+    setFormDataBaslikAndRef({ ...formDataBaslikRef.current, [name]: value });
   };
 
   const handleInputChangeDetay = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormDataDetay({ ...formDataDetay, [name]: value });
+    setFormDataDetayAndRef({ ...formDataDetayRef.current, [name]: value });
   };
   const miktarRef = useRef<any>(null);
 
   //stok getirme, gridden stok düzeltme, stok kodu okutunca bilgilerini getirme işlemleri
   const handleKeyPress = useCallback(async (stokKodu: string) => {
-    setFormDataDetay((prevFormData) => ({
+    setFormDataDetayAndRef((prevFormData: any) => ({
       ...prevFormData,
-      stokKodu:stokKodu,
+      stokKodu: stokKodu,
       stokAdi: "",
     }));
 
@@ -284,13 +314,13 @@ const App = () => {
           response.data.value.adi &&
           response.data.value.kodu === stokKodu
         ) {
-          const alreadyHas = gridData.find((x) => x.stokKodu == stokKodu);
+          const alreadyHas = gridDataRef.current.find((x) => x.stokKodu == stokKodu);
           const alreadyHasgMiktar = alreadyHas ? alreadyHas.miktar : 0;
           const alreadyHasgIstenilenMiktar = alreadyHas
             ? alreadyHas.istenilenMiktar
             : 0;
 
-          setFormDataDetay((prevFormData) => ({
+          setFormDataDetayAndRef((prevFormData: any) => ({
             ...prevFormData,
             stokAdi: response.data.value.adi!,
             olcuBrId: response.data.value.stokOlcuBirim1Id,
@@ -320,7 +350,7 @@ const App = () => {
       dialogFieldName: string,
       selectedValue: { Id: any; [key: string]: any }
     ) => {
-      setFormDataBaslik((prevFormData) => {
+      setFormDataBaslikAndRef((prevFormData: any) => {
         const newFormData = {
           ...prevFormData,
           [fieldName]: selectedValue[dialogFieldName],
@@ -331,7 +361,7 @@ const App = () => {
         }
         return newFormData;
       });
-      setFormDataDetay((prevFormData) => {
+      setFormDataDetayAndRef((prevFormData: any) => {
         const newFormData = {
           ...prevFormData,
           [fieldName]: selectedValue[dialogFieldName],
@@ -351,8 +381,8 @@ const App = () => {
     const sortDirection = 1;
 
     const filters = {
-      projeKodu: { value: formDataDetay.projeKodu, matchMode: "equals" },
-      plasiyerKodu: { value: formDataDetay.uniteKodu, matchMode: "equals" },
+      projeKodu: { value: formDataDetayRef.current.projeKodu, matchMode: "equals" },
+      plasiyerKodu: { value: formDataDetayRef.current.uniteKodu, matchMode: "equals" },
       miktar: { value: "0", matchMode: "gt" },
     };
     const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
@@ -366,7 +396,9 @@ const App = () => {
 
       const data = response.data.value;
       const maxId =
-        gridData.length > 0 ? Math.max(...gridData.map((item) => item.id!)) : 0;
+        gridDataRef.current.length > 0
+          ? Math.max(...gridDataRef.current.map((item) => item.id!))
+          : 0;
       const newGridData: GridData[] = data.items.map((item, index) => ({
         id: maxId + index + 1,
         projeKodu: item.projeKodu,
@@ -376,14 +408,14 @@ const App = () => {
         stokKodu: item.stokKodu,
         stokAdi: item.stokAdi,
         miktar: 0,
-        fiyat:0,
+        fiyat: 0,
         istenilenMiktar: item.miktar,
         bakiye: item.bakiye,
         olcuBirimId: item.olcuBirimId,
         olcuBr: item.olcuBr,
       }));
 
-      setGridData(newGridData);
+      setGridDataAndRef(newGridData);
     } catch (error) {
       console.error(error);
     } finally {
@@ -392,10 +424,10 @@ const App = () => {
   };
 
   //gride doldurma işlemleri
-  const handleAddToGrid = useCallback( () => {
-    const nStoK = formDataDetay.stokKodu;
+  const handleAddToGrid = useCallback(() => {
+    const nStoK = formDataDetayRef.current.stokKodu;
 
-    if (!nStoK || formDataDetay.miktar === 0) {
+    if (!nStoK || formDataDetayRef.current.miktar === 0) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
@@ -405,10 +437,10 @@ const App = () => {
       return;
     }
 
-    const alreadyHas = gridData.find((x) => x.stokKodu == nStoK);
+    const alreadyHas = gridDataRef.current.find((x) => x.stokKodu == nStoK);
 
     if (alreadyHas) {
-      if (Number(formDataDetay.miktar) > Number(alreadyHas.istenilenMiktar)) {
+      if (Number(formDataDetayRef.current.miktar) > Number(alreadyHas.istenilenMiktar)) {
         toast.current?.show({
           severity: "error",
           summary: "Hata",
@@ -418,38 +450,40 @@ const App = () => {
         return;
       }
 
-      setGridData((prevGridData) =>
+      setGridDataAndRef((prevGridData: any[]) =>
         prevGridData.map((item) =>
           item.stokKodu === nStoK
             ? {
                 ...item,
-                miktar: formDataDetay.miktar!,
+                miktar: formDataDetayRef.current.miktar!,
               }
             : item
         )
       );
     } else {
       const maxId =
-        gridData.length > 0 ? Math.max(...gridData.map((item) => item.id!)) : 0;
+        gridDataRef.current.length > 0
+          ? Math.max(...gridDataRef.current.map((item) => item.id!))
+          : 0;
 
       const newGridData: GridData = {
         id: maxId + 1,
-        stokKartiId: formDataDetay.stokKartiId,
-        stokKodu: formDataDetay.stokKodu,
-        stokAdi: formDataDetay.stokAdi,
-        miktar: formDataDetay.miktar,
+        stokKartiId: formDataDetayRef.current.stokKartiId,
+        stokKodu: formDataDetayRef.current.stokKodu,
+        stokAdi: formDataDetayRef.current.stokAdi,
+        miktar: formDataDetayRef.current.miktar,
         istenilenMiktar: 0,
-        fiyat:0,
+        fiyat: 0,
         bakiye: 0,
-        olcuBirimId: formDataDetay.olcuBrId,
-        olcuBr: formDataDetay.olcuBr,
+        olcuBirimId: formDataDetayRef.current.olcuBrId,
+        olcuBr: formDataDetayRef.current.olcuBr,
       };
-      setGridData((prevGridData) => [...prevGridData, newGridData]);
+      setGridDataAndRef((prevGridData: any) => [...prevGridData, newGridData]);
     }
 
     document.getElementById("getirButton")!.hidden = true;
 
-    setFormDataDetay((prevFormData) => ({
+    setFormDataDetayAndRef((prevFormData: any) => ({
       ...prevFormData,
       stokKartiId: 0,
       stokKodu: "",
@@ -457,7 +491,8 @@ const App = () => {
       miktar: 0,
       istenilenMiktar: 0,
     }));
-  }, [formDataDetay, gridData]);
+  }, []);
+
   //Silme onaylaması yapıldıktan sonra
   const confirmDelete = useCallback(() => {
     if (selectedItem) {
@@ -467,12 +502,9 @@ const App = () => {
   }, [selectedItem]);
 
   //gridden silme işlemi
-  const deleteItem = useCallback( (item: GridData) => {
+  const deleteItem = useCallback((item: GridData) => {
     try {
-      // if (item.miktar != 0) {
-      //   await api.stokHareket.delete(item.id as number);
-      // } stoktan silmeye gerek yok, hepsini tek seferde kaydedeceğim ama daha sonra düzeltilmesi gerekiyor.
-      setGridData((prevGridData) => {
+      setGridDataAndRef((prevGridData: any[]) => {
         const newGridData = prevGridData.filter((i) => i.id !== item.id);
 
         if (newGridData.length === 0) {
@@ -500,7 +532,7 @@ const App = () => {
 
   //validasyon işlemleri
   const validateForm = () => {
-    if (!formDataBaslik.numara) {
+    if (!formDataBaslikRef.current.numara) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
@@ -510,7 +542,7 @@ const App = () => {
       return false;
     }
 
-    if (!formDataBaslik.hareketTuru) {
+    if (!formDataBaslikRef.current.hareketTuru) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
@@ -531,11 +563,11 @@ const App = () => {
     try {
       const belgeResponse = await api.belge.create({
         belgeTip: EBelgeTip.AmbarCikisFisi,
-        no: formDataBaslik.seri+formDataBaslik.numara,
-        tarih: formDataBaslik.tarih,
-        aciklama1: formDataBaslik.aciklama1,
-        aciklama2: formDataBaslik.aciklama2,
-        aciklama3: formDataBaslik.aciklama3,
+        no: formDataBaslikRef.current.seri + formDataBaslikRef.current.numara,
+        tarih: formDataBaslikRef.current.tarih,
+        aciklama1: formDataBaslikRef.current.aciklama1,
+        aciklama2: formDataBaslikRef.current.aciklama2,
+        aciklama3: formDataBaslikRef.current.aciklama3,
         tamamlandi: false,
       });
 
@@ -554,9 +586,9 @@ const App = () => {
 
       const ambarFisiData: IAmbarFisi = {
         belgeId: belgeId!,
-        ambarHareketTur: formDataBaslik.hareketTuru,
-        cikisYeri: formDataBaslik.cikisYeri,
-        cikisYeriId: formDataBaslik.cikisYeriKoduId,
+        ambarHareketTur: formDataBaslikRef.current.hareketTuru,
+        cikisYeri: formDataBaslikRef.current.cikisYeri,
+        cikisYeriId: formDataBaslikRef.current.cikisYeriKoduId,
       };
       const ambarFisiResponse = await api.ambarFisi.create(ambarFisiData);
 
@@ -570,21 +602,21 @@ const App = () => {
         );
       }
 
-      const stokHareketData: IStokHareket[] = gridData
+      const stokHareketData: IStokHareket[] = gridDataRef.current
         .filter((item) => item.miktar > 0)
         .map((item, index) => ({
           belgeId: belgeId!,
           stokKartiId: item.stokKartiId,
-          masrafStokKartiId:formDataBaslik.cikisYeriKoduId,
+          masrafStokKartiId: formDataBaslikRef.current.cikisYeriKoduId,
           miktar: item.miktar,
-          istenilenMiktar:0,
+          istenilenMiktar: 0,
           fiyatTL: item.fiyat,
           hucreId: item.hucreKoduId,
-          aciklama1: formDataBaslik.aciklama1,
-          aciklama2: formDataBaslik.aciklama2,
-          aciklama3: formDataBaslik.aciklama3,
-          projeId: formDataDetay.projeKoduId,
-          uniteId: formDataDetay.uniteKoduId,
+          aciklama1: formDataBaslikRef.current.aciklama1,
+          aciklama2: formDataBaslikRef.current.aciklama2,
+          aciklama3: formDataBaslikRef.current.aciklama3,
+          projeId: formDataDetayRef.current.projeKoduId,
+          uniteId: formDataDetayRef.current.uniteKoduId,
           sira: index + 1,
           girisCikis: "C",
           olcuBirimId: item.olcuBirimId,
@@ -790,8 +822,8 @@ const App = () => {
                           value: value,
                         }))}
                       onChange={(e) =>
-                        setFormDataBaslik({
-                          ...formDataBaslik,
+                        setFormDataBaslikAndRef({
+                          ...formDataBaslikRef.current,
                           hareketTuru: e.value,
                         })
                       }
@@ -818,8 +850,8 @@ const App = () => {
                           value: value,
                         }))}
                       onChange={(e) =>
-                        setFormDataBaslik({
-                          ...formDataBaslik,
+                        setFormDataBaslikAndRef({
+                          ...formDataBaslikRef.current,
                           cikisYeri: e.value,
                         })
                       }
@@ -925,7 +957,7 @@ const App = () => {
                     <Dropdown
                       showClear
                       placeholder="Özel Kod 1"
-                      value={formDataDetay.ozelKod1}
+                      value={formDataDetayRef.current.ozelKod1}
                       style={{ width: "100%" }}
                     />
                     <label htmlFor="ozelKod1">Özel Kod 1</label>
@@ -938,7 +970,7 @@ const App = () => {
                     inputId="eIrsaliye"
                     name="eIrsaliye"
                     value="eIrsaliye"
-                    checked={formDataBaslik.eIrsaliye || false}
+                    checked={formDataBaslikRef.current.eIrsaliye || false}
                   />
                   <label htmlFor="ingredient1" className="ml-2">
                     eİrsaliye
@@ -956,11 +988,9 @@ const App = () => {
                 <InputText
                   id="stokKodu"
                   name="stokKodu"
-                  //value={formDataDetay.stokKodu}
-                  //onBlur={handleInputChangeDetay}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      handleKeyPress((e.target as HTMLInputElement).value );
+                      handleKeyPress((e.target as HTMLInputElement).value);
                     }
                   }}
                 />
@@ -983,7 +1013,7 @@ const App = () => {
               <InputText
                 id="stokKartiId"
                 name="stokKartiId"
-                value={formDataDetay.stokKartiId?.toString()}
+                value={formDataDetayRef.current.stokKartiId?.toString()}
                 type="hidden"
               />
             </FloatLabel>
@@ -994,7 +1024,7 @@ const App = () => {
               <InputText
                 id="stokAdi"
                 name="stokAdi"
-                value={formDataDetay.stokAdi}
+                value={formDataDetayRef.current.stokAdi}
                 disabled
               />
             </FloatLabel>
@@ -1005,7 +1035,7 @@ const App = () => {
               <InputNumber
                 id="istenilenMiktar"
                 name="istenilenMiktar"
-                value={formDataDetay.istenilenMiktar}
+                value={formDataDetayRef.current.istenilenMiktar}
                 min={0}
                 minFractionDigits={2}
                 maxFractionDigits={5}
@@ -1020,13 +1050,13 @@ const App = () => {
               <InputNumber
                 id="miktar"
                 name="miktar"
-                value={formDataDetay.miktar}
+                value={formDataDetayRef.current.miktar}
                 min={0}
                 minFractionDigits={0}
                 maxFractionDigits={2}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    setFormDataDetay((prevState) => ({
+                    setFormDataDetayAndRef((prevState: any) => ({
                       ...prevState,
                       miktar: Number((e.target as HTMLInputElement).value),
                     }));
@@ -1044,7 +1074,7 @@ const App = () => {
               <InputText
                 id="hucre"
                 name="hucre"
-                value={formDataDetay.hucreKodu}
+                value={formDataDetayRef.current.hucreKodu}
                 onChange={handleInputChangeDetay}
                 disabled
               />
@@ -1071,7 +1101,7 @@ const App = () => {
             <Column field="stokKodu" header="Stok Kodu" />
             <Column field="stokAdi" header="Stok Adı" />
             <Column field="miktar" header="Miktar" />
-            <Column field="olcuBirimId" header="Miktar" />
+            {/* <Column field="olcuBirimId" header="Miktar" /> */}
             <Column field="istenilenMiktar" header="İstenilen Miktar" />
             <Column field="refKodu" header="Raf Kodu" />
             <Column field="depoBakiye" header="Depo Bakiye" />
@@ -1082,7 +1112,7 @@ const App = () => {
                     className="btn btn-info ms-1"
                     onClick={() => {
                       setSelectedItem(rowData);
-                      setFormDataDetay((prevFormData) => ({
+                      setFormDataDetayAndRef((prevFormData: any) => ({
                         ...prevFormData,
                         stokKodu: rowData.stokKodu,
                         stokAdi: rowData.stokAdi,
@@ -1112,4 +1142,5 @@ const App = () => {
     </div>
   );
 };
+
 export default App;

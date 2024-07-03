@@ -1,7 +1,7 @@
 export enum EAmbarFisiCikisYeri{
-    MasrafMerkezi=0,
-    StokKodu=1,
-    AnaMamulGrubu=2,
-    MaliyetGrubu=3,
-    Serbest=4
+    MasrafMerkezi=1,
+    StokKodu=2,
+    AnaMamulGrubu=3,
+    MaliyetGrubu=4,
+    Serbest=5
 }

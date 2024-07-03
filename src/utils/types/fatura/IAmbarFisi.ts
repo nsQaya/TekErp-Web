@@ -11,5 +11,6 @@ export interface IAmbarFisi
     belgeId:number,
     ambarHareketTur:EAmbarHareketTur,
     cikisYeri:EAmbarFisiCikisYeri,
+    cikisYeriKodu?:string,
     cikisYeriId:number
 }

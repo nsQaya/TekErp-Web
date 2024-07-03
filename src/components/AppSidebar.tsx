@@ -15,6 +15,7 @@ export default () => {
     {title: "Plasiyer Kodu", href: "/tanimlamalar/plasiyers"},
     {title: "Proje Kodu", href: "/tanimlamalar/projes"},
     {title: "Ünite Kodu", href: "/tanimlamalar/unites"},
+    {title: "Belge Seri", href: "/tanimlamalar/belgeSeris"},
   ]);
 
   const [kullaniciPages, __] =useState([

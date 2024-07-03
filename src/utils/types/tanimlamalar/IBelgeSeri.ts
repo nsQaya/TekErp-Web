@@ -5,7 +5,7 @@ export interface IBelgeSeri {
   id?: number;
   belgeTip: EBelgeTip;
   seri:string;
-  no:number;
-  belgeNo:string;
-  gibBelgeNo:string;
+  no?:number;
+  belgeNo?:string;
+  gibBelgeNo?:string;
 }

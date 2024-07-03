@@ -1,11 +1,11 @@
 import { createRef, useCallback,   useEffect,   useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
-import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
 import { IIl } from "../../../utils/types/tanimlamalar/IIl";
 
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
+import { ColumnProps } from "primereact/column";
 
 
 
@@ -42,35 +42,30 @@ export default () => {
   },[])
 
 
-  const columns: TableColumn<IIl>[] = [
+  const columns: ColumnProps[] = [
     {
-      name: "#",
-      selector: (row) => row.id as number,
+      field: "#",
+      header:"id",
       sortable: true,
     },
     {
-      name: "Ülke",
-      selector: (row) => row.ulke.adi,
+      header: "Ülke",
+      field:"adi",
       sortable: true,
     },
     {
-      name: "Plaka Kodu",
-      selector: (row) => row.plakaKodu,
+      header: "Plaka Kodu",
+      field:"plakaKodu",
       sortable: true,
     },
     {
-      name: "Adı",
-      selector: (row) => row.adi,
+      header: "Adı",
+      field:"adi",
       sortable: true,
     },
     {
-      name: "Aktarım Durumu",
-      selector: (row) => row.aktarimDurumu,
-      sortable: true,
-    },
-    {
-      name: "işlemler",
-      cell: (row) => {
+      header: "işlemler",
+      body: (row) => {
         return (
           <>
             <button className="btn btn-info ms-1"  onClick={(e)=>[e.preventDefault(),setSelectedItem(row), setModalShowing(true)]}>
@@ -115,7 +110,7 @@ export default () => {
       
       <DynamicModal 
         isShownig={isModalShowing} 
-        title="il Ekle" 
+        title="Ekle" 
         api={api.il} 
         items={modalItems}
         onDone={onSuccess}
@@ -128,10 +123,6 @@ export default () => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Data Export</h4>
-              <h6 className="card-subtitle">
-                Export data to Copy, CSV, Excel, PDF & Print
-              </h6>
               <button
                 type="button"
                 className="btn btn-info btn-rounded m-t-10 float-end text-white"

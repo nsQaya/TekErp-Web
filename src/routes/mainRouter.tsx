@@ -19,6 +19,7 @@ import DovizTipiItem from "../pages/taminlamalar/dovizTipi/items";
 import PlasiyerItem from "../pages/taminlamalar/plasiyer/items";
 import ProjeItem from "../pages/taminlamalar/proje/items";
 import UniteItem from "../pages/taminlamalar/unite/items";
+import BelgeSeriItem from "../pages/taminlamalar/belgeSeri/items";
 
 import AmbarCikisFisiListe from "../pages/fatura/ambarCikisFisiListe";
 import AmbarFisiEkle from "../pages/fatura/ambarFisiEkle";
@@ -72,6 +73,10 @@ export default createHashRouter([
           {
             path: "unites",
             element: <UniteItem />,
+          },
+          {
+            path: "belgeSeris",
+            element: <BelgeSeriItem />,
           },
         ],
       },

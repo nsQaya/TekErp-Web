@@ -1,22 +1,18 @@
 import { AxiosInstance } from "axios";
-import { SortOrder } from "react-data-table-component";
+
 import { IBaseResponseValue, IPagedResponse } from "../../types";
-import { IBelge } from "../../types/fatura/IBelge";
+import { DynamicQuery } from "../../transformFilter";
+import { IBelge, IBelgeNo } from "../../types/fatura/IBelge";
+import { EBelgeTip } from "../../types/enums/EBelgeTip";
+
 
 
 
 const controller="belges";
 
 export default ($axios: AxiosInstance) => ({
-    getAllForGrid(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IBelge>>>(`/${controller}/GetListForGrid`, {
-            params: {
-                pageIndex: page,
-                pageSize: take,
-                sortColumn: sortColumn, // Sıralama sütunu
-                sortDirection: sortDirection, // Sıralama yönü
-            }
-        });
+    getAllForGrid(page: number, take: number,dynamicQuery:DynamicQuery  ){
+        return $axios.post<IBaseResponseValue<IPagedResponse<IBelge>>>(`/${controller}/GetListForGrid?PageIndex=${page}&PageSize=${take}`, dynamicQuery );
     },
     getAll(page: number, take: number){
         return $axios.get<IBaseResponseValue<IPagedResponse<IBelge>>>(`/${controller}`, {
@@ -37,5 +33,8 @@ export default ($axios: AxiosInstance) => ({
     },
     get(id: number){
         return $axios.get<IBaseResponseValue<IBelge>>(`/${controller}/${id}`);
+    },
+    getBySeri(seri: string,belgeTip: EBelgeTip){
+        return $axios.get<IBaseResponseValue<IBelgeNo>>(`/${controller}/GetBySeri?Seri=${seri}&BelgeTip=${belgeTip}`);
     }
 });

@@ -1,7 +1,7 @@
 export enum EAmbarHareketTur{
-    Devir=0,
-    Depolar=1,
-    Uretim=2,
-    Muhtelif=3,
-    Konsinye=4
+    Devir=1,
+    Depolar=2,
+    Uretim=3,
+    Muhtelif=4,
+    Konsinye=5
 }

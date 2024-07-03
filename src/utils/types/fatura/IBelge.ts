@@ -14,3 +14,6 @@ export  interface IBelge{
     tamamlandi?:boolean,
     aktarimDurumu:EAktarimDurumu
 }
+export interface IBelgeNo{
+    belgeNo:string
+}

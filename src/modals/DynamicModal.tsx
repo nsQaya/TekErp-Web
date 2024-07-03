@@ -103,9 +103,8 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                 <form className="form-horizontal form-material">
                     {formItems.filter(item=>!item.hidden).map((item, index) => (
                         item.type === FormItemTypes.input ? (
-                            <div className="col-md-12 m-b-20">
+                            <div className="col-md-12 m-b-20" key={index}>
                                 <input
-                                    key={index}
                                     type="text"
                                     className="form-control"
                                     placeholder={item.title}
@@ -115,11 +114,11 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                                 />
                             </div>
                         ) : (item.type === FormItemTypes.select && item.options) ? (
-                            <div className="col-md-12 m-b-20">
+                            <div className="col-md-12 m-b-20" key={index}>
                                 <Select
                                     defaultValue={item.options.find(x=>x.value==item.value)}
                                     placeholder={item.title}
-                                    key={index}
+                                    
 
                                     onChange={(selected: any) => item.setValue && item.setValue(selected)}
                                     options={item.options as Options<any>}
@@ -127,9 +126,9 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                             </div>
                         ) : item.type === FormItemTypes.creatable ? (
 
-                            <div className="col-md-12 m-b-20">
+                            <div className="col-md-12 m-b-20" key={index}>
                                 <CreatableSelect
-                                    key={index}
+                                    
                                     placeholder={item.title}
                                     isMulti
                                     onChange={(items:any)=>item.setValue && item.setValue(items.map((x:any)=>x.value))}

@@ -1,3 +1,4 @@
+import { IHucreOzet } from "../tanimlamalar/IHucreOzet";
 import { IStokOlcuBirim } from "../tanimlamalar/IStokOlcuBirim";
 import { IStokKod } from "./IStokKod";
 
@@ -28,6 +29,7 @@ export interface IStok {
   stokOlcuBirim3:IStokOlcuBirim;
   olcuBr3Pay: number;
   olcuBr3Payda: number;
+  hucreOzets:IHucreOzet[];
   alisDovizTipiId: number;
   satisDovizTipiId: number;
   alisFiyati: number;

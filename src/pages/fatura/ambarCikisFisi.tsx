@@ -14,7 +14,6 @@ import StokRehberDialog from "../../components/Rehber/StokRehberDialog";
 import { Dropdown } from "primereact/dropdown";
 import ProjeRehberDialog from "../../components/Rehber/ProjeRehberDialog";
 import UniteRehberDialog from "../../components/Rehber/UniteRehberDialog";
-
 import { InputNumber } from "primereact/inputnumber";
 import { transformFilter } from "../../utils/transformFilter";
 import api from "../../utils/api";
@@ -29,6 +28,7 @@ import { EBelgeTip } from "../../utils/types/enums/EBelgeTip";
 import { IAmbarFisi } from "../../utils/types/fatura/IAmbarFisi";
 import { IStokHareket } from "../../utils/types/fatura/IStokHareket";
 import { IBelgeSeri } from "../../utils/types/tanimlamalar/IBelgeSeri";
+import { IHucreOzet } from "../../utils/types/tanimlamalar/IHucreOzet";
 
 // Form verileri için bir tip tanımı
 type FormDataBaslik = {
@@ -131,9 +131,36 @@ const App = () => {
   const [selectedItem, setSelectedItem] = useState<GridData | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingGetir, setLoadingGetir] = useState(false);
-  const [seriOptions, setSeriOptions] = useState<
-    { label: string; value: string }[]
-  >([]);
+  const [seriOptions, setSeriOptions] = useState<{ label: string; value: string }[]>([]);
+  const [hucreOptions, setHucreOptions] = useState<{ label: string; value: number }[]>([]);
+
+
+  // useEffect(() => {
+  //   const fetchHucreOptions = async () => {
+  //     try {
+  //       const response = await api.belgeSeri.getAll(0, 1000);
+  //       if (response.data.value) {
+  //         const options = response.data.value.items.map((item: IBelgeSeri) => ({
+  //           label: item.seri,
+  //           value: item.seri,
+  //         }));
+  //         setHucreOptions(options);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching seri options:", error);
+  //     }
+  //   };
+  //   fetchHucreOptions();
+  // }, []);
+
+  const handleHucreChange =  (e: { value: any }) => {
+    const selectedHucre = e.value;
+    setFormDataDetay((prevFormData) => ({
+      ...prevFormData,
+      hucreKoduId: selectedHucre,
+      numara:"",
+    }));
+  };
 
   useEffect(() => {
     const fetchSeriOptions = async () => {
@@ -299,6 +326,16 @@ const App = () => {
             istenilenMiktar: alreadyHasgIstenilenMiktar!,
           }));
 
+          if(response.data.value.hucreOzets)
+            if(response.data.value.hucreOzets.length>0)
+              {
+                const options = response.data.value.hucreOzets.map((item: IHucreOzet) => ({
+                  label: item.hucre.kodu,
+                  value: item.hucre.id!,
+                }));
+                setHucreOptions(options);
+              }
+
           if (miktarRef.current) {
             const inputElement = miktarRef.current.getInput();
             if (inputElement) {
@@ -384,6 +421,7 @@ const App = () => {
       }));
 
       setGridData(newGridData);
+      document.getElementById("getirButton")!.hidden = true;
     } catch (error) {
       console.error(error);
     } finally {
@@ -458,6 +496,7 @@ const App = () => {
       istenilenMiktar: 0,
     }));
   }, [formDataDetay, gridData]);
+
   //Silme onaylaması yapıldıktan sonra
   const confirmDelete = useCallback(() => {
     if (selectedItem) {
@@ -956,8 +995,9 @@ const App = () => {
                 <InputText
                   id="stokKodu"
                   name="stokKodu"
-                  //value={formDataDetay.stokKodu}
+                  value={formDataDetay.stokKodu}
                   //onBlur={handleInputChangeDetay}
+                  onChange={handleInputChangeDetay}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleKeyPress((e.target as HTMLInputElement).value );
@@ -1024,15 +1064,15 @@ const App = () => {
                 min={0}
                 minFractionDigits={0}
                 maxFractionDigits={2}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setFormDataDetay((prevState) => ({
-                      ...prevState,
-                      miktar: Number((e.target as HTMLInputElement).value),
-                    }));
-                    handleAddToGrid();
-                  }
-                }}
+                onBlur={(e)=>setFormDataDetay((prevState) => ({
+                  ...prevState,
+                  miktar: Number((e.target as HTMLInputElement).value),
+                }))}
+                // onKeyDown={(e) => {
+                //   if (e.key === "Enter") {
+                //     // handleAddToGrid();
+                //   }
+                // }}
                 ref={miktarRef}
                 inputStyle={{ textAlign: "right" }}
               />
@@ -1041,12 +1081,13 @@ const App = () => {
           <div className="col-md-1 col-sm-6 mt-4">
             <FloatLabel>
               <label htmlFor="hucre">Hucre</label>
-              <InputText
+              <Dropdown
                 id="hucre"
                 name="hucre"
-                value={formDataDetay.hucreKodu}
-                onChange={handleInputChangeDetay}
-                disabled
+                value={formDataDetay.hucreKoduId}
+                options={hucreOptions}
+                onChange={handleHucreChange}
+                className="w-full md:w-14rem"
               />
             </FloatLabel>
           </div>
@@ -1071,10 +1112,10 @@ const App = () => {
             <Column field="stokKodu" header="Stok Kodu" />
             <Column field="stokAdi" header="Stok Adı" />
             <Column field="miktar" header="Miktar" />
-            <Column field="olcuBirimId" header="Miktar" />
+            {/* <Column field="olcuBirimId" header="Miktar" /> */}
             <Column field="istenilenMiktar" header="İstenilen Miktar" />
             <Column field="refKodu" header="Raf Kodu" />
-            <Column field="depoBakiye" header="Depo Bakiye" />
+            <Column field="bakiye" header="Depo Bakiye" />
             <Column
               body={(rowData) => (
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -1084,6 +1125,7 @@ const App = () => {
                       setSelectedItem(rowData);
                       setFormDataDetay((prevFormData) => ({
                         ...prevFormData,
+                        stokKartiId:rowData.stokKartiId,
                         stokKodu: rowData.stokKodu,
                         stokAdi: rowData.stokAdi,
                         miktar: rowData.miktar,

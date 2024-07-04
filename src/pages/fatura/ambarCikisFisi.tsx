@@ -83,7 +83,7 @@ type GridData = {
 
 const App = () => {
   const currentDate = new Date();
-  currentDate.setHours(3,0,0,0);
+  currentDate.setHours(3, 0, 0, 0);
 
   const [formDataBaslik, setFormDataBaslik] = useState<FormDataBaslik>({
     seri: "",
@@ -131,34 +131,21 @@ const App = () => {
   const [selectedItem, setSelectedItem] = useState<GridData | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingGetir, setLoadingGetir] = useState(false);
-  const [seriOptions, setSeriOptions] = useState<{ label: string; value: string }[]>([]);
-  const [hucreOptions, setHucreOptions] = useState<{ label: string; value: number }[]>([]);
+  const [seriOptions, setSeriOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [hucreOptions, setHucreOptions] = useState<
+    { label: string; value: number }[]
+  >([]);
 
 
-  // useEffect(() => {
-  //   const fetchHucreOptions = async () => {
-  //     try {
-  //       const response = await api.belgeSeri.getAll(0, 1000);
-  //       if (response.data.value) {
-  //         const options = response.data.value.items.map((item: IBelgeSeri) => ({
-  //           label: item.seri,
-  //           value: item.seri,
-  //         }));
-  //         setHucreOptions(options);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching seri options:", error);
-  //     }
-  //   };
-  //   fetchHucreOptions();
-  // }, []);
-
-  const handleHucreChange =  (e: { value: any }) => {
-    const selectedHucre = e.value;
+  const handleHucreChange = (e: any) => {
+    const selectedOption = hucreOptions.find(option => option.value === e.value);
     setFormDataDetay((prevFormData) => ({
       ...prevFormData,
-      hucreKoduId: selectedHucre,
-      numara:"",
+      hucreKodu: selectedOption ? selectedOption.label : '',
+      hucreKoduId: e.value,
+      numara: "",
     }));
   };
 
@@ -186,7 +173,7 @@ const App = () => {
     setFormDataBaslik((prevFormDataBaslik) => ({
       ...prevFormDataBaslik,
       seri: selectedSeri,
-      numara:"",
+      numara: "",
     }));
 
     if (selectedSeri) {
@@ -207,7 +194,6 @@ const App = () => {
         console.error("Error fetching data:", error);
       }
     }
-
   };
 
   const [searchParams] = useSearchParams();
@@ -299,8 +285,10 @@ const App = () => {
   const handleKeyPress = useCallback(async (stokKodu: string) => {
     setFormDataDetay((prevFormData) => ({
       ...prevFormData,
-      stokKodu:stokKodu,
+      stokKodu: stokKodu,
       stokAdi: "",
+      hucreKodu:"",
+      hucreKoduId:0
     }));
 
     try {
@@ -311,11 +299,11 @@ const App = () => {
           response.data.value.adi &&
           response.data.value.kodu === stokKodu
         ) {
+
+
           const alreadyHas = gridData.find((x) => x.stokKodu == stokKodu);
           const alreadyHasgMiktar = alreadyHas ? alreadyHas.miktar : 0;
-          const alreadyHasgIstenilenMiktar = alreadyHas
-            ? alreadyHas.istenilenMiktar
-            : 0;
+          const alreadyHasgIstenilenMiktar = alreadyHas ? alreadyHas.istenilenMiktar: 0;
 
           setFormDataDetay((prevFormData) => ({
             ...prevFormData,
@@ -325,16 +313,22 @@ const App = () => {
             miktar: alreadyHasgMiktar!,
             istenilenMiktar: alreadyHasgIstenilenMiktar!,
           }));
+          
 
-          if(response.data.value.hucreOzets)
-            if(response.data.value.hucreOzets.length>0)
-              {
-                const options = response.data.value.hucreOzets.map((item: IHucreOzet) => ({
+          if (response.data.value.hucreOzets){
+            if (response.data.value.hucreOzets.length > 0) {
+              const options = response.data.value.hucreOzets.map(
+                (item: IHucreOzet) => ({
                   label: item.hucre.kodu,
                   value: item.hucre.id!,
-                }));
-                setHucreOptions(options);
-              }
+                })
+              );
+              setHucreOptions(options);
+            }
+          }
+          else{
+            setHucreOptions([]);
+          }
 
           if (miktarRef.current) {
             const inputElement = miktarRef.current.getInput();
@@ -348,7 +342,7 @@ const App = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }, []);
+  }, [gridData]);
 
   //rehber işlemleri
   const handleDialogSelect = useCallback(
@@ -374,7 +368,7 @@ const App = () => {
           [fieldName]: selectedValue[dialogFieldName],
           [`${fieldName}Id`]: selectedValue.Id,
         };
-        
+
         return newFormData;
       });
     },
@@ -413,7 +407,7 @@ const App = () => {
         stokKodu: item.stokKodu,
         stokAdi: item.stokAdi,
         miktar: 0,
-        fiyat:0,
+        fiyat: 0,
         istenilenMiktar: item.miktar,
         bakiye: item.bakiye,
         olcuBirimId: item.olcuBirimId,
@@ -430,7 +424,7 @@ const App = () => {
   };
 
   //gride doldurma işlemleri
-  const handleAddToGrid = useCallback( () => {
+  const handleAddToGrid = useCallback(() => {
     const nStoK = formDataDetay.stokKodu;
 
     if (!nStoK || formDataDetay.miktar === 0) {
@@ -446,7 +440,9 @@ const App = () => {
     const alreadyHas = gridData.find((x) => x.stokKodu == nStoK);
 
     if (alreadyHas) {
-      if (Number(formDataDetay.miktar) > Number(alreadyHas.istenilenMiktar)) {
+      if (Number(formDataDetay.miktar) > Number(alreadyHas.istenilenMiktar)
+        && Number(alreadyHas.istenilenMiktar)>0
+      ) {
         toast.current?.show({
           severity: "error",
           summary: "Hata",
@@ -462,6 +458,8 @@ const App = () => {
             ? {
                 ...item,
                 miktar: formDataDetay.miktar!,
+                hucreKodu:formDataDetay.hucreKodu,
+                hucreKoduId:formDataDetay.hucreKoduId
               }
             : item
         )
@@ -476,8 +474,10 @@ const App = () => {
         stokKodu: formDataDetay.stokKodu,
         stokAdi: formDataDetay.stokAdi,
         miktar: formDataDetay.miktar,
+        hucreKodu:formDataDetay.hucreKodu,
+        hucreKoduId:formDataDetay.hucreKoduId,
         istenilenMiktar: 0,
-        fiyat:0,
+        fiyat: 0,
         bakiye: 0,
         olcuBirimId: formDataDetay.olcuBrId,
         olcuBr: formDataDetay.olcuBr,
@@ -495,6 +495,7 @@ const App = () => {
       miktar: 0,
       istenilenMiktar: 0,
     }));
+    setHucreOptions([]);
   }, [formDataDetay, gridData]);
 
   //Silme onaylaması yapıldıktan sonra
@@ -506,7 +507,7 @@ const App = () => {
   }, [selectedItem]);
 
   //gridden silme işlemi
-  const deleteItem = useCallback( (item: GridData) => {
+  const deleteItem = useCallback((item: GridData) => {
     try {
       // if (item.miktar != 0) {
       //   await api.stokHareket.delete(item.id as number);
@@ -570,7 +571,7 @@ const App = () => {
     try {
       const belgeResponse = await api.belge.create({
         belgeTip: EBelgeTip.AmbarCikisFisi,
-        no: formDataBaslik.seri+formDataBaslik.numara,
+        no: formDataBaslik.seri + formDataBaslik.numara,
         tarih: formDataBaslik.tarih,
         aciklama1: formDataBaslik.aciklama1,
         aciklama2: formDataBaslik.aciklama2,
@@ -614,9 +615,9 @@ const App = () => {
         .map((item, index) => ({
           belgeId: belgeId!,
           stokKartiId: item.stokKartiId,
-          masrafStokKartiId:formDataBaslik.cikisYeriKoduId,
+          masrafStokKartiId: formDataBaslik.cikisYeriKoduId,
           miktar: item.miktar,
-          istenilenMiktar:0,
+          istenilenMiktar: 0,
           fiyatTL: item.fiyat,
           hucreId: item.hucreKoduId,
           aciklama1: formDataBaslik.aciklama1,
@@ -1000,7 +1001,7 @@ const App = () => {
                   onChange={handleInputChangeDetay}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      handleKeyPress((e.target as HTMLInputElement).value );
+                      handleKeyPress((e.target as HTMLInputElement).value);
                     }
                   }}
                 />
@@ -1039,7 +1040,7 @@ const App = () => {
               />
             </FloatLabel>
           </div>
-          <div className="col-md-2 col-sm-6 mt-4">
+          <div className="col-md-1 col-sm-6 mt-4">
             <FloatLabel>
               <label htmlFor="miktar">İstenilen Miktar</label>
               <InputNumber
@@ -1064,10 +1065,12 @@ const App = () => {
                 min={0}
                 minFractionDigits={0}
                 maxFractionDigits={2}
-                onBlur={(e)=>setFormDataDetay((prevState) => ({
-                  ...prevState,
-                  miktar: Number((e.target as HTMLInputElement).value),
-                }))}
+                onBlur={(e) =>
+                  setFormDataDetay((prevState) => ({
+                    ...prevState,
+                    miktar: Number((e.target as HTMLInputElement).value),
+                  }))
+                }
                 // onKeyDown={(e) => {
                 //   if (e.key === "Enter") {
                 //     // handleAddToGrid();
@@ -1078,7 +1081,7 @@ const App = () => {
               />
             </FloatLabel>
           </div>
-          <div className="col-md-1 col-sm-6 mt-4">
+          <div className="col-md-2 col-sm-6 mt-4">
             <FloatLabel>
               <label htmlFor="hucre">Hucre</label>
               <Dropdown
@@ -1114,7 +1117,7 @@ const App = () => {
             <Column field="miktar" header="Miktar" />
             {/* <Column field="olcuBirimId" header="Miktar" /> */}
             <Column field="istenilenMiktar" header="İstenilen Miktar" />
-            <Column field="refKodu" header="Raf Kodu" />
+            <Column field="hucreKodu" header="Hücre" />
             <Column field="bakiye" header="Depo Bakiye" />
             <Column
               body={(rowData) => (
@@ -1125,7 +1128,7 @@ const App = () => {
                       setSelectedItem(rowData);
                       setFormDataDetay((prevFormData) => ({
                         ...prevFormData,
-                        stokKartiId:rowData.stokKartiId,
+                        stokKartiId: rowData.stokKartiId,
                         stokKodu: rowData.stokKodu,
                         stokAdi: rowData.stokAdi,
                         miktar: rowData.miktar,

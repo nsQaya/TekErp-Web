@@ -16,7 +16,7 @@ export interface IStokHareket {
     fiyatDovizTipId?:number;
     olcuBirimId:number;
     olcuBirim?:IStokOlcuBirim;
-    hucreId?:number;
+    hucreId:number;
     hucre?:IHucre;
     bakiye?:number;
     girisCikis:string;

@@ -1,9 +1,10 @@
 export interface IIhtiyacPlanlamaRapor {
     id: number,
     tarih?: Date,
-    projeKodu?:string,
+    hucreId:number,
+    projeKodu:string,
     projeAciklama?:string,
-    plasiyerKodu?:string,
+    plasiyerKodu:string,
     plasiyerAciklama?:string,
     mamulAdi?:string,
     stokKartiId:number,

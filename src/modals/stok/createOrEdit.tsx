@@ -350,7 +350,7 @@ export default (props: IStokModalProps) => {
               <div className="col-lg-12 m-b-20">
                 <label className="form-label"></label>
                 <Select
-                  value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim1Id.toString())}
+                  value={stokOlcuBirims.find((x) => x.value == String(stokOlcuBirim1Id))}
                   placeholder="Ölçü Birim 1"
                   onChange={(selected: any) => setStokOlcuBirim1Id(selected.value)}
                   options={stokOlcuBirims as Options<any>}
@@ -506,7 +506,7 @@ export default (props: IStokModalProps) => {
                   <label className="form-label"> </label>
                 </div>
                 <Select
-                  defaultValue={dovizTipis.find((x) => x.value == alisDovizTipiId.toString())}
+                  defaultValue={dovizTipis.find((x) => x.value == String(alisDovizTipiId))}
                   placeholder="Alış Döviz"
                   onChange={(selected: any) => setAlisDovizTipiId(selected.value)}
                   options={dovizTipis as Options<any>}
@@ -533,7 +533,7 @@ export default (props: IStokModalProps) => {
                   <label className="form-label"> </label>
                 </div>
                 <Select
-                  defaultValue={dovizTipis.find((x) => x.value == satisDovizTipiId.toString())}
+                  defaultValue={dovizTipis.find((x) => x.value == String(satisDovizTipiId))}
                   placeholder="Satış Döviz"
                   onChange={(selected: any) => setSatisDovizTipiId(selected.value)}
                   options={dovizTipis as Options<any>}

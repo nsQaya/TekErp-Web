@@ -58,7 +58,7 @@ type FormDataDetay = {
   miktar: number;
   istenilenMiktar?: number;
   fiyat?: number;
-  hucreKoduId?: number;
+  hucreId: number;
   hucreKodu?: string;
   bakiye?: number;
   olcuBrId: number;
@@ -74,7 +74,7 @@ type GridData = {
   miktar: number;
   istenilenMiktar: number;
   fiyat: number;
-  hucreKoduId?: number;
+  hucreId: number;
   hucreKodu?: string;
   bakiye?: number;
   olcuBirimId: number;
@@ -112,7 +112,7 @@ const App = () => {
     istenilenMiktar: 0,
     miktar: 0,
     fiyat: 0,
-    hucreKoduId: 0,
+    hucreId: 0,
     hucreKodu: "",
     olcuBrId: 0,
     olcuBr: "",
@@ -144,7 +144,7 @@ const App = () => {
     setFormDataDetay((prevFormData) => ({
       ...prevFormData,
       hucreKodu: selectedOption ? selectedOption.label : '',
-      hucreKoduId: e.value,
+      hucreId: e.value,
       numara: "",
     }));
   };
@@ -235,7 +235,7 @@ const App = () => {
                   miktar: item.miktar,
                   istenilenMiktar: item.istenilenMiktar,
                   fiyat: item.fiyatTL,
-                  hucreKoduId: item.hucreId,
+                  hucreId: item.hucreId,
                   hucreKodu: item.hucre?.kodu,
                   bakiye: item.bakiye,
                   olcuBirimId: item.olcuBirimId,
@@ -252,6 +252,7 @@ const App = () => {
               uniteKoduId: gridResponse.data.value.items[0].uniteId,
               uniteKodu: gridResponse.data.value.items[0].unite?.kodu,
               stokKartiId: 0,
+              hucreId:0,
               stokKodu: "",
               miktar: 0,
               istenilenMiktar: 0,
@@ -282,26 +283,25 @@ const App = () => {
   const miktarRef = useRef<any>(null);
 
   //stok getirme, gridden stok düzeltme, stok kodu okutunca bilgilerini getirme işlemleri
-  const handleKeyPress = useCallback(async (stokKodu: string) => {
+  const handleKeyPress = useCallback(async () => {
     setFormDataDetay((prevFormData) => ({
       ...prevFormData,
-      stokKodu: stokKodu,
       stokAdi: "",
       hucreKodu:"",
-      hucreKoduId:0
+      hucreId:0
     }));
 
     try {
-      const response = await api.stok.getByKod(stokKodu);
+      const response = await api.stok.getByKod(formDataDetay.stokKodu);
       if (response.status) {
         if (
           response.data &&
           response.data.value.adi &&
-          response.data.value.kodu === stokKodu
+          response.data.value.kodu === formDataDetay.stokKodu
         ) {
 
 
-          const alreadyHas = gridData.find((x) => x.stokKodu == stokKodu);
+          const alreadyHas = gridData.find((x) => x.stokKodu == formDataDetay.stokKodu);
           const alreadyHasgMiktar = alreadyHas ? alreadyHas.miktar : 0;
           const alreadyHasgIstenilenMiktar = alreadyHas ? alreadyHas.istenilenMiktar: 0;
 
@@ -329,20 +329,33 @@ const App = () => {
           else{
             setHucreOptions([]);
           }
-
           if (miktarRef.current) {
-            const inputElement = miktarRef.current.getInput();
-            if (inputElement) {
-              inputElement.focus();
-              inputElement.select();
-            }
-          }
+          miktarRef.current.focus();
+
+          setTimeout(() => {
+              miktarRef.current.focus();
+          }, 0);
+        }
+
+          // if (miktarRef.current) {
+          //   const inputElement = miktarRef.current.getInput();
+          //   if (inputElement) {
+          //     inputElement.focus();
+          //     inputElement.select();
+          //   }
+          // }
+          // const miktarElemant = document.getElementById('miktar');
+          // miktarElemant!.focus();
+          // if (miktarElemant) {
+          //   miktarElemant.focus();
+          // }
         }
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }, [gridData]);
+  }, [gridData,formDataDetay.stokKodu]);
+
 
   //rehber işlemleri
   const handleDialogSelect = useCallback(
@@ -358,7 +371,7 @@ const App = () => {
           [`${fieldName}Id`]: selectedValue.Id,
         };
         if (fieldName === "stokKodu") {
-          handleKeyPress(selectedValue[fieldName]);
+          handleKeyPress();
         }
         return newFormData;
       });
@@ -410,6 +423,7 @@ const App = () => {
         fiyat: 0,
         istenilenMiktar: item.miktar,
         bakiye: item.bakiye,
+        hucreId:item.hucreId,
         olcuBirimId: item.olcuBirimId,
         olcuBr: item.olcuBr,
       }));
@@ -459,7 +473,7 @@ const App = () => {
                 ...item,
                 miktar: formDataDetay.miktar!,
                 hucreKodu:formDataDetay.hucreKodu,
-                hucreKoduId:formDataDetay.hucreKoduId
+                hucreId:formDataDetay.hucreId
               }
             : item
         )
@@ -475,7 +489,7 @@ const App = () => {
         stokAdi: formDataDetay.stokAdi,
         miktar: formDataDetay.miktar,
         hucreKodu:formDataDetay.hucreKodu,
-        hucreKoduId:formDataDetay.hucreKoduId,
+        hucreId:formDataDetay.hucreId,
         istenilenMiktar: 0,
         fiyat: 0,
         bakiye: 0,
@@ -563,7 +577,7 @@ const App = () => {
   };
 
   //bütün belgeyi backende gönderiyor.
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!validateForm()) {
       return;
     }
@@ -619,7 +633,7 @@ const App = () => {
           miktar: item.miktar,
           istenilenMiktar: 0,
           fiyatTL: item.fiyat,
-          hucreId: item.hucreKoduId,
+          hucreId: item.hucreId,
           aciklama1: formDataBaslik.aciklama1,
           aciklama2: formDataBaslik.aciklama2,
           aciklama3: formDataBaslik.aciklama3,
@@ -676,7 +690,7 @@ const App = () => {
     } finally {
       setLoading(false);
     }
-  };
+  },[formDataBaslik,gridData, formDataDetay]);
 
   //html içeriği
   return (
@@ -696,7 +710,7 @@ const App = () => {
         rejectLabel="Hayır"
       />
 
-      <h5>{belgeId}</h5>
+      {/* <h5>{belgeId}</h5> */}
 
       <div className="p-fluid p-formgrid p-grid">
         <div className="row">
@@ -892,10 +906,11 @@ const App = () => {
                     <StokRehberDialog
                       isVisible={dialogVisible.cikisKoduDialog}
                       onHide={() =>
-                        setDialogVisible({
+                        {setDialogVisible({
                           ...dialogVisible,
                           cikisKoduDialog: false,
-                        })
+                        });
+                      }
                       }
                       onSelect={(selectedValue) =>
                         handleDialogSelect(
@@ -1001,7 +1016,7 @@ const App = () => {
                   onChange={handleInputChangeDetay}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      handleKeyPress((e.target as HTMLInputElement).value);
+                      handleKeyPress();
                     }
                   }}
                 />
@@ -1035,6 +1050,9 @@ const App = () => {
               <InputText
                 id="stokAdi"
                 name="stokAdi"
+                onVolumeChange={ 
+                    miktarRef.current?.focus()
+                }
                 value={formDataDetay.stokAdi}
                 disabled
               />
@@ -1065,17 +1083,17 @@ const App = () => {
                 min={0}
                 minFractionDigits={0}
                 maxFractionDigits={2}
-                onBlur={(e) =>
-                  setFormDataDetay((prevState) => ({
-                    ...prevState,
-                    miktar: Number((e.target as HTMLInputElement).value),
+                onChange={(e) =>
+                  setFormDataDetay((state) => ({
+                    ...state,
+                    miktar: Number(e.value),
                   }))
                 }
-                // onKeyDown={(e) => {
-                //   if (e.key === "Enter") {
-                //     // handleAddToGrid();
-                //   }
-                // }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                     handleAddToGrid();
+                  }
+                }}
                 ref={miktarRef}
                 inputStyle={{ textAlign: "right" }}
               />
@@ -1087,7 +1105,7 @@ const App = () => {
               <Dropdown
                 id="hucre"
                 name="hucre"
-                value={formDataDetay.hucreKoduId}
+                value={formDataDetay.hucreId}
                 options={hucreOptions}
                 onChange={handleHucreChange}
                 className="w-full md:w-14rem"
@@ -1109,6 +1127,7 @@ const App = () => {
             scrollable
             scrollHeight="450px"
             emptyMessage="Kayıt yok."
+            virtualScrollerOptions={{ itemSize: 46 }}
           >
             <Column field="id" header="#" />
             {/* <Column field="stokKartiId" header="Stok Kartı Id" /> */}
@@ -1132,6 +1151,7 @@ const App = () => {
                         stokKodu: rowData.stokKodu,
                         stokAdi: rowData.stokAdi,
                         miktar: rowData.miktar,
+                        hucreId:rowData.hucreId,
                         istenilenMiktar: rowData.istenilenMiktar,
                       }));
                     }}

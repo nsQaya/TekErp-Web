@@ -68,7 +68,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   const [page, setPage] = useState(0);
   const [perPage, setPerPage] = useState((props.rowPerPageOptions && props.rowPerPageOptions[0]) || 10);
   const [sortColumn, setSortColumn] = useState<string>('Id');
-  const [sortDirection, setSortDirection] = useState<SortOrder>(0);
+  const [sortDirection, setSortDirection] = useState<SortOrder>(1);
   const [filters, setFilters] = useState(() => {
     return props.columns
       .filter(column => column.filter && column.field)

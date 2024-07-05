@@ -1,19 +1,19 @@
-import { TableColumn } from "react-data-table-component";
+import { ColumnProps } from "primereact/column";
 
 import * as XLSX from 'xlsx';
-export function convertArrayOfObjectsToExcel<T>(columns: TableColumn<T>[], array: T[]): Blob {
+export function convertArrayOfObjectsToExcel<T>(columns: ColumnProps[], array: T[]): Blob {
 	const worksheetData: any[][] = [];
 
 	// Add column headers
-	const headerRow = columns.map(x => x.name);
+	const headerRow = columns.map(x => x.header);
 	worksheetData.push(headerRow);
 
 	// Add rows
-	array.forEach(item => {
+	array.forEach(() => {
 		const row = columns.map(column => {
 			let value = '';
-			if (column.selector) {
-				value = column.selector(item).toString();
+			if (column.field) {
+				value = column.field;
 			}
 			return value;
 		});

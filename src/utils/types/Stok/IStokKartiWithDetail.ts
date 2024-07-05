@@ -37,6 +37,6 @@ export interface IStokKartiWithDetail {
   minimumSiparisMiktari: number;
   aktarimDurumu: number;
   stokBarkods: IStokBarkod[];
-  sAPKods: ISapKod[];
+  sapKods: ISapKod[];
   hucres: IHucre[];
 }

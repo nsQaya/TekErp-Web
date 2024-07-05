@@ -55,7 +55,7 @@ export default (props: IStokModalProps) => {
   const [minimumSiparisMiktari, setMinimumSiparisMiktari] = useState(0);
 
   const [stokBarkods, setStokBarkods] = useState<{label: string, value: string}[]>([]);
-  const [sAPKOds, setSAPKods] = useState<{label: string, value: string}[]>([]);
+  const [sapKods, setSAPKods] = useState<{label: string, value: string}[]>([]);
   const [hucres, setHucres] = useState<{label: string, value: string}[]>([]);
 
 
@@ -101,7 +101,7 @@ export default (props: IStokModalProps) => {
     setMinimumSiparisMiktari(item.minimumSiparisMiktari);
 
     setHucres(item.hucres.map(x=>({label: x.kodu, value: x.kodu })));
-    setSAPKods(item.sAPKods.map(x=>({label: x.kod, value: x.kod })));
+    setSAPKods(item.sapKods.map(x=>({label: x.kod, value: x.kod })));
     setStokBarkods(item.stokBarkods.map(x=>({label: x.barkod, value: x.barkod })));
   }
 
@@ -257,7 +257,7 @@ export default (props: IStokModalProps) => {
         stokOlcuBirim2Id: stokOlcuBirim2Id,
         stokOlcuBirim3Id: stokOlcuBirim3Id, 
       hucres: hucres.map(x=>({ kodu: x.value })),
-      sAPKods: sAPKOds.map(x=>({ kod: x.value })),
+      sapKods: sapKods.map(x=>({ kod: x.value })),
       stokBarkods: stokBarkods.map(x=>({ barkod: x.value, stokOlcuBirimId: stokOlcuBirim1Id })),
     } as IStokKartiWithDetail;
 
@@ -276,13 +276,16 @@ export default (props: IStokModalProps) => {
       props.onDone();
     }
 
-  }, [ID, adi,agirlik,alisDovizTipiId,alisFiyati,alisKDVOrani,asgariStokMiktari,azamiStokMiktari,boy,en,genislik,ingilizceIsim,kodu,minimumSiparisMiktari,olcuBr2Pay,olcuBr2Payda,olcuBr3Pay,olcuBr3Payda,satisDovizTipiId,satisFiyati,satisKDVOrani,seriTakibiVarMi,stokGrupKoduId,stokKod1Id,stokKod2Id,stokKod3Id,stokKod4Id,stokKod5Id,stokOlcuBirim1Id,stokOlcuBirim2Id,stokOlcuBirim3Id, hucres, sAPKOds,stokBarkods]);
+  }, [ID, adi,agirlik,alisDovizTipiId,alisFiyati,alisKDVOrani,asgariStokMiktari,azamiStokMiktari,boy,en,genislik,
+    ingilizceIsim,kodu,minimumSiparisMiktari,olcuBr2Pay,olcuBr2Payda,olcuBr3Pay,olcuBr3Payda,satisDovizTipiId,satisFiyati,
+    satisKDVOrani,seriTakibiVarMi,stokGrupKoduId,stokKod1Id,stokKod2Id,stokKod3Id,stokKod4Id,stokKod5Id,stokOlcuBirim1Id,
+    stokOlcuBirim2Id,stokOlcuBirim3Id, hucres, sapKods,stokBarkods]);
 
   return (
     <Modal show={isShowing} onHide={() => props.onHide && props.onHide()} className="custom-modal">
       <Modal.Header closeButton>
         <Modal.Title>
-          <span style={{ fontWeight: 'bold' }}>STOK EKLE </span>
+          <span style={{ fontWeight: 'bold' }}>EKLE </span>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -668,7 +671,7 @@ export default (props: IStokModalProps) => {
                 <CreatableSelect
                   placeholder="SAP Kodları"
                   isMulti
-                  value={sAPKOds}
+                  value={sapKods}
                   onChange={(items: any) =>
                     setSAPKods(items)
                   }

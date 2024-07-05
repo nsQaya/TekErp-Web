@@ -6,9 +6,8 @@ import CreateOrEditModal from "../../modals/stok/createOrEdit";
 import AppTable, { ITableRef } from "../../components/AppTable";
 import { IStokKartiWithDetail } from "../../utils/types/stok/IStokKartiWithDetail";
 import { baseURL } from "../../utils/config";
-import { convertArrayOfObjectsToExcel } from "../../utils/excel";
-import { saveAs } from 'file-saver';
 import { ColumnProps } from "primereact/column";
+import { Button } from "primereact/button";
 
 
 export default () => {
@@ -95,13 +94,14 @@ export default () => {
     },
   ];
 
-  const onExport= useCallback(()=>{
-    if(!myTable.current?.data) return;
+  //Stokğa özel excel listesi alma muhtemelen gündeme gelecek, o zaman bunu kullanacakğız
+  // const onExport= useCallback(()=>{
+  //   if(!myTable.current?.data) return;
 
-    const myColumns= columns.filter(x=>x.header!="işlemler");
-    let blob = convertArrayOfObjectsToExcel<IStokKartiWithDetail>(myColumns, myTable.current.data);
-    saveAs(blob, 'data.xlsx');
-  },[myTable])
+  //   const myColumns= columns.filter(x=>x.header!="işlemler");
+  //   let blob = convertArrayOfObjectsToExcel<IStokKartiWithDetail>(myColumns, myTable.current.data);
+  //   saveAs(blob, 'data.xlsx');
+  // },[myTable])
 
   return (
     <div className="container-fluid">
@@ -117,40 +117,43 @@ export default () => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <button
-                type="button"
-                className="btn btn-info btn-rounded m-t-10 float-end text-white ms-3"
-                onClick={(e) => [e.preventDefault(), onExport()]}
-              >
-                Çıktı Al
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-info btn-rounded m-t-10 float-end text-white ms-3"
-                onClick={(e) => [e.preventDefault(), setModalShowing(true)]}
-              >
-                Yeni Stok Ekle
-              </button>
-
-              <button 
-                type="button" 
-                className="btn btn-info btn-rounded m-t-10 float-end text-white" 
-                onClick={(e) => [e.preventDefault(), writeBarkods()]}
-                disabled={selectedStokIDS.length <= 0}
-              >
-                Barkod Yazdır
-              </button>
 
               <div className="table-responsive m-t-40">
                 <AppTable
                     baseApi={api.stokWithDetail}
                     columns={columns}
-
                     key={'Stoklar'}
                     ref={myTable}
                     rowSelectable={true}
-                    onChangeSelected={(selected)=>setSelectedStokIDS(selected.selectedRows.map(x=>Number(x.stokKarti.id)))}
+                    onChangeSelected={(selected)=>setSelectedStokIDS(selected.map(x=>Number(x.id)))}
+                    appendHeader={() => {
+                      return (<>
+                        {/* <Button
+                        type="button"
+                        className="p-button-secondary"
+                        onClick={(e) => [e.preventDefault(), onExport()]}
+                      >
+                        Çıktı Al
+                      </Button> */}
+        
+                      <Button
+                        type="button"
+                        className="p-button-secondary"
+                        onClick={(e) => [e.preventDefault(), setModalShowing(true)]}
+                      >
+                        Yeni
+                      </Button>
+        
+                      <Button 
+                        type="button" 
+                        className="p-button-secondary" 
+                        onClick={(e) => [e.preventDefault(), writeBarkods()]}
+                        disabled={selectedStokIDS.length <= 0}
+                      >
+                        Barkod Yazdır
+                      </Button></>
+                )
+                    }}
                 />
               </div>
             </div>

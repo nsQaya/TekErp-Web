@@ -5,7 +5,6 @@ import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, IFormItem } from "../../../modals/DynamicModal";
 import { ColumnProps } from "primereact/column";
 import { Button } from "primereact/button";
-import { IStok } from "../../../utils/types/stok/IStok";
 import { IStokKod } from "../../../utils/types/stok/IStokKod";
 
 export default () => {

@@ -292,8 +292,18 @@ export default (props: IStokModalProps) => {
         <form className="form-horizontal form-material">
           <div className="row">
             <div className="col-lg-6">
+            <div className="col-md-12 m-b-20">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="id"
+                value={ID}
+                hidden
+                onChange={(text) => setID(text.target.valueAsNumber)}
+              />
+            </div>
               <div className="form-group">
-                <label className="form-label">Stok Kodu</label>
+                <label className="form-label">Stok Kodu </label>
                 <input
                   type="text"
                   className="form-control"

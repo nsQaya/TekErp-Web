@@ -21,7 +21,7 @@ export default ($axios: AxiosInstance) => ({
         return $axios.post<IBaseResponseValue<IStokKartiWithDetail>>(`/${controller}/CreateStokKartiWithDetails`, params);
     },
     update(params: Partial<IStokKartiWithDetail>){
-        return $axios.put<IBaseResponseValue<IStokKartiWithDetail>>(`/${controller}/CreateStokKartiWithDetails`, params);
+        return $axios.put<IBaseResponseValue<IStokKartiWithDetail>>(`/${controller}/UpdateStokKartiWithDetails`, params);
     },
     get(id: number){
         return $axios.get<IBaseResponseValue<IStokKartiWithDetail>>(`/${controller}/GetByIdWithDetails?id=${id}`);

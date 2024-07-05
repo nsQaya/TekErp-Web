@@ -1,20 +1,13 @@
 import { AxiosInstance } from "axios";
-import { SortOrder } from "react-data-table-component";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { IDepo } from "../../types/tanimlamalar/IDepo";
+import { DynamicQuery } from "../../transformFilter";
 
 const controller="depoes";
 
 export default ($axios: AxiosInstance) => ({
-    getAllForGrid(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
-        return $axios.get<IBaseResponseValue<IPagedResponse<IDepo>>>(`/${controller}/GetListForGrid`, {
-            params: {
-                pageIndex: page,
-                pageSize: take,
-                sortColumn: sortColumn, // Sıralama sütunu
-                sortDirection: sortDirection, // Sıralama yönü
-            }
-        });
+    getAllForGrid(page: number, take: number,dynamicQuery:DynamicQuery  ){
+        return $axios.post<IBaseResponseValue<IPagedResponse<IDepo>>>(`/${controller}/GetListForGrid?PageIndex=${page}&PageSize=${take}`, dynamicQuery );
     },
     getAll(page: number, take: number){
         return $axios.get<IBaseResponseValue<IPagedResponse<IDepo>>>(`/${controller}`, {
@@ -37,3 +30,5 @@ export default ($axios: AxiosInstance) => ({
         return $axios.get<IBaseResponseValue<IDepo>>(`/${controller}/${id}`);
     }
 });
+
+

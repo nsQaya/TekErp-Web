@@ -1,117 +1,115 @@
-import { createRef, useCallback,   useState } from "react";
+import { createRef, useCallback, useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
-import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
-import { IStokKod } from "../../../utils/types/stok/IStokKod";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, IFormItem } from "../../../modals/DynamicModal";
+import { ColumnProps } from "primereact/column";
+import { Button } from "primereact/button";
+import { IStok } from "../../../utils/types/stok/IStok";
+import { IStokKod } from "../../../utils/types/stok/IStokKod";
 
 export default () => {
   const myTable = createRef<ITableRef<IStokKod>>();
   const [isModalShowing, setModalShowing] = useState(false);
-  const [selectedItem, setSelectedItem]= useState<IStokKod>();
+  const [selectedItem, setSelectedItem] = useState<IStokKod>();
 
-  const items= [
-    {
-      name: "id",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      title: "Adı",
-      name: "adi",
-      type: FormItemTypes.input
-    },
-    {
-      title: "Kodu",
-      name: "kodu",
-      type: FormItemTypes.input
-    }
-  ] as IFormItem[];
+
 
   const onSuccess = () => {
-    if(selectedItem){
+    if (selectedItem) {
       alert("Başarıyla güncellendi !");
-    }else{
+    } else {
       alert("Başarıyla eklendi !");
     }
-    setModalShowing(false);
     myTable.current?.refresh();
+    setModalShowing(false);
   };
 
-  const deleteItem= useCallback(async (item: IStokKod)=>{
-    if(!window.confirm("Emin misin ?")) return;
-    await api.stokKod1.delete(item.id);
+  const deleteItem = useCallback(async (item: IStokKod) => {
+    if (!window.confirm("Emin misin ?")) return;
+    await api.stokKod1.delete(item.id as number);
     myTable.current?.refresh();
-  },[])
+  }, [])
 
 
-  const columns: TableColumn<IStokKod>[] = [
+  const columns: ColumnProps[] = [
     {
-      name: "#",
-      selector: (row) => row.id,
+      header: "",
+      field: "id",
       sortable: true,
     },
     {
-      name: "Adı",
-      selector: (row) => row.adi,
+      header: "Adı",
+      field: "adi",
       sortable: true,
+      filter: true,
     },
     {
-      name: "işlemler",
-      cell: (row) => {
+      header: "İşlemler",
+      body: (row) => {
         return (
           <>
-            <button className="btn btn-info ms-1"  onClick={(e)=>[e.preventDefault(),setSelectedItem(row), setModalShowing(true)]}>
+            <button className="btn btn-info ms-1" onClick={(e) => [e.preventDefault(), setSelectedItem(row), setModalShowing(true)]}>
               <i className="ti-pencil"></i>
             </button>
-            <button className="btn btn-danger ms-1" onClick={(e)=>[e.preventDefault(), deleteItem(row)]}>
+            <button className="btn btn-danger ms-1" onClick={(e) => [e.preventDefault(), deleteItem(row)]}>
               <i className="ti-trash"></i>
             </button>
           </>
         );
-      },
+      }
     },
   ];
 
-  
+  const modalItems = [
+    {
+      name: "id",
+      type: FormItemTypes.input,
+      hidden: true,
+    },
+    {
+      title: "Adı",
+      name: "adi",
+      type: FormItemTypes.input,
+    },
+    {
+      title: "Kodu",
+      name: "kodu",
+      type: FormItemTypes.input,
+    },
+  ] as IFormItem[];
 
   return (
     <div className="container-fluid">
 
-      <DynamicModal 
-        isShownig={isModalShowing} 
-        title="Stok Ekle" 
-        api={api.stokKod1} 
-        items={items}
+      <DynamicModal
+        isShownig={isModalShowing}
+        title="Stok Ekle"
+        api={api.stokKod1}
+        items={modalItems}
         onDone={onSuccess}
         selectedItem={selectedItem}
-        onHide={()=>setModalShowing(false)}
+        onHide={() => setModalShowing(false)}
       />
-
-      <AppBreadcrumb title="Kod 1'ler" />
+      <AppBreadcrumb title="" />
       <div className="row">
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Data Export</h4>
-              <h6 className="card-subtitle">
-                Export data to Copy, CSV, Excel, PDF & Print
-              </h6>
-              <button
-                type="button"
-                className="btn btn-info btn-rounded m-t-10 float-end text-white"
-                onClick={(e) => [e.preventDefault(), setModalShowing(true)]}
-              >
-                Yeni Kod-1 Ekle
-              </button>
               <div className="table-responsive m-t-40">
                 <AppTable
                   baseApi={api.stokKod1}
                   columns={columns}
-                  key={"Stoklar 1 Kodlar"}
+                  key={"Stok Kod 1 'ler"}
                   ref={myTable}
-                  rowSelectable={false}
+                  rowSelectable={true}
+                  appendHeader={() => {
+                    return (
+                      <Button className="p-button-secondary" 
+                      onClick={(e) => [e.preventDefault(), setModalShowing(true)]}>
+                  Yeni
+              </Button>)
+                  }}
                 />
               </div>
             </div>

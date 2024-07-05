@@ -43,6 +43,8 @@ import unite from "./tanimlamalar/unite";
 import { IUnite } from "../types/tanimlamalar/IUnite";
 import { IStokHareket } from "../types/stok/IStokHareket";
 import stokHareket from "../api/stokHareket";
+import { IStokKod2 } from "../types/Stok/IStokKod2";
+import stokKod2 from "./stokKod2";
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
@@ -110,7 +112,7 @@ const repositories = {
   stokWithDetail: stokWithDetail(instance) as unknown as ICrudBaseAPI<IStokKartiWithDetail>,
   stokGrupKodu: stokGrupKod(instance) as unknown as ICrudBaseAPI<IStokKod>,
   stokKod1: stokKod(instance, 1) as unknown as ICrudBaseAPI<IStokKod>,
-  stokKod2: stokKod(instance, 2) as unknown as ICrudBaseAPI<IStokKod>,
+  stokKod2: stokKod2(instance, 2) as unknown as ICrudBaseAPI<IStokKod2>,
   stokKod3: stokKod(instance, 3)as unknown  as ICrudBaseAPI<IStokKod>,
   stokKod4: stokKod(instance, 4) as unknown as ICrudBaseAPI<IStokKod>,
   stokKod5: stokKod(instance, 5) as unknown as ICrudBaseAPI<IStokKod>,

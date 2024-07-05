@@ -1,3 +1,4 @@
+
 import { IStokKod } from "./IStokKod";
 
 export interface IStok {

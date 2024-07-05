@@ -5,6 +5,7 @@ import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, IFormItem } from "../../../modals/DynamicModal";
 import { IUlke } from "../../../utils/types/tanimlamalar/IUlke";
 import { ColumnProps } from "primereact/column";
+import { Button } from "primereact/button";
 
 export default () => {
   const myTable = createRef<ITableRef<IUlke>>();
@@ -31,30 +32,22 @@ export default () => {
 
 
   const columns: ColumnProps[] = [
-    {
-      field: "id",
-      header: "#",
-      sortable: true
-    },
+   
     {
       header: "Kodu",
       field: "kodu",
       sortable: true,
-      filter: true
+     
     },
     {
-      header: "Adı",
+      header: "Ülke",
       field: "adi",
       sortable: true,
       filter: true
     },
+
     {
-      header: "Aktarım Durumu",
-      field: "aktarimDurumu",
-      sortable: true,
-    },
-    {
-      header: "işlemler",
+      header: "İşlemler",
       body: (row) => {
         return (
           <>
@@ -71,11 +64,7 @@ export default () => {
   ];
 
   const modalItems = [
-    {
-      name: "id",
-      type: FormItemTypes.input,
-      hidden: true
-    },
+    
     {
       title: "Kodu",
       name: "kodu",
@@ -101,30 +90,24 @@ export default () => {
         selectedItem={selectedItem}
         onHide={() => setModalShowing(false)}
       />
-
       <AppBreadcrumb title="" />
       <div className="row">
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Data Export</h4>
-              <h6 className="card-subtitle">
-                Export data to Copy, CSV, Excel, PDF & Print
-              </h6>
-
-              <div className="table-responsive m-t-50">
-
+              <div className="table-responsive m-t-40">
                 <AppTable
                   baseApi={api.ulke}
                   columns={columns}
                   key={"Ülkeler"}
                   ref={myTable}
-                  rowSelectable={true}
+                  rowSelectable={false}
                   appendHeader={() => {
                     return (
-                    <button type="button" className="btn btn-info btn-rounded m-t-10 float-end text-white" onClick={(e) => [e.preventDefault(), setModalShowing(true)]}>
-                      Yeni
-                    </button>)
+                      <Button className="p-button-secondary" 
+                      onClick={(e) => [e.preventDefault(), setModalShowing(true)]}>
+                  Yeni
+              </Button>)
                   }}
                 />
               </div>

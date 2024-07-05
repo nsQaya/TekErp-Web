@@ -2,17 +2,19 @@ import { AxiosInstance } from "axios";
 import { SortOrder } from "react-data-table-component";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { IStokOlcuBirim } from "../../types/tanimlamalar/IStokOlcuBirim";
+import { DynamicQuery } from "../../transformFilter";
 
 const controller="stokOlcuBirims";
 
 export default ($axios: AxiosInstance) => ({
-    getAll(page: number, take: number,sortColumn?: string, sortDirection?: SortOrder){
+    getAllForGrid(page: number, take: number,dynamicQuery:DynamicQuery  ){
+        return $axios.post<IBaseResponseValue<IPagedResponse<IStokOlcuBirim>>>(`/${controller}/GetListForGrid?PageIndex=${page}&PageSize=${take}`, dynamicQuery );
+    },
+    getAll(page: number, take: number){
         return $axios.get<IBaseResponseValue<IPagedResponse<IStokOlcuBirim>>>(`/${controller}`, {
             params: {
                 pageIndex: page,
-                pageSize: take,
-                sortColumn: sortColumn, // Sıralama sütunu
-                sortDirection: sortDirection, // Sıralama yönü
+                pageSize: take
             }
         });
     },

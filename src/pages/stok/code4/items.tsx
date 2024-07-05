@@ -1,64 +1,59 @@
 import { createRef, useCallback, useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import api from "../../../utils/api";
+import { IStokKod } from "../../../utils/types/stok/IStokKod";
 import AppTable, { ITableRef } from "../../../components/AppTable";
-import DynamicModal, { FormItemTypes,  IFormItem } from "../../../modals/DynamicModal";
-import { IUnite } from "../../../utils/types/tanimlamalar/IUnite";
+import DynamicModal, { FormItemTypes, IFormItem } from "../../../modals/DynamicModal";
 import { ColumnProps } from "primereact/column";
 import { Button } from "primereact/button";
 
 export default () => {
-  const myTable = createRef<ITableRef<IUnite>>();
+  const myTable = createRef<ITableRef<IStokKod>>();
   const [isModalShowing, setModalShowing] = useState(false);
-  const [selectedItem, setSelectedItem]= useState<IUnite>();
+  const [selectedItem, setSelectedItem] = useState<IStokKod>();
+
   
 
-
   const onSuccess = () => {
-    if(selectedItem){
+    if (selectedItem) {
       alert("Başarıyla güncellendi !");
-    }else{
+    } else {
       alert("Başarıyla eklendi !");
     }
-    myTable.current?.refresh();
     setModalShowing(false);
+    myTable.current?.refresh();
   };
 
-  const deleteItem= useCallback(async (item: IUnite)=>{
-    if(!window.confirm("Emin misin ?")) return;
-    await api.unite.delete(item.id as number);
+  const deleteItem = useCallback(async (item: IStokKod) => {
+    if (!window.confirm("Emin misin ?")) return;
+    await api.stokKod4.delete(item.id);
     myTable.current?.refresh();
-  },[])
+  }, [])
 
 
   const columns: ColumnProps[] = [
     {
-      field: "id",
       header: "",
-      sortable: true
+      field:"",
+      sortable: true,
+      
     },
     {
-      header: " Ünite Kodu",
-      field: "kodu",
+      header: "Adı",
+      field: "adi",
       sortable: true,
       filter: true
     },
-    {
-      header: "Açıklama",
-      field: "aciklama",
-      sortable: true,
-      filter: true
-    },
-   
+
     {
       header: "İşlemler",
       body: (row) => {
         return (
           <>
-            <button className="btn btn-info ms-1"  onClick={(e)=>[e.preventDefault(),setSelectedItem(row), setModalShowing(true)]}>
+            <button className="btn btn-info ms-1" onClick={(e) => [e.preventDefault(), setSelectedItem(row), setModalShowing(true)]}>
               <i className="ti-pencil"></i>
             </button>
-            <button className="btn btn-danger ms-1" onClick={(e)=>[e.preventDefault(), deleteItem(row)]}>
+            <button className="btn btn-danger ms-1" onClick={(e) => [e.preventDefault(), deleteItem(row)]}>
               <i className="ti-trash"></i>
             </button>
           </>
@@ -66,56 +61,58 @@ export default () => {
       },
     },
   ];
-
-  const modalItems= [
+  const modalItems = [
     {
       name: "id",
       type: FormItemTypes.input,
       hidden: true
     },
     {
-      title: "Kodu",
-      name: "kodu",
+      title: "Adı",
+      name: "adi",
       type: FormItemTypes.input
     },
     {
-      title: "Açıklama",
-      name: "aciklama",
+      title: "Kodu",
+      name: "kodu",
       type: FormItemTypes.input
     }
   ] as IFormItem[];
 
 
+
   return (
     <div className="container-fluid">
-      
-      <DynamicModal 
-        isShownig={isModalShowing} 
-        title="Ünite Ekle" 
-        api={api.unite} 
+
+      <DynamicModal
+        isShownig={isModalShowing}
+        title="Stok Ekle"
+        api={api.stokKod4}
         items={modalItems}
         onDone={onSuccess}
         selectedItem={selectedItem}
-        onHide={()=>setModalShowing(false)}
+        onHide={() => setModalShowing(false)}
       />
 
-      <AppBreadcrumb title="" />
+      <AppBreadcrumb title="Kod 4'ler" />
       <div className="row">
         <div className="col-12">
           <div className="card">
             <div className="card-body">
+
+              <div className="table-responsive m-t-40">
                 <AppTable
-                  baseApi={api.unite}
+                  baseApi={api.stokKod4}
                   columns={columns}
-                  key={"Üniteler"}
+                  key={"Stoklar 4 Kodlar"}
                   ref={myTable}
-                  rowSelectable={false}
+                  rowSelectable={true}
                   appendHeader={() => {
                     return (
-                      <Button className="p-button-secondary" 
-                      onClick={(e) => [e.preventDefault(), setModalShowing(true)]}>
-                  Yeni
-              </Button>)
+                      <Button className="p-button-secondary"
+                        onClick={(e) => [e.preventDefault(), setModalShowing(true)]}>
+                        Yeni
+                      </Button>)
                   }}
                 />
               </div>
@@ -123,6 +120,6 @@ export default () => {
           </div>
         </div>
       </div>
-    
+    </div>
   );
 };

@@ -5,6 +5,9 @@ import DefaultLayout from "../layouts/default";
 import StockItems from "../pages/stok/items";
 import StockCode1Items from "../pages/stok/code1/items";
 import StockCode2Items from "../pages/stok/code2/items";
+import StockCode3Items from "../pages/stok/code3/items";
+import StockCode4Items from "../pages/stok/code4/items";
+import StockCode5Items from "../pages/stok/code5/items";
 
 import IhtiyacPlanlama from "../pages/planlama/ihtiyacPlanlama"
 
@@ -94,6 +97,18 @@ export default createHashRouter([
           {
             path: "code2",
             element: <StockCode2Items />,
+          },
+          {
+            path: "code3",
+            element: <StockCode3Items />,
+          },
+          {
+            path: "code4",
+            element: <StockCode4Items />,
+          },
+          {
+            path: "code5",
+            element: <StockCode5Items />,
           },
         ],
       },

@@ -1,14 +1,13 @@
 import { createRef, useCallback,   useEffect,   useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import api from "../../../utils/api";
-
-
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
 import { IHucre } from "../../../utils/types/tanimlamalar/IHucre";
 import { ColumnProps } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import {FloatLabel } from "primereact/floatlabel";
+import { Button } from "primereact/button";
 
 
 
@@ -48,12 +47,7 @@ export default () => {
 
 
   const columns: ColumnProps[] = [
-    {
-      header: "#",
-      field: "id",
-      sortable: false,
-      filter: false
-    },
+   
     {
       header: "Hücre Kodu",
       field: "kodu",
@@ -84,11 +78,7 @@ export default () => {
   ];
 
   const modalItems= [
-    {
-      name: "id",
-      type: FormItemTypes.input,
-      hidden: true
-    },
+   
     {
       title: "Depo Kodu",
       name: "depoId",
@@ -109,7 +99,9 @@ export default () => {
 
   return (
     <div className="container-fluid">
+       
       
+           
 
 
       <DynamicModal 
@@ -121,44 +113,20 @@ export default () => {
         selectedItem={selectedItem}
         onHide={()=>setModalShowing(false)}
       />
+     
+      
 
       <AppBreadcrumb title="" />
       <div className="row">
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Data Export</h4>
-              <h6 className="card-subtitle">
-                Export data to Copy, CSV, Excel, PDF & Print
-              </h6>
               <div className="row">
               <div className="col-md-3">
-              <FloatLabel>
-            <InputText id="username" onChange={(e) => setValue(e.target.value)}/>
-            <label htmlFor="username">UserName</label>
-            </FloatLabel>
-            </div>
-            <div className="col-md-3">
-              <FloatLabel>
-            <InputText id="username" onChange={(e) => setValue(e.target.value)} />
-            <label htmlFor="username">UserName</label>
-            </FloatLabel>
-            </div>
-            <div className="col-md-3">
-              <FloatLabel>
-            <InputText id="username" onChange={(e) => setValue(e.target.value)} />
-            <label htmlFor="username">UserName</label>
-            </FloatLabel>
             </div>
             </div>
-              <button
-                type="button"
-                className="btn btn-info btn-rounded m-t-10 float-end text-white"
-                onClick={(e) => [e.preventDefault(), setModalShowing(true)]}
-              >
-                Yeni
-              </button>
               <div className="table-responsive m-t-40">
+           
                 <AppTable
                   baseApi={api.hucre}
                   columns={columns}
@@ -166,7 +134,16 @@ export default () => {
                   ref={myTable}
                   rowSelectable={false}
                   rowPerPageOptions={[10,25,50,100]}
+                  appendHeader={() => {
+                    return (
+                      <Button className="p-button-secondary" 
+                      onClick={(e) => [e.preventDefault(), setModalShowing(true)]}>
+                  Yeni
+              </Button>)
+                  }}
+                  
                 />
+
               </div>
             </div>
           </div>

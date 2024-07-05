@@ -3,6 +3,7 @@ import { AxiosInstance } from "axios";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { DynamicQuery } from "../../transformFilter";
 import { IProje } from "../../types/tanimlamalar/IProje";
+import { DynamicQuery } from "../../transformFilter";
 
 
 

@@ -1,10 +1,11 @@
 import { createRef, useCallback,      useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
-import { TableColumn } from "react-data-table-component";
 import api from "../../../utils/api";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes,  IFormItem } from "../../../modals/DynamicModal";
 import { IPlasiyer } from "../../../utils/types/tanimlamalar/IPlasiyer";
+import { ColumnProps } from "primereact/column";
+import { Button } from "primereact/button";
 
 
 
@@ -13,6 +14,7 @@ export default () => {
   const myTable = createRef<ITableRef<IPlasiyer>>();
   const [isModalShowing, setModalShowing] = useState(false);
   const [selectedItem, setSelectedItem]= useState<IPlasiyer>();
+  
   
 
 
@@ -33,30 +35,24 @@ export default () => {
   },[])
 
 
-  const columns: TableColumn<IPlasiyer>[] = [
+  const columns: ColumnProps[] = [
+    
     {
-      name: "#",
-      selector: (row) => row.id as number,
+      header: "Plasiyer Kodu",
+      field: "kodu",
       sortable: true,
+      filter: true
     },
     {
-      name: "Kodu",
-      selector: (row) => row.kodu,
+      header: "Adı",
+      field: "adi",
       sortable: true,
+      filter: true
     },
+
     {
-      name: "Adı",
-      selector: (row) => row.adi,
-      sortable: true,
-    },
-    {
-      name: "Aktarım Durumu",
-      selector: (row) => row.aktarimDurumu,
-      sortable: true,
-    },
-    {
-      name: "işlemler",
-      cell: (row) => {
+      header: "İşlemler",
+      body: (row) => {
         return (
           <>
             <button className="btn btn-info ms-1"  onClick={(e)=>[e.preventDefault(),setSelectedItem(row), setModalShowing(true)]}>
@@ -72,11 +68,7 @@ export default () => {
   ];
 
   const modalItems= [
-    {
-      name: "id",
-      type: FormItemTypes.input,
-      hidden: true
-    },
+   
     {
       title: "Kodu",
       name: "kodu",
@@ -108,17 +100,6 @@ export default () => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Data Export</h4>
-              <h6 className="card-subtitle">
-                Export data to Copy, CSV, Excel, PDF & Print
-              </h6>
-              <button
-                type="button"
-                className="btn btn-info btn-rounded m-t-10 float-end text-white"
-                onClick={(e) => [e.preventDefault(), setModalShowing(true)]}
-              >
-                Yeni
-              </button>
               <div className="table-responsive m-t-40">
                 <AppTable
                   baseApi={api.plasiyer}
@@ -126,6 +107,13 @@ export default () => {
                   key={"Depolar"}
                   ref={myTable}
                   rowSelectable={false}
+                  appendHeader={() => {
+                    return (
+                      <Button className="p-button-secondary" 
+                      onClick={(e) => [e.preventDefault(), setModalShowing(true)]}>
+                  Yeni
+              </Button>)
+                  }}
                 />
               </div>
             </div>

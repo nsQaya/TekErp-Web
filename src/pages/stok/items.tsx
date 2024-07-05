@@ -117,11 +117,6 @@ export default () => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Data Export</h4>
-              <h6 className="card-subtitle">
-                Export data to Copy, CSV, Excel, PDF & Print
-              </h6>
-
               <button
                 type="button"
                 className="btn btn-info btn-rounded m-t-10 float-end text-white ms-3"

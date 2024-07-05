@@ -1,5 +1,4 @@
 import { AxiosInstance } from "axios";
-
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { IUlke } from "../../types/tanimlamalar/IUlke";
 import { DynamicQuery } from "../../transformFilter";
@@ -31,3 +30,9 @@ export default ($axios: AxiosInstance) => ({
         return $axios.get<IBaseResponseValue<IUlke>>(`/${controller}/${id}`);
     }
 });
+
+
+
+
+
+

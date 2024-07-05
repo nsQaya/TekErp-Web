@@ -1,7 +1,7 @@
 import { AxiosInstance } from "axios";
+import { IIl } from "../../types/tanimlamalar/IIl";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { DynamicQuery } from "../../transformFilter";
-import { IIl } from "../../types/tanimlamalar/IIl";
 
 const controller="ils";
 

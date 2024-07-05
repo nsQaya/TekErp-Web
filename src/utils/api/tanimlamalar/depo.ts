@@ -2,6 +2,7 @@ import { AxiosInstance } from "axios";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { DynamicQuery } from "../../transformFilter";
 import { IDepo } from "../../types/tanimlamalar/IDepo";
+import { DynamicQuery } from "../../transformFilter";
 
 
 const controller="depoes";
@@ -31,3 +32,5 @@ export default ($axios: AxiosInstance) => ({
         return $axios.get<IBaseResponseValue<IDepo>>(`/${controller}/${id}`);
     }
 });
+
+

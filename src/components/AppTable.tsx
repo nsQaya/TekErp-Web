@@ -68,7 +68,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   const [page, setPage] = useState(0);
   const [perPage, setPerPage] = useState((props.rowPerPageOptions && props.rowPerPageOptions[0]) || 10);
   const [sortColumn, setSortColumn] = useState<string>('Id');
-  const [sortDirection, setSortDirection] = useState<SortOrder>(-1);
+  const [sortDirection, setSortDirection] = useState<SortOrder>(0);
   const [filters, setFilters] = useState(() => {
     return props.columns
       .filter(column => column.filter && column.field)
@@ -79,7 +79,6 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
         return acc;
       }, {} as any);
   });
-  
 
   const exportColumns = props.columns.map((col) => ({ title: col.header, dataKey: col.field }));
 
@@ -188,9 +187,9 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
         rows={perPage}
         loading={loading}
         dataKey="id"
-        filterDisplay="row" //Bu özellik her sutün üstüne arama filtresi koyuyor.
+        filterDisplay="row"
         emptyMessage="Kayıt yok."
-        rowsPerPageOptions={props.rowPerPageOptions || [10,25,50,100]}
+        rowsPerPageOptions={props.rowPerPageOptions || [10, 25, 50, 100]}
         totalRecords={totalRows}
         lazy
         onPage={handleTableEvent}
@@ -200,13 +199,13 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
         sortOrder={sortDirection}
         first={first}
         onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<DataTableValue[]>) => {
-          props.onChangeSelected && props.onChangeSelected(e.value);
           setSelectedItems(e.value);
+          props.onChangeSelected && props.onChangeSelected(e.value);
         }}
         selectionMode={props.rowSelectable ? "multiple" : null}
         selection={selectedItems}
       >
-        {props.rowSelectable && <Column selectionMode="multiple" headerStyle={{ width: '1rem' }}></Column>}
+        {props.rowSelectable && <Column selectionMode="multiple" headerStyle={{ width: '1rem' }} />}
         {props.columns.map((column, index) => (
           <Column key={index} {...column} />
         ))}

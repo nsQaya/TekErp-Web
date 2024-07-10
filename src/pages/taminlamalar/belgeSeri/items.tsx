@@ -1,4 +1,4 @@
-import { createRef, useCallback, useEffect, useState } from "react";
+import { createRef, useCallback, useEffect, useRef, useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import api from "../../../utils/api";
 import AppTable, { ITableRef } from "../../../components/AppTable";
@@ -9,6 +9,9 @@ import DynamicModal, {
 import { ColumnProps } from "primereact/column";
 import { IBelgeSeri } from "../../../utils/types/tanimlamalar/IBelgeSeri";
 import { EBelgeTip } from "../../../utils/types/enums/EBelgeTip";
+import { Toast } from "primereact/toast";
+import { ConfirmDialog } from "primereact/confirmdialog";
+import { Button } from "primereact/button";
 
 export default () => {
   const myTable = createRef<ITableRef<IBelgeSeri>>();
@@ -16,11 +19,15 @@ export default () => {
   const [selectedItem, setSelectedItem] = useState<IBelgeSeri>();
   const [belges, setBelges] = useState<any[]>([]);
 
+  const toast = useRef<Toast>(null);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<IBelgeSeri | null>(null);
+
   // Enum değerlerini alıp 900 ile başlayanları filtreleyen fonksiyon
   const getFilteredEnumValues = () => {
-    return Object.entries(EBelgeTip)
-      .filter(([key, value]) => typeof value === "number" && value >= 900)
-      .map(([key, value]) => ({ label: key, value: Number(value) }));
+    return Object.values(EBelgeTip)
+      .filter((value) => typeof value === "number" && value >= 900)
+      .map((value) => ({ label: EBelgeTip[value as keyof typeof EBelgeTip], value: Number(value) }));
   };
 
   useEffect(() => {
@@ -30,26 +37,43 @@ export default () => {
 
   const onSuccess = () => {
     if (selectedItem) {
-      alert("Başarıyla güncellendi !");
+      toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla güncellendi !" });
     } else {
-      alert("Başarıyla eklendi !");
+      toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla eklendi !" });
     }
     myTable.current?.refresh();
     setModalShowing(false);
   };
 
-  const deleteItem = useCallback(async (item: IBelgeSeri) => {
-    if (!window.confirm("Emin misin ?")) return;
-    await api.belgeSeri.delete(item.id as number);
-    myTable.current?.refresh();
-  }, []);
+  const confirmDelete = useCallback(async () => {
+    if (itemToDelete) {
+      try {
+        await api.belgeSeri.delete(itemToDelete.id as number);
+        myTable.current?.refresh();
+        toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla silindi !" });
+      } catch (error) {
+        console.error("Silme işleminde hata:", error);
+        toast.current?.show({ severity: "error", summary: "Hata", detail: "Silme işleminde hata oluştu !" });
+      } finally {
+        setItemToDelete(null);
+        setConfirmVisible(false);
+      }
+    }
+  }, [itemToDelete]);
+
+  const deleteItem = (item: IBelgeSeri) => {
+    setItemToDelete(item);
+    setConfirmVisible(true);
+  };
+
+  useEffect(() => {
+    if (!confirmVisible && !itemToDelete) {
+      myTable.current?.refresh();
+    }
+  }, [confirmVisible, itemToDelete]);
 
   const columns: ColumnProps[] = [
-    {
-      header: "#",
-      field: "id",
-      sortable: true,
-    },
+
     {
       header: "Belge Tipi",
       field: "belgeTip",
@@ -78,10 +102,17 @@ export default () => {
       body: (row) => {
         return (
           <>
-            <button className="btn btn-info ms-1" onClick={(e) => [e.preventDefault(), setSelectedItem(row), setModalShowing(true)]}>
+            <button className="btn btn-info ms-1" onClick={(e) => {
+              e.preventDefault();
+              setSelectedItem(row);
+              setModalShowing(true);
+            }}>
               <i className="ti-pencil"></i>
             </button>
-            <button className="btn btn-danger ms-1" onClick={(e) => [e.preventDefault(), deleteItem(row)]}>
+            <button className="btn btn-danger ms-1" onClick={(e) => {
+              e.preventDefault();
+              deleteItem(row);
+            }}>
               <i className="ti-trash"></i>
             </button>
           </>
@@ -112,6 +143,18 @@ export default () => {
 
   return (
     <div className="container-fluid">
+      <Toast ref={toast} />
+      <ConfirmDialog
+        visible={confirmVisible}
+        onHide={() => setConfirmVisible(false)}
+        message="Silmek istediğinizden emin misiniz?"
+        header="Onay"
+        icon="pi pi-exclamation-triangle"
+        accept={confirmDelete}
+        reject={() => setConfirmVisible(false)}
+        acceptLabel="Evet"
+        rejectLabel="Hayır"
+      />
       <DynamicModal
         isShownig={isModalShowing}
         title="Ekle"
@@ -121,32 +164,28 @@ export default () => {
         selectedItem={selectedItem}
         onHide={() => setModalShowing(false)}
       />
-
       <AppBreadcrumb title="" />
       <div className="row">
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <div className="table-responsive m-t-50">
+              <div className="table-responsive m-t-40">
                 <AppTable
                   baseApi={api.belgeSeri}
                   columns={columns}
                   key={"BelgeSeriler"}
                   ref={myTable}
-                  rowSelectable={true}
+                  rowSelectable={false}
                   appendHeader={() => {
                     return (
-                      <button
-                        type="button"
-                        className="btn btn-info btn-rounded m-t-10 float-end text-white"
-                        onClick={(e) => [
-                          e.preventDefault(),
-                          setModalShowing(true),
-                        ]}
-                      >
+                      <Button className="p-button-secondary" onClick={(e) => {
+                        e.preventDefault();
+                        setSelectedItem(undefined);
+                        setModalShowing(true);
+                      }}>
                         Yeni
-                      </button>
-                    );
+                      </Button>
+                    )
                   }}
                 />
               </div>

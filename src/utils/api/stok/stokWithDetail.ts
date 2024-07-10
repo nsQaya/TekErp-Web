@@ -1,7 +1,9 @@
 import { AxiosInstance } from "axios";
-import { IBaseResponseValue, IPagedResponse } from "../types";
-import { IStokKartiWithDetail } from "../types/stok/IStokKartiWithDetail";
-import { DynamicQuery } from "../transformFilter";
+import { IBaseResponseValue, IPagedResponse } from "../../types";
+import { DynamicQuery } from "../../transformFilter";
+import { IStokKartiWithDetail } from "../../types/stok/IStokKartiWithDetail";
+
+
 
 const controller="StokKartis";
 

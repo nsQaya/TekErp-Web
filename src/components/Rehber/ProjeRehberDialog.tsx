@@ -14,7 +14,7 @@ export default(props: {isVisible: boolean, onSelect: (item: any) => void, onHide
         },
         {
           header: "Açıklama",
-          field: "Aciklama",
+          field: "aciklama",
           // sortable: true,
           filter: true,
         },

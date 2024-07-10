@@ -1,5 +1,4 @@
 import { AxiosInstance } from "axios";
-import { SortOrder } from "react-data-table-component";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { IPlasiyer } from "../../types/tanimlamalar/IPlasiyer";
 import { DynamicQuery } from "../../transformFilter";

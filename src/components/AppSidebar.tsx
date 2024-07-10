@@ -26,7 +26,7 @@ export default () => {
 
   const [stokPages, ___] =useState([
     {title: "Stoklar", href: "/stok/stoks"},
-    {title: "Grup Kodu", href: "/"},
+    {title: "Grup Kodu", href: "/stok/groupCode"},
     {title: "Kod 1", href: "/stok/code1"},
     {title: "Kod 2", href: "/stok/code2"},
     {title: "Kod 3", href: "/stok/code3"},

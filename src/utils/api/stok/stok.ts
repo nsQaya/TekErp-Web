@@ -1,7 +1,8 @@
 import { AxiosInstance, AxiosResponse } from "axios";
-import { IBaseResponseValue, ICrudBaseAPI, IPagedResponse } from "../types";
-import { IStok } from "../types/stok/IStok";
-import { DynamicQuery } from "../transformFilter";
+import { IBaseResponseValue, ICrudBaseAPI, IPagedResponse } from "../../types";
+
+import { DynamicQuery } from "../../transformFilter";
+import { IStok } from "../../types/stok/IStok";
 
 const controller="StokKartis";
 
@@ -26,6 +27,9 @@ export default ($axios: AxiosInstance) => ({
     },
     getByKod(kod: string){
         return $axios.get<IBaseResponseValue<IStok>>(`/${controller}/GetByKod?Kod=${kod}`);
+    },
+    get(id: number){
+        return $axios.get<IBaseResponseValue<IStok>>(`/${controller}/${id}`);
     }
 
 });

@@ -1,43 +1,64 @@
-import { createRef, useCallback, useState } from "react";
+import { createRef, useCallback, useState, useRef, useEffect } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import api from "../../../utils/api";
 import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, IFormItem } from "../../../modals/DynamicModal";
 import { ColumnProps } from "primereact/column";
 import { Button } from "primereact/button";
-import { IStokKod2 } from "../../../utils/types/Stok/IStokKod2";
+import { IStokKod } from "../../../utils/types/stok/IStokKod";
+import { Toast } from "primereact/toast";
+import { ConfirmDialog } from "primereact/confirmdialog";
 
 export default () => {
-  const myTable = createRef<ITableRef<IStokKod2>>();
+  const myTable = createRef<ITableRef<IStokKod>>();
   const [isModalShowing, setModalShowing] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<IStokKod2>();
-
-
+  const [selectedItem, setSelectedItem] = useState<IStokKod | undefined>();
+  const toast = useRef<Toast>(null);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<IStokKod | null>(null);
 
   const onSuccess = () => {
     if (selectedItem) {
-      alert("Başarıyla güncellendi !");
+      toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla güncellendi !" });
     } else {
-      alert("Başarıyla eklendi !");
+      toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla eklendi !" });
     }
     myTable.current?.refresh();
     setModalShowing(false);
   };
 
-  const deleteItem = useCallback(async (item: IStokKod2) => {
-    if (!window.confirm("Emin misin ?")) return;
-    await api.stokKod2.delete(item.id as number);
-    myTable.current?.refresh();
-  }, [])
+  const confirmDelete = useCallback(async () => {
+    if (itemToDelete) {
+      try {
+        await api.stokKod2.delete(itemToDelete.id as number);
+        myTable.current?.refresh();
+        toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla silindi !" });
+      } catch (error) {
+        console.error("Silme işleminde hata:", error);
+        toast.current?.show({ severity: "error", summary: "Hata", detail: "Silme işleminde hata oluştu !" });
+      } finally {
+        setItemToDelete(null);
+        setConfirmVisible(false);
+      }
+    }
+  }, [itemToDelete]);
 
+  const deleteItem = (item: IStokKod) => {
+    setItemToDelete(item);
+    setConfirmVisible(true);
+  };
 
+  useEffect(() => {
+    if (!confirmVisible && !itemToDelete) {
+      myTable.current?.refresh();
+    }
+  }, [confirmVisible, itemToDelete]);
 
   const columns: ColumnProps[] = [
     {
       header: "",
-      field:"",
+      field: "id",
       sortable: true,
-      
     },
     {
       header: "Adı",
@@ -45,23 +66,30 @@ export default () => {
       sortable: true,
       filter: true
     },
-
     {
       header: "İşlemler",
       body: (row) => {
         return (
           <>
-            <button className="btn btn-info ms-1" onClick={(e) => [e.preventDefault(), setSelectedItem(row), setModalShowing(true)]}>
+            <button className="btn btn-info ms-1" onClick={(e) => {
+              e.preventDefault();
+              setSelectedItem(row);
+              setModalShowing(true);
+            }}>
               <i className="ti-pencil"></i>
             </button>
-            <button className="btn btn-danger ms-1" onClick={(e) => [e.preventDefault(), deleteItem(row)]}>
+            <button className="btn btn-danger ms-1" onClick={(e) => {
+              e.preventDefault();
+              deleteItem(row);
+            }}>
               <i className="ti-trash"></i>
             </button>
           </>
         );
-      },
+      }
     },
   ];
+
   const modalItems = [
     {
       name: "id",
@@ -80,14 +108,23 @@ export default () => {
     }
   ] as IFormItem[];
 
-
-
   return (
     <div className="container-fluid">
-
+      <Toast ref={toast} />
+      <ConfirmDialog
+        visible={confirmVisible}
+        onHide={() => setConfirmVisible(false)}
+        message="Silmek istediğinizden emin misiniz?"
+        header="Onay"
+        icon="pi pi-exclamation-triangle"
+        accept={confirmDelete}
+        reject={() => setConfirmVisible(false)}
+        acceptLabel="Evet"
+        rejectLabel="Hayır"
+      />
       <DynamicModal
         isShownig={isModalShowing}
-        title="Stok Kod 2 Ekle"
+        title="Ekle"
         api={api.stokKod2}
         items={modalItems}
         onDone={onSuccess}
@@ -108,10 +145,14 @@ export default () => {
                   rowSelectable={true}
                   appendHeader={() => {
                     return (
-                      <Button className="p-button-secondary" 
-                      onClick={(e) => [e.preventDefault(), setModalShowing(true)]}>
-                  Yeni
-              </Button>)
+                      <Button className="p-button-secondary" onClick={(e) => {
+                        e.preventDefault();
+                        setSelectedItem(undefined);
+                        setModalShowing(true);
+                      }}>
+                        Yeni
+                      </Button>
+                    )
                   }}
                 />
               </div>

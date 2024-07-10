@@ -25,7 +25,6 @@ import { ConfirmDialog } from "primereact/confirmdialog";
 import { EAmbarHareketTur } from "../../utils/types/enums/EAmbarHareketTur";
 import { EAmbarFisiCikisYeri } from "../../utils/types/enums/EAmbarFisiCikisYeri";
 import { EBelgeTip } from "../../utils/types/enums/EBelgeTip";
-import { IAmbarFisi } from "../../utils/types/fatura/IAmbarFisi";
 import { IStokHareket } from "../../utils/types/fatura/IStokHareket";
 import { IBelgeSeri } from "../../utils/types/tanimlamalar/IBelgeSeri";
 import { IHucreOzet } from "../../utils/types/tanimlamalar/IHucreOzet";
@@ -53,7 +52,7 @@ type FormDataDetay = {
   ozelKod1Id?: number;
   ozelKod1?: string;
   stokKartiId: number;
-  stokKodu: string;
+  //stokKodu: string;
   stokAdi?: string;
   miktar: number;
   istenilenMiktar?: number;
@@ -107,7 +106,7 @@ const App = () => {
     ozelKod1Id: 0,
     ozelKod1: "",
     stokKartiId: 0,
-    stokKodu: "",
+    //stokKodu: "",
     stokAdi: "",
     istenilenMiktar: 0,
     miktar: 0,
@@ -138,16 +137,39 @@ const App = () => {
     { label: string; value: number }[]
   >([]);
 
+  const [selectedHucre, setSelectedHucre] = useState<number | null>(null);
+  const [selectedStokKodu, setSelectedStokKodu] = useState("");
 
-  const handleHucreChange = (e: any) => {
-    const selectedOption = hucreOptions.find(option => option.value === e.value);
+  useEffect(() => {
     setFormDataDetay((prevFormData) => ({
       ...prevFormData,
-      hucreKodu: selectedOption ? selectedOption.label : '',
+      stokKodu: selectedStokKodu,
+    }));
+  }, [selectedStokKodu]);
+
+  const handleHucreChange = (e: any) => {
+    const selectedOption = hucreOptions.find(
+      (option) => option.value === e.value
+    );
+    setFormDataDetay((prevFormData) => ({
+      ...prevFormData,
+      hucreKodu: selectedOption ? selectedOption.label : "",
       hucreId: e.value,
       numara: "",
     }));
+    setSelectedHucre(e.value);
   };
+
+  useEffect(() => {
+    if (hucreOptions.length > 0) {
+      setSelectedHucre(hucreOptions[0].value);
+      setFormDataDetay((prevFormData) => ({
+        ...prevFormData,
+        hucreKodu: hucreOptions[0].label,
+        hucreId: hucreOptions[0].value,
+      }));
+    }
+  }, [hucreOptions]);
 
   useEffect(() => {
     const fetchSeriOptions = async () => {
@@ -198,50 +220,148 @@ const App = () => {
 
   const [searchParams] = useSearchParams();
   //belge düzenleme için, belge id sini alma
-  const belgeId = useMemo(
+  const updateBelgeId = useMemo(
     () => Number(searchParams.get("belgeId")),
     [searchParams]
   );
 
   useEffect(() => {
+    const validateFormDataBaslik = () => {
+      Object.keys(formDataBaslik).forEach((key) => {
+        if (formDataBaslik[key as keyof FormDataBaslik] === undefined || formDataBaslik[key as keyof FormDataBaslik] === null) {
+          toast.current?.show({
+            severity: "warn",
+            summary: "Uyarı",
+            detail: `${key} değeri hatalı!`,
+            life: 3000,
+          });
+        }
+      });
+    };
+
+    validateFormDataBaslik();
+  }, [formDataDetay]);
+
+  const fetchCikisYeriKoduFromAnaMamulGrubu = async (id: number) => {
+    try {
+      const response = await api.stok.get(id);
+      return response.data.value.kodu;
+    } catch (error) {
+      console.error("Error fetching stok kodu:", error);
+      return "";
+    }
+  };
+  const fetchCikisYeriKoduFromMaliyetGrubu = async (id: number) => {
+    try {
+      const response = await api.stok.get(id);
+      return response.data.value.kodu;
+    } catch (error) {
+      console.error("Error fetching stok kodu:", error);
+      return "";
+    }
+  };
+  const fetchCikisYeriKoduFromMasrafMerkezi = async (id: number) => {
+    try {
+      const response = await api.stok.get(id);
+      return response.data.value.kodu;
+    } catch (error) {
+      console.error("Error fetching stok kodu:", error);
+      return "";
+    }
+  };
+  const fetchCikisYeriKoduFromSerbest = async (id: number) => {
+    try {
+      const response = await api.stok.get(id);
+      return response.data.value.kodu;
+    } catch (error) {
+      console.error("Error fetching stok kodu:", error);
+      return "";
+    }
+  };
+  const fetchCikisYeriKoduFromStokKodu = async (id: number) => {
+    try {
+      const response = await api.stok.get(id);
+      return response.data.value.kodu;
+    } catch (error) {
+      console.error("Error fetching stok kodu:", error);
+      return "";
+    }
+  };
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.ambarFisi.get(belgeId);
+        const response = await api.ambarFisi.getByBelgeId(updateBelgeId);
         if (response.data.status) {
           const ambarFisi = response.data.value;
           const belge = ambarFisi.belge!;
+          const seri = belge.no.substring(0, 3);
+          const numara = belge.no.substring(3);
+          let cikisYeriKodu = "";
+
+          switch (ambarFisi.cikisYeri) {
+            case EAmbarFisiCikisYeri.AnaMamulGrubu:
+              cikisYeriKodu= await fetchCikisYeriKoduFromAnaMamulGrubu(
+                ambarFisi.cikisYeriId
+              );
+              break;
+            case EAmbarFisiCikisYeri.MaliyetGrubu:
+              cikisYeriKodu= await fetchCikisYeriKoduFromMaliyetGrubu(
+                ambarFisi.cikisYeriId
+              );
+              break;
+            case EAmbarFisiCikisYeri.MasrafMerkezi:
+              cikisYeriKodu= await fetchCikisYeriKoduFromMasrafMerkezi(
+                ambarFisi.cikisYeriId
+              );
+              break;
+            case EAmbarFisiCikisYeri.Serbest:
+              cikisYeriKodu= await fetchCikisYeriKoduFromSerbest(
+                ambarFisi.cikisYeriId
+              );
+              break;
+            case EAmbarFisiCikisYeri.StokKodu:
+              cikisYeriKodu= await fetchCikisYeriKoduFromStokKodu(
+                ambarFisi.cikisYeriId
+              );
+              break;
+
+            default:
+              break;
+          }
+
           setFormDataBaslik({
-            seri: belge.seri,
-            numara: belge.no,
+            seri: seri,
+            numara: numara,
             tarih: currentDate,
             hareketTuru: ambarFisi.ambarHareketTur,
             cikisYeri: ambarFisi.cikisYeri,
-            cikisYeriKodu: ambarFisi.cikisYeriKodu,
+            cikisYeriKodu: cikisYeriKodu,
             cikisYeriKoduId: ambarFisi.cikisYeriId,
             aciklama1: belge.aciklama1,
             aciklama2: belge.aciklama2,
             aciklama3: belge.aciklama3,
           });
 
-          const gridResponse = await api.stokHareket.getListByBelgeId(belgeId);
+          const gridResponse = await api.stokHareket.getListByBelgeId(
+            updateBelgeId
+          );
           if (gridResponse.data.value) {
             setGridData(
-              gridResponse.data.value.items.map(
-                (item: IStokHareket, index: number) => ({
-                  id: item.id,
-                  stokKartiId: item.stokKartiId,
-                  stokKodu: item.stokKarti!.kodu,
-                  stokAdi: item.stokKarti!.adi,
-                  miktar: item.miktar,
-                  istenilenMiktar: item.istenilenMiktar,
-                  fiyat: item.fiyatTL,
-                  hucreId: item.hucreId,
-                  hucreKodu: item.hucre?.kodu,
-                  bakiye: item.bakiye,
-                  olcuBirimId: item.olcuBirimId,
-                  olcuBr: item.olcuBirim?.simge,
-                })
-              )
+              gridResponse.data.value.items.map((item: IStokHareket) => ({
+                id: item.sira,
+                stokKartiId: item.stokKartiId,
+                stokKodu: item.stokKarti!.kodu,
+                stokAdi: item.stokKarti!.adi,
+                miktar: item.miktar,
+                istenilenMiktar: item.istenilenMiktar,
+                fiyat: item.fiyatTL,
+                hucreId: item.hucreId,
+                hucreKodu: item.hucre?.kodu,
+                bakiye: item.bakiye,
+                olcuBirimId: item.olcuBirimId,
+                olcuBr: item.olcuBirim?.simge,
+              }))
             );
 
             //Herhangi bir stoktan veri almak için
@@ -252,8 +372,8 @@ const App = () => {
               uniteKoduId: gridResponse.data.value.items[0].uniteId,
               uniteKodu: gridResponse.data.value.items[0].unite?.kodu,
               stokKartiId: 0,
-              hucreId:0,
-              stokKodu: "",
+              hucreId: 0,
+              //stokKodu: "",
               miktar: 0,
               istenilenMiktar: 0,
               olcuBrId: 0,
@@ -266,20 +386,20 @@ const App = () => {
       }
     };
 
-    if (belgeId) {
+    if (updateBelgeId) {
       fetchData();
     }
-  }, [belgeId]);
+  }, [updateBelgeId]);
 
   const handleInputChangeBaslik = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormDataBaslik({ ...formDataBaslik, [name]: value });
   };
 
-  const handleInputChangeDetay = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormDataDetay({ ...formDataDetay, [name]: value });
-  };
+  // const handleInputChangeDetay = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setFormDataDetay({ ...formDataDetay, [name]: value });
+  // };
   const miktarRef = useRef<any>(null);
 
   //stok getirme, gridden stok düzeltme, stok kodu okutunca bilgilerini getirme işlemleri
@@ -287,23 +407,26 @@ const App = () => {
     setFormDataDetay((prevFormData) => ({
       ...prevFormData,
       stokAdi: "",
-      hucreKodu:"",
-      hucreId:0
+      hucreKodu: "",
+      hucreId: 0,
     }));
+    setHucreOptions([]);
 
     try {
-      const response = await api.stok.getByKod(formDataDetay.stokKodu);
+      const response = await api.stok.getByKod(selectedStokKodu);
       if (response.status) {
         if (
           response.data &&
           response.data.value.adi &&
-          response.data.value.kodu === formDataDetay.stokKodu
+          response.data.value.kodu === selectedStokKodu
         ) {
-
-
-          const alreadyHas = gridData.find((x) => x.stokKodu == formDataDetay.stokKodu);
+          const alreadyHas = gridData.find(
+            (x) => x.stokKodu == selectedStokKodu
+          );
           const alreadyHasgMiktar = alreadyHas ? alreadyHas.miktar : 0;
-          const alreadyHasgIstenilenMiktar = alreadyHas ? alreadyHas.istenilenMiktar: 0;
+          const alreadyHasgIstenilenMiktar = alreadyHas
+            ? alreadyHas.istenilenMiktar
+            : 0;
 
           setFormDataDetay((prevFormData) => ({
             ...prevFormData,
@@ -313,9 +436,8 @@ const App = () => {
             miktar: alreadyHasgMiktar!,
             istenilenMiktar: alreadyHasgIstenilenMiktar!,
           }));
-          
 
-          if (response.data.value.hucreOzets){
+          if (response.data.value.hucreOzets) {
             if (response.data.value.hucreOzets.length > 0) {
               const options = response.data.value.hucreOzets.map(
                 (item: IHucreOzet) => ({
@@ -326,36 +448,20 @@ const App = () => {
               setHucreOptions(options);
             }
           }
-          else{
-            setHucreOptions([]);
-          }
-          if (miktarRef.current) {
-          miktarRef.current.focus();
-
-          setTimeout(() => {
-              miktarRef.current.focus();
-          }, 0);
-        }
-
           // if (miktarRef.current) {
-          //   const inputElement = miktarRef.current.getInput();
-          //   if (inputElement) {
-          //     inputElement.focus();
-          //     inputElement.select();
-          //   }
-          // }
-          // const miktarElemant = document.getElementById('miktar');
-          // miktarElemant!.focus();
-          // if (miktarElemant) {
-          //   miktarElemant.focus();
-          // }
+          //   miktarRef.current.focus();
         }
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }, [gridData,formDataDetay.stokKodu]);
+  }, [gridData, selectedStokKodu]);
 
+  useEffect(() => {
+    if (selectedStokKodu) {
+      handleKeyPress();
+    }
+  }, [selectedStokKodu, handleKeyPress]);
 
   //rehber işlemleri
   const handleDialogSelect = useCallback(
@@ -371,7 +477,7 @@ const App = () => {
           [`${fieldName}Id`]: selectedValue.Id,
         };
         if (fieldName === "stokKodu") {
-          handleKeyPress();
+          setSelectedStokKodu(selectedValue[dialogFieldName]);
         }
         return newFormData;
       });
@@ -390,6 +496,10 @@ const App = () => {
 
   //ihtiyaç planlama raporundan getirilen bilgiler
   const handleGetir = async () => {
+    if (!validateGetir()) {
+      return;
+    }
+
     setLoadingGetir(true);
     const sortColumn = "Id";
     const sortDirection = 1;
@@ -408,28 +518,33 @@ const App = () => {
         dynamicQuery
       );
 
-      const data = response.data.value;
-      const maxId =
-        gridData.length > 0 ? Math.max(...gridData.map((item) => item.id!)) : 0;
-      const newGridData: GridData[] = data.items.map((item, index) => ({
-        id: maxId + index + 1,
-        projeKodu: item.projeKodu,
-        uniteKodu: item.plasiyerKodu,
-        numara: item.belgeNo,
-        stokKartiId: item.stokKartiId,
-        stokKodu: item.stokKodu,
-        stokAdi: item.stokAdi,
-        miktar: 0,
-        fiyat: 0,
-        istenilenMiktar: item.miktar,
-        bakiye: item.bakiye,
-        hucreId:item.hucreId,
-        olcuBirimId: item.olcuBirimId,
-        olcuBr: item.olcuBr,
-      }));
+      if (response.data.value && response.data.value.count > 0) {
+        document.getElementById("getirButton")!.hidden = true;
 
-      setGridData(newGridData);
-      document.getElementById("getirButton")!.hidden = true;
+        const data = response.data.value;
+        const maxId =
+          gridData.length > 0
+            ? Math.max(...gridData.map((item) => item.id!))
+            : 0;
+        const newGridData: GridData[] = data.items.map((item, index) => ({
+          id: maxId + index + 1,
+          projeKodu: item.projeKodu,
+          uniteKodu: item.plasiyerKodu,
+          numara: item.belgeNo,
+          stokKartiId: item.stokKartiId,
+          stokKodu: item.stokKodu,
+          stokAdi: item.stokAdi,
+          miktar: 0,
+          fiyat: 0,
+          istenilenMiktar: item.miktar,
+          bakiye: item.bakiye,
+          hucreId: item.hucreId,
+          olcuBirimId: item.olcuBirimId,
+          olcuBr: item.olcuBr,
+        }));
+
+        setGridData(newGridData);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -439,7 +554,7 @@ const App = () => {
 
   //gride doldurma işlemleri
   const handleAddToGrid = useCallback(() => {
-    const nStoK = formDataDetay.stokKodu;
+    const nStoK = selectedStokKodu;
 
     if (!nStoK || formDataDetay.miktar === 0) {
       toast.current?.show({
@@ -454,8 +569,9 @@ const App = () => {
     const alreadyHas = gridData.find((x) => x.stokKodu == nStoK);
 
     if (alreadyHas) {
-      if (Number(formDataDetay.miktar) > Number(alreadyHas.istenilenMiktar)
-        && Number(alreadyHas.istenilenMiktar)>0
+      if (
+        Number(formDataDetay.miktar) > Number(alreadyHas.istenilenMiktar) &&
+        Number(alreadyHas.istenilenMiktar) > 0
       ) {
         toast.current?.show({
           severity: "error",
@@ -472,8 +588,8 @@ const App = () => {
             ? {
                 ...item,
                 miktar: formDataDetay.miktar!,
-                hucreKodu:formDataDetay.hucreKodu,
-                hucreId:formDataDetay.hucreId
+                hucreKodu: formDataDetay.hucreKodu,
+                hucreId: formDataDetay.hucreId,
               }
             : item
         )
@@ -485,11 +601,11 @@ const App = () => {
       const newGridData: GridData = {
         id: maxId + 1,
         stokKartiId: formDataDetay.stokKartiId,
-        stokKodu: formDataDetay.stokKodu,
+        stokKodu: selectedStokKodu,
         stokAdi: formDataDetay.stokAdi,
         miktar: formDataDetay.miktar,
-        hucreKodu:formDataDetay.hucreKodu,
-        hucreId:formDataDetay.hucreId,
+        hucreKodu: formDataDetay.hucreKodu,
+        hucreId: formDataDetay.hucreId,
         istenilenMiktar: 0,
         fiyat: 0,
         bakiye: 0,
@@ -500,15 +616,16 @@ const App = () => {
     }
 
     document.getElementById("getirButton")!.hidden = true;
+    setSelectedStokKodu("");
 
-    setFormDataDetay((prevFormData) => ({
-      ...prevFormData,
-      stokKartiId: 0,
-      stokKodu: "",
-      stokAdi: "",
-      miktar: 0,
-      istenilenMiktar: 0,
-    }));
+    // setFormDataDetay((prevFormData) => ({
+    //   ...prevFormData,
+    //   stokKartiId: 0,
+    //   stokKoduu: "",
+    //   stokAdi: "",
+    //   miktar: 0,
+    //   istenilenMiktar: 0,
+    // }));
     setHucreOptions([]);
   }, [formDataDetay, gridData]);
 
@@ -576,6 +693,30 @@ const App = () => {
     return true;
   };
 
+  //validasyon işlemleri
+  const validateGetir = () => {
+    if (!formDataDetay.projeKodu) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Proje kodu boş olamaz",
+        life: 3000,
+      });
+      return false;
+    }
+
+    if (!formDataDetay.uniteKodu) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Ünite kodu boş olamaz",
+        life: 3000,
+      });
+      return false;
+    }
+    return true;
+  };
+
   //bütün belgeyi backende gönderiyor.
   const handleSave = useCallback(async () => {
     if (!validateForm()) {
@@ -583,15 +724,53 @@ const App = () => {
     }
     setLoading(true);
     try {
-      const belgeResponse = await api.belge.create({
-        belgeTip: EBelgeTip.AmbarCikisFisi,
-        no: formDataBaslik.seri + formDataBaslik.numara,
-        tarih: formDataBaslik.tarih,
-        aciklama1: formDataBaslik.aciklama1,
-        aciklama2: formDataBaslik.aciklama2,
-        aciklama3: formDataBaslik.aciklama3,
-        tamamlandi: false,
-      });
+      if (updateBelgeId != 0) {
+        //belgeId den stokhareketlesi seç
+        const updateStokHareketRresponse =
+          await api.stokHareket.getListByBelgeId(updateBelgeId);
+
+        //StokHareketSil
+        if (updateStokHareketRresponse.data.value) {
+          updateStokHareketRresponse.data.value.items.forEach(
+            async (element) => {
+              const silHareket = await api.stokHareket.delete(element.id!);
+              if (!silHareket.data.status) {
+                throw new Error(
+                  (silHareket.data.errors &&
+                    silHareket.data.errors[0].Errors &&
+                    silHareket.data.errors[0].Errors[0]) ||
+                    "Stok Hareket Silme İşleminde Hata"
+                );
+              }
+            }
+          );
+        }
+      }
+
+      let belgeResponse;
+
+      if (updateBelgeId != 0) {
+        belgeResponse = await api.belge.update({
+          id: updateBelgeId,
+          belgeTip: EBelgeTip.AmbarCikisFisi,
+          no: formDataBaslik.seri + formDataBaslik.numara,
+          tarih: formDataBaslik.tarih,
+          aciklama1: formDataBaslik.aciklama1,
+          aciklama2: formDataBaslik.aciklama2,
+          aciklama3: formDataBaslik.aciklama3,
+          tamamlandi: false,
+        });
+      } else {
+        belgeResponse = await api.belge.create({
+          belgeTip: EBelgeTip.AmbarCikisFisi,
+          no: formDataBaslik.seri + formDataBaslik.numara,
+          tarih: formDataBaslik.tarih,
+          aciklama1: formDataBaslik.aciklama1,
+          aciklama2: formDataBaslik.aciklama2,
+          aciklama3: formDataBaslik.aciklama3,
+          tamamlandi: false,
+        });
+      }
 
       const belgeId = belgeResponse.data.value.id;
       !belgeResponse.data.status;
@@ -602,17 +781,41 @@ const App = () => {
           (belgeResponse.data.errors &&
             belgeResponse.data.errors[0].Errors &&
             belgeResponse.data.errors[0].Errors[0]) ||
-            "Belge oluştururken hata oldu"
+            "Belge oluştururken-güncellenirken hata oldu"
         );
       }
 
-      const ambarFisiData: IAmbarFisi = {
-        belgeId: belgeId!,
-        ambarHareketTur: formDataBaslik.hareketTuru,
-        cikisYeri: formDataBaslik.cikisYeri,
-        cikisYeriId: formDataBaslik.cikisYeriKoduId,
-      };
-      const ambarFisiResponse = await api.ambarFisi.create(ambarFisiData);
+      let ambarFisiResponse;
+
+      if (updateBelgeId != 0) {
+        const updateAmbarFisiResponse = await api.ambarFisi.getByBelgeId(
+          updateBelgeId
+        );
+
+        if (!updateAmbarFisiResponse.data.status) {
+          throw new Error(
+            (updateAmbarFisiResponse.data.errors &&
+              updateAmbarFisiResponse.data.errors[0].Errors &&
+              updateAmbarFisiResponse.data.errors[0].Errors[0]) ||
+              "Ambar fişi bulunamadı"
+          );
+        }
+
+        ambarFisiResponse = await api.ambarFisi.update({
+          id: updateAmbarFisiResponse.data.value.id!,
+          belgeId: belgeId!,
+          ambarHareketTur: formDataBaslik.hareketTuru,
+          cikisYeri: formDataBaslik.cikisYeri,
+          cikisYeriId: formDataBaslik.cikisYeriKoduId,
+        });
+      } else {
+        ambarFisiResponse = await api.ambarFisi.create({
+          belgeId: belgeId!,
+          ambarHareketTur: formDataBaslik.hareketTuru,
+          cikisYeri: formDataBaslik.cikisYeri,
+          cikisYeriId: formDataBaslik.cikisYeriKoduId,
+        });
+      }
 
       if (!ambarFisiResponse.data.status) {
         setLoading(false);
@@ -661,6 +864,12 @@ const App = () => {
       const belgeUpdateResponse = await api.belge.update({
         id: belgeId,
         tamamlandi: true,
+        belgeTip: EBelgeTip.AmbarCikisFisi,
+        no: formDataBaslik.seri + formDataBaslik.numara,
+        tarih: formDataBaslik.tarih,
+        aciklama1: formDataBaslik.aciklama1,
+        aciklama2: formDataBaslik.aciklama2,
+        aciklama3: formDataBaslik.aciklama3,
       });
 
       if (!belgeUpdateResponse.data.status) {
@@ -679,6 +888,7 @@ const App = () => {
         detail: "Veriler başarıyla kaydedildi",
         life: 3000,
       });
+      resetForm();
     } catch (error: any) {
       toast.current?.show({
         severity: "error",
@@ -690,13 +900,61 @@ const App = () => {
     } finally {
       setLoading(false);
     }
-  },[formDataBaslik,gridData, formDataDetay]);
+  }, [formDataBaslik, gridData, formDataDetay]);
+
+  const resetForm = () => {
+    setFormDataBaslik({
+      seri: "",
+      numara: "",
+      tarih: currentDate,
+      hareketTuru: EAmbarHareketTur.Devir,
+      cikisYeri: EAmbarFisiCikisYeri.StokKodu,
+      cikisYeriKodu: "",
+      cikisYeriKoduId: 0,
+      aciklama1: "",
+      aciklama2: "",
+      aciklama3: "",
+      eIrsaliye: false,
+    });
+
+    setFormDataDetay({
+      projeKoduId: 0,
+      projeKodu: "",
+      uniteKoduId: 0,
+      uniteKodu: "",
+      ozelKod1Id: 0,
+      ozelKod1: "",
+      stokKartiId: 0,
+      stokAdi: "",
+      istenilenMiktar: 0,
+      miktar: 0,
+      fiyat: 0,
+      hucreId: 0,
+      hucreKodu: "",
+      olcuBrId: 0,
+      olcuBr: "",
+    });
+
+    setDialogVisible({
+      proje: false,
+      unite: false,
+      stok: false,
+      cikisKoduDialog: false,
+    });
+
+    setGridData([]);
+    setSelectedItem(null);
+    setSelectedStokKodu("");
+    setSelectedHucre(null);
+    setHucreOptions([]);
+  };
 
   //html içeriği
   return (
     <div className="container-fluid">
-      {JSON.stringify(formDataBaslik)}
-      {JSON.stringify(formDataDetay)}
+      {/* {JSON.stringify(formDataBaslik)}
+      {JSON.stringify(formDataDetay)} <br></br>
+      {JSON.stringify(selectedStokKodu)} */}
       <Toast ref={toast} />
       <ConfirmDialog
         visible={visible}
@@ -709,9 +967,7 @@ const App = () => {
         acceptLabel="Evet"
         rejectLabel="Hayır"
       />
-
       {/* <h5>{belgeId}</h5> */}
-
       <div className="p-fluid p-formgrid p-grid">
         <div className="row">
           <div className="col-md-3 col-sm-6 mt-4">
@@ -723,6 +979,7 @@ const App = () => {
                   name="projeKodu"
                   value={formDataDetay.projeKodu}
                   readOnly
+                  disabled
                 />
                 <Button
                   label="..."
@@ -757,6 +1014,7 @@ const App = () => {
                   name="uniteKodu"
                   value={formDataDetay.uniteKodu}
                   readOnly
+                  disabled
                 />
                 <Button
                   label="..."
@@ -839,7 +1097,7 @@ const App = () => {
                         .map((value) => ({
                           label:
                             EAmbarHareketTur[
-                              value as keyof typeof EAmbarHareketTur
+                              value as unknown as keyof typeof EAmbarHareketTur
                             ],
                           value: value,
                         }))}
@@ -867,7 +1125,7 @@ const App = () => {
                         .map((value) => ({
                           label:
                             EAmbarFisiCikisYeri[
-                              value as keyof typeof EAmbarFisiCikisYeri
+                              value as unknown as keyof typeof EAmbarFisiCikisYeri
                             ],
                           value: value,
                         }))}
@@ -893,6 +1151,7 @@ const App = () => {
                       name="cikisYeriKodu"
                       value={formDataBaslik.cikisYeriKodu?.toString()}
                       readOnly
+                      disabled
                     />
                     <Button
                       label="..."
@@ -905,13 +1164,12 @@ const App = () => {
                     />
                     <StokRehberDialog
                       isVisible={dialogVisible.cikisKoduDialog}
-                      onHide={() =>
-                        {setDialogVisible({
+                      onHide={() => {
+                        setDialogVisible({
                           ...dialogVisible,
                           cikisKoduDialog: false,
                         });
-                      }
-                      }
+                      }}
                       onSelect={(selectedValue) =>
                         handleDialogSelect(
                           "cikisYeriKodu",
@@ -1011,12 +1269,16 @@ const App = () => {
                 <InputText
                   id="stokKodu"
                   name="stokKodu"
-                  value={formDataDetay.stokKodu}
+                  value={selectedStokKodu}
                   //onBlur={handleInputChangeDetay}
-                  onChange={handleInputChangeDetay}
+                  //onChange={(text) => setKodu(text.target.value)}
+                  onChange={(e) => setSelectedStokKodu(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleKeyPress();
+                      if (miktarRef.current) {
+                        miktarRef.current.focus();
+                      }
                     }
                   }}
                 />
@@ -1050,9 +1312,6 @@ const App = () => {
               <InputText
                 id="stokAdi"
                 name="stokAdi"
-                onVolumeChange={ 
-                    miktarRef.current?.focus()
-                }
                 value={formDataDetay.stokAdi}
                 disabled
               />
@@ -1091,7 +1350,7 @@ const App = () => {
                 }
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                     handleAddToGrid();
+                    handleAddToGrid();
                   }
                 }}
                 ref={miktarRef}
@@ -1105,7 +1364,7 @@ const App = () => {
               <Dropdown
                 id="hucre"
                 name="hucre"
-                value={formDataDetay.hucreId}
+                value={selectedHucre}
                 options={hucreOptions}
                 onChange={handleHucreChange}
                 className="w-full md:w-14rem"
@@ -1144,16 +1403,18 @@ const App = () => {
                   <button
                     className="btn btn-info ms-1"
                     onClick={() => {
-                      setSelectedItem(rowData);
-                      setFormDataDetay((prevFormData) => ({
-                        ...prevFormData,
-                        stokKartiId: rowData.stokKartiId,
-                        stokKodu: rowData.stokKodu,
-                        stokAdi: rowData.stokAdi,
-                        miktar: rowData.miktar,
-                        hucreId:rowData.hucreId,
-                        istenilenMiktar: rowData.istenilenMiktar,
-                      }));
+                      setSelectedStokKodu(rowData.stokKodu);
+                      // setSelectedItem(rowData);
+                      // setFormDataDetay((prevFormData) => ({
+                      //   ...prevFormData,
+                      //   stokKartiId: rowData.stokKartiId,
+                      //   stokKodu: rowData.stokKodu,
+                      //   stokAdi: rowData.stokAdi,
+                      //   miktar: rowData.miktar,
+                      //   hucreId: rowData.hucreId,
+                      //   istenilenMiktar: rowData.istenilenMiktar,
+                      // }));
+                      //handleKeyPress();
                     }}
                   >
                     <i className="ti-pencil"></i>

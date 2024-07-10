@@ -27,6 +27,11 @@ export default () => {
       sortable: false,
     },
     {
+      field: "belgeId",
+      header: "#",
+      sortable: false,
+    },
+    {
       field: "belge.no",
       header: "Belge No",
       sortable: true,
@@ -69,7 +74,7 @@ export default () => {
             onClick={(e) => {
               e.preventDefault();
               setSelectedItem(row);
-              navigate(`/fatura/ambarcikisfisi/${row.belgeId}`)
+              navigate(`/fatura/ambarcikisfisi?belgeId=${row.belgeId}`)
               // setModalShowing(true);
             }}
           >

@@ -1,4 +1,4 @@
-import { createRef, useCallback, useEffect, useState } from "react";
+import { createRef, useCallback, useEffect, useRef, useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import api from "../../../utils/api";
 import { IIl } from "../../../utils/types/tanimlamalar/IIl";
@@ -6,12 +6,17 @@ import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
 import { ColumnProps } from "primereact/column";
 import { Button } from "primereact/button";
+import { ConfirmDialog } from "primereact/confirmdialog";
+import { Toast } from "primereact/toast";
 
 export default () => {
   const myTable = createRef<ITableRef<IIl>>();
   const [isModalShowing, setModalShowing] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<IIl>();
+  const [selectedItem, setSelectedItem] = useState<IIl| undefined>();
   const [countries, setCountries] = useState<FormSelectItem[]>();
+  const toast = useRef<Toast>(null);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<IIl | null>(null);
 
   const fetchCountries = useCallback(async () => {
     const { data: { value: { items } } } = await api.ulke.getAll(0, 1000);
@@ -24,31 +29,52 @@ export default () => {
 
   const onSuccess = () => {
     if (selectedItem) {
-      alert("Başarıyla güncellendi !");
+      toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla güncellendi !" });
     } else {
-      alert("Başarıyla eklendi !");
+      toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla eklendi !" });
     }
     myTable.current?.refresh();
     setModalShowing(false);
   };
 
-  const deleteItem = useCallback(async (item: IIl) => {
-    if (!window.confirm("Emin misin ?")) return;
-    await api.il.delete(item.id as number);
-    myTable.current?.refresh();
-  }, []);
+  const confirmDelete = useCallback(async () => {
+    if (itemToDelete) {
+      try {
+        await api.il.delete(itemToDelete.id as number);
+        myTable.current?.refresh();
+        toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla silindi !" });
+      } catch (error) {
+        console.error("Silme işleminde hata:", error);
+        toast.current?.show({ severity: "error", summary: "Hata", detail: "Silme işleminde hata oluştu !" });
+      } finally {
+        setItemToDelete(null);
+        setConfirmVisible(false);
+      }
+    }
+  }, [itemToDelete]);
+
+  const deleteItem = (item: IIl) => {
+    setItemToDelete(item);
+    setConfirmVisible(true);
+  };
+
+  useEffect(() => {
+    if (!confirmVisible && !itemToDelete) {
+      myTable.current?.refresh();
+    }
+  }, [confirmVisible, itemToDelete]);
 
   const columns: ColumnProps[] = [
-   
+
     {
       header: "Ülke",
-      field: "ulkeAdi",  // Burada 'ulkeAdi' doğru property olmalı
+      field: "ulke.adi", 
       sortable: true,
       filter: true
     },
     {
       header: "Plaka Kodu",
-      field: "plakaKodu",  // Burada 'plakaKodu' doğru property olmalı
+      field: "plakaKodu",  
       sortable: true,
       filter: true
     },
@@ -63,10 +89,17 @@ export default () => {
       body: (row: IIl) => {
         return (
           <>
-            <button className="btn btn-info ms-1" onClick={(e) => [e.preventDefault(), setSelectedItem(row), setModalShowing(true)]}>
+            <button className="btn btn-info ms-1" onClick={(e) => {
+              e.preventDefault();
+              setSelectedItem(row);
+              setModalShowing(true);
+            }}>
               <i className="ti-pencil"></i>
             </button>
-            <button className="btn btn-danger ms-1" onClick={(e) => [e.preventDefault(), deleteItem(row)]}>
+            <button className="btn btn-danger ms-1" onClick={(e) => {
+              e.preventDefault();
+              deleteItem(row);
+            }}>
               <i className="ti-trash"></i>
             </button>
           </>
@@ -76,7 +109,11 @@ export default () => {
   ];
 
   const modalItems = [
-   
+    {
+      name: "id",
+      type: FormItemTypes.input,
+      hidden:true,
+    },
     {
       title: "Ülke",
       name: "ulkeId",
@@ -90,14 +127,25 @@ export default () => {
     },
     {
       title: "Plaka Kodu",
-      name: "plakaKodu",  // Burada 'plakaKodu' doğru property olmalı
+      name: "plakaKodu", 
       type: FormItemTypes.input
     }
   ] as IFormItem[];
 
   return (
     <div className="container-fluid">
-      
+      <Toast ref={toast} />
+      <ConfirmDialog
+        visible={confirmVisible}
+        onHide={() => setConfirmVisible(false)}
+        message="Silmek istediğinizden emin misiniz?"
+        header="Onay"
+        icon="pi pi-exclamation-triangle"
+        accept={confirmDelete}
+        reject={() => setConfirmVisible(false)}
+        acceptLabel="Evet"
+        rejectLabel="Hayır"
+      />
       <DynamicModal 
         isShownig={isModalShowing} 
         title="Ekle" 
@@ -113,18 +161,22 @@ export default () => {
           <div className="card">
             <div className="card-body">
               <div className="table-responsive m-t-40">
-                <AppTable
+              <AppTable
                   baseApi={api.il}
                   columns={columns}
-                  key={"İller"}
+                  key={"İlçeler"}
                   ref={myTable}
                   rowSelectable={false}
                   appendHeader={() => {
                     return (
-                      <Button className="p-button-secondary" onClick={(e) => [e.preventDefault(), setModalShowing(true)]}>
+                      <Button className="p-button-secondary" onClick={(e) => {
+                        e.preventDefault();
+                        setSelectedItem(undefined);
+                        setModalShowing(true);
+                      }}>
                         Yeni
                       </Button>
-                    );
+                    )
                   }}
                 />
               </div>

@@ -1,6 +1,5 @@
 import { AxiosInstance } from "axios";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
-import { DynamicQuery } from "../../transformFilter";
 import { IUnite } from "../../types/tanimlamalar/IUnite";
 import { DynamicQuery } from "../../transformFilter";
 

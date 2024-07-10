@@ -2,7 +2,6 @@ import { AxiosInstance } from "axios";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { DynamicQuery } from "../../transformFilter";
 import { IDepo } from "../../types/tanimlamalar/IDepo";
-import { DynamicQuery } from "../../transformFilter";
 
 
 const controller="depoes";

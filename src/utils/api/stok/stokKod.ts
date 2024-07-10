@@ -1,10 +1,14 @@
 import { AxiosInstance } from "axios";
-import { IBaseResponseValue, IPagedResponse } from "../types";
-import { IStokKod } from "../types/stok/IStokKod";
+import { IStokKod } from "../../types/stok/IStokKod";
+import { IBaseResponseValue, IPagedResponse } from "../../types";
+import { DynamicQuery } from "../../transformFilter";
 
 
 
 export default ($axios: AxiosInstance, stokKodu: number) => ({
+    getAllForGrid(page: number, take: number,dynamicQuery:DynamicQuery  ){
+        return $axios.post<IBaseResponseValue<IPagedResponse<IStokKod>>>(`/StokKod${stokKodu}s/GetListForGrid?PageIndex=${page}&PageSize=${take}`, dynamicQuery );
+    },
     getAll(page: number, take: number){
         return $axios.get<IBaseResponseValue<IPagedResponse<IStokKod>>>(`/StokKod${stokKodu}s`, {
             params: {

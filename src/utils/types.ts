@@ -48,6 +48,7 @@ export interface ICrudBaseAPI<T>{
   getListByBelgeId(id: number): Promise<{ data: { value: { items: T[], count: number } } }>;
   get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   getByKod: (id: string) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
+  getByBelgeId: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   getBySeri: (seri: string,belgeTip: EBelgeTip) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   create: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>
   update: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>

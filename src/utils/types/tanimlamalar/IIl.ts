@@ -6,6 +6,5 @@ export interface IIl {
   plakaKodu: string;
   ulkeId: number;
   ulke:IUlke;
-  ulkeAdi: string;
   aktarimDurumu: number;
 }

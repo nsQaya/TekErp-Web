@@ -30,5 +30,8 @@ export default ($axios: AxiosInstance) => ({
     },
     get(id: number){
         return $axios.get<IBaseResponseValue<IAmbarFisi>>(`/${controller}/${id}`);
+    },
+    getByBelgeId(id: number){
+        return $axios.get<IBaseResponseValue<IAmbarFisi>>(`/${controller}/GetByBelgeId?BelgeId=${id}`);
     }
 });

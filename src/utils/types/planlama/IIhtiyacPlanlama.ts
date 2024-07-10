@@ -1,15 +1,20 @@
+import { IStok } from "../stok/IStok";
+import { IProje } from "../tanimlamalar/IProje";
+import { IStokOlcuBirim } from "../tanimlamalar/IStokOlcuBirim";
+import { IUnite } from "../tanimlamalar/IUnite";
+
 export interface IIhtiyacPlanlama {
-    id: number;
+    id?: number;
     projeId: number;
-    projeKodu?:string;
+    proje?:IProje;
     uniteId: number;
-    uniteKodu?:string;
+    unite?:IUnite;
     mamulAdi?: string;
     stokKartiId: number;
-    stokKartiKodu?:string;
-    stokKartiAdi?:string;
+    stokKarti?:IStok;
     miktar: number;
     stokOlcuBirimId: number;
+    stokOlcuBirim?:IStokOlcuBirim;
     stokOlcuBirimString: string;
     tarih: Date;
     durum: string;

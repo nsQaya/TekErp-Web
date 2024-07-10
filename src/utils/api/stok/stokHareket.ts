@@ -1,7 +1,7 @@
 import { AxiosInstance } from "axios";
-import { IStokHareket } from "../types/fatura/IStokHareket";
-import { IBaseResponseValue, IPagedResponse } from "../types";
-import { DynamicQuery } from "../transformFilter";
+import { IStokHareket } from "../../types/fatura/IStokHareket";
+import { IBaseResponseValue, IPagedResponse } from "../../types";
+import { DynamicQuery } from "../../transformFilter";
 
 
 

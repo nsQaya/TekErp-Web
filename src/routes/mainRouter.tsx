@@ -3,6 +3,7 @@ import Home from "../pages/Home";
 import DefaultLayout from "../layouts/default";
 
 import StockItems from "../pages/stok/items";
+import StockGroupCode1Items from "../pages/stok/groupCode/items";
 import StockCode1Items from "../pages/stok/code1/items";
 import StockCode2Items from "../pages/stok/code2/items";
 import StockCode3Items from "../pages/stok/code3/items";
@@ -89,6 +90,10 @@ export default createHashRouter([
           {
             path: "stoks",
             element: <StockItems />,
+          },
+          {
+            path: "groupCode",
+            element: <StockGroupCode1Items />,
           },
           {
             path: "code1",

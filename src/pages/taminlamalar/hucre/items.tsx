@@ -5,8 +5,6 @@ import AppTable, { ITableRef } from "../../../components/AppTable";
 import DynamicModal, { FormItemTypes, FormSelectItem, IFormItem } from "../../../modals/DynamicModal";
 import { IHucre } from "../../../utils/types/tanimlamalar/IHucre";
 import { ColumnProps } from "primereact/column";
-import { InputText } from "primereact/inputtext";
-import {FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 
 
@@ -92,19 +90,9 @@ export default () => {
     }
   ] as IFormItem[];
 
-
-  function setValue(value: string): void {
-    throw new Error("Function not implemented.");
-  }
-
   return (
     <div className="container-fluid">
-       
-      
-           
-
-
-      <DynamicModal 
+        <DynamicModal 
         isShownig={isModalShowing} 
         title="Hücre Ekle" 
         api={api.hucre} 

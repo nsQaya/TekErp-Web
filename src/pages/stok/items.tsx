@@ -5,7 +5,7 @@ import { IStok } from "../../utils/types/stok/IStok";
 import CreateOrEditModal from "../../modals/stok/createOrEdit";
 import AppTable, { ITableRef } from "../../components/AppTable";
 import { IStokKartiWithDetail } from "../../utils/types/stok/IStokKartiWithDetail";
-import { baseURL } from "../../utils/config";
+import {  stokbarkodURL } from "../../utils/config";
 import { ColumnProps } from "primereact/column";
 import { Button } from "primereact/button";
 
@@ -34,8 +34,16 @@ export default () => {
     if(!data.status){
       return alert("Barkod oluşturulamadı")
     }
+    //window.open(stokbarkodURL+data.value.url+".pdf", '_blank');
 
-    location.href=baseURL+"/assets/"+data.value.url+".prf";
+    const newWindow = window.open(stokbarkodURL+data.value.url+".pdf", '_blank');
+    if (newWindow) {
+      newWindow.onload = () => {
+        newWindow.print();
+      };
+    } else {
+      console.error("Yeni sekme açılırken bir hata oluştu.");
+    }
 
   },[selectedStokIDS])
 

@@ -1,49 +1,90 @@
-import { createRef, useCallback, useState } from "react";
+import { createRef, useCallback, useEffect, useRef, useState } from "react";
 import AppBreadcrumb from "../../../components/AppBreadcrumb";
 import api from "../../../utils/api";
 import AppTable, { ITableRef } from "../../../components/AppTable";
-import DynamicModal, { FormItemTypes, IFormItem } from "../../../modals/DynamicModal";
+import DynamicModal, {
+  FormItemTypes,
+  IFormItem,
+} from "../../../modals/DynamicModal";
 import { IUlke } from "../../../utils/types/tanimlamalar/IUlke";
 import { ColumnProps } from "primereact/column";
 import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
+import { ConfirmDialog } from "primereact/confirmdialog";
 
 export default () => {
   const myTable = createRef<ITableRef<IUlke>>();
   const [isModalShowing, setModalShowing] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<IUlke>();
-
-
+  const [selectedItem, setSelectedItem] = useState<IUlke | undefined>();
+  const toast = useRef<Toast>(null);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<IUlke | null>(null);
 
   const onSuccess = () => {
     if (selectedItem) {
-      alert("Başarıyla güncellendi !");
+      toast.current?.show({
+        severity: "success",
+        summary: "Başarılı",
+        detail: "Başarıyla güncellendi !",
+      });
     } else {
-      alert("Başarıyla eklendi !");
+      toast.current?.show({
+        severity: "success",
+        summary: "Başarılı",
+        detail: "Başarıyla eklendi !",
+      });
     }
     myTable.current?.refresh();
     setModalShowing(false);
   };
 
-  const deleteItem = useCallback(async (item: IUlke) => {
-    if (!window.confirm("Emin misin ?")) return;
-    await api.ulke.delete(item.id as number);
-    myTable.current?.refresh();
-  }, [])
+  const confirmDelete = useCallback(async () => {
+    if (itemToDelete) {
+      try {
+        await api.ulke.delete(itemToDelete.id as number);
+        myTable.current?.refresh();
+        toast.current?.show({
+          severity: "success",
+          summary: "Başarılı",
+          detail: "Başarıyla silindi !",
+        });
+      } catch (error) {
+        console.error("Silme işleminde hata:", error);
+        toast.current?.show({
+          severity: "error",
+          summary: "Hata",
+          detail: "Silme işleminde hata oluştu !",
+        });
+      } finally {
+        setItemToDelete(null);
+        setConfirmVisible(false);
+      }
+    }
+  }, [itemToDelete]);
 
+  const deleteItem = (item: IUlke) => {
+    setItemToDelete(item);
+    setConfirmVisible(true);
+  };
+
+  useEffect(() => {
+    if (!confirmVisible && !itemToDelete) {
+      myTable.current?.refresh();
+    }
+  }, [confirmVisible, itemToDelete]);
 
   const columns: ColumnProps[] = [
-   
     {
       header: "Kodu",
       field: "kodu",
       sortable: true,
-     
+      filter: true,
     },
     {
       header: "Ülke",
       field: "adi",
       sortable: true,
-      filter: true
+      filter: true,
     },
 
     {
@@ -51,36 +92,63 @@ export default () => {
       body: (row) => {
         return (
           <>
-            <button className="btn btn-info ms-1" onClick={(e) => [e.preventDefault(), setSelectedItem(row), setModalShowing(true)]}>
+            <button
+              className="btn btn-info ms-1"
+              onClick={(e) => {
+                e.preventDefault();
+                setSelectedItem(row);
+                setModalShowing(true);
+              }}
+            >
               <i className="ti-pencil"></i>
             </button>
-            <button className="btn btn-danger ms-1" onClick={(e) => [e.preventDefault(), deleteItem(row)]}>
+            <button
+              className="btn btn-danger ms-1"
+              onClick={(e) => {
+                e.preventDefault();
+                deleteItem(row);
+              }}
+            >
               <i className="ti-trash"></i>
             </button>
           </>
         );
-      }
+      },
     },
   ];
 
   const modalItems = [
-    
+    {
+      name: "id",
+      type: FormItemTypes.input,
+      hidden: true,
+    },
     {
       title: "Kodu",
       name: "kodu",
-      type: FormItemTypes.input
+      type: FormItemTypes.input,
     },
     {
       title: "Adı",
       name: "adi",
-      type: FormItemTypes.input
-    }
+      type: FormItemTypes.input,
+    },
   ] as IFormItem[];
 
-
   return (
-    <div className="container-fluid">
-
+    <div className="container-fluid"style={{ marginTop: 1, paddingTop: 1 }}>
+      <Toast ref={toast} />
+      <ConfirmDialog
+        visible={confirmVisible}
+        onHide={() => setConfirmVisible(false)}
+        message="Silmek istediğinizden emin misiniz?"
+        header="Onay"
+        icon="pi pi-exclamation-triangle"
+        accept={confirmDelete}
+        reject={() => setConfirmVisible(false)}
+        acceptLabel="Evet"
+        rejectLabel="Hayır"
+      />
       <DynamicModal
         isShownig={isModalShowing}
         title="Ülke Ekle"
@@ -91,11 +159,11 @@ export default () => {
         onHide={() => setModalShowing(false)}
       />
       <AppBreadcrumb title="" />
-      <div className="row">
-        <div className="col-12">
-          <div className="card">
-            <div className="card-body">
-              <div className="table-responsive m-t-40">
+      <div className="row" style={{ marginTop: 1, paddingTop: 1 }}>
+        <div className="col-12" style={{ marginTop: 1, paddingTop: 1 }}>
+          <div className="card" style={{ marginTop: 1, paddingTop: 1 }} >
+            <div className="card-body" style={{ marginTop: 1, paddingTop: 1 }}>
+              <div className="table-responsive m-t-40" style={{ marginTop: 1, paddingTop: 1 }}>
                 <AppTable
                   baseApi={api.ulke}
                   columns={columns}
@@ -104,10 +172,17 @@ export default () => {
                   rowSelectable={false}
                   appendHeader={() => {
                     return (
-                      <Button className="p-button-secondary" 
-                      onClick={(e) => [e.preventDefault(), setModalShowing(true)]}>
-                  Yeni
-              </Button>)
+                      <Button
+                        className="p-button-secondary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setSelectedItem(undefined);
+                          setModalShowing(true);
+                        }}
+                      >
+                        Yeni
+                      </Button>
+                    );
                   }}
                 />
               </div>

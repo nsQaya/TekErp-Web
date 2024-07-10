@@ -30,7 +30,7 @@ export default () => {
   const confirmDelete = useCallback(async () => {
     if (itemToDelete) {
       try {
-        await api.stokKod1.delete(itemToDelete.id as number);
+        await api.stokGrupKodu.delete(itemToDelete.id as number);
         myTable.current?.refresh();
         toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla silindi !" });
       } catch (error) {
@@ -125,7 +125,7 @@ export default () => {
       <DynamicModal
         isShownig={isModalShowing}
         title="Ekle"
-        api={api.stokKod1}
+        api={api.stokGrupKodu}
         items={modalItems}
         onDone={onSuccess}
         selectedItem={selectedItem}
@@ -138,9 +138,9 @@ export default () => {
             <div className="card-body">
               <div className="table-responsive m-t-40">
                 <AppTable
-                  baseApi={api.stokKod1}
+                  baseApi={api.stokGrupKodu}
                   columns={columns}
-                  key={"Stok Kod 1'ler"}
+                  key={"Stok Kod 5'ler"}
                   ref={myTable}
                   rowSelectable={true}
                   appendHeader={() => {

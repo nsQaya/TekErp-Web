@@ -507,6 +507,7 @@ const App = () => {
     const filters = {
       projeKodu: { value: formDataDetay.projeKodu, matchMode: "equals" },
       plasiyerKodu: { value: formDataDetay.uniteKodu, matchMode: "equals" },
+      //belgeNo: { value: "", matchMode: "equals" },
       miktar: { value: "0", matchMode: "gt" },
     };
     const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);

@@ -13,6 +13,7 @@ import stokKartiSelect from "../../components/SelectItems/stokKartiSelect";
 import olcuBirimSelect from "../../components/SelectItems/olcuBirimSelect";
 import { Button } from "primereact/button";
 
+
 export default () => {
   const myTable = createRef<ITableRef<IIhtiyacPlanlama>>();
   const [isModalShowing, setModalShowing] = useState(false);
@@ -99,16 +100,27 @@ export default () => {
     }
   }, [confirmVisible, itemToDelete]);
 
+  // const dateFilterTemplate = (options: { value: Nullable<Date>; filterCallback: (arg0: Nullable<Date>, arg1: any) => void; index: any; }) => {
+  //   return <Calendar value={options.value} onChange={(e) => options.filterCallback(e.value, options.index)} dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" mask="99/99/9999" />;};
 
   const columns: ColumnProps[] = [
     {
       header: "Tarih",
       field: "tarih",
+      body: (row) => row.tarih
+        ? new Date(row.tarih).toLocaleDateString("tr-TR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        : "",
       sortable: true,
       filter: true,
+      filterField: "date", dataType: "date",
+      //filterElement:{dateFilterTemplate},
       style: {
-        fontSize: "9px",
-        width: "80px",
+        //fontSize: "9px",
+        minWidth: "80px",
       },
     },
     {
@@ -117,8 +129,8 @@ export default () => {
       sortable: true,
       filter: true,
       style: {
-        width: "70px",
-        fontSize: "9px",
+        minWidth: "80px",
+        //fontSize: "9px",
       },
     },
     {
@@ -127,8 +139,8 @@ export default () => {
       sortable: true,
       filter: true,
       style: {
-        fontSize: "9px",
-        width: "100px",
+        //fontSize: "9px",
+        minWidth: "100px",
       },
     },
     {
@@ -137,8 +149,8 @@ export default () => {
       sortable: true,
       filter: true,
       style: {
-        width: "70px",
-        fontSize: "9px",
+        minWidth: "80px",
+        //fontSize: "9px",
       },
     },
     {
@@ -147,8 +159,8 @@ export default () => {
       sortable: true,
       filter: true,
       style: {
-        width: "100px",
-        fontSize: "9px",
+        minWidth: "100px",
+        //fontSize: "9px",
       },
     },
     {
@@ -157,8 +169,8 @@ export default () => {
       sortable: true,
       filter: true,
       style: {
-        width: "100px",
-        fontSize: "9px",
+        minWidth: "80px",
+        //fontSize: "9px",
       },
     },
     {
@@ -167,8 +179,8 @@ export default () => {
       sortable: true,
       filter: true,
       style: {
-        width: "100px",
-        fontSize: "9px",
+        minWidth: "150px",
+        //fontSize: "9px",
       },
     },
     {
@@ -177,8 +189,8 @@ export default () => {
       sortable: true,
       filter: true,
       style: {
-        width: "250px",
-        fontSize: "9px",
+        minWidth: "500px",
+        //fontSize: "9px",
       },
     },
     {
@@ -187,8 +199,8 @@ export default () => {
       sortable: true,
       filter: true,
       style: {
-        width: "50px",
-        fontSize: "9px",
+        minWidth: "80px",
+        //fontSize: "9px",
       },
     },
     {
@@ -197,8 +209,8 @@ export default () => {
       sortable: true,
       filter: true,
       style: {
-        width: "70px",
-        fontSize: "9px",
+        minWidth: "80px",
+        //fontSize: "9px",
       },
     },
     {
@@ -207,8 +219,8 @@ export default () => {
       sortable: true,
       filter: true,
       style: {
-        width: "70px",
-        fontSize: "9px",
+        minWidth: "80px",
+        //fontSize: "9px",
       },
     },
     {
@@ -232,6 +244,10 @@ export default () => {
           </>
         );
       },
+      style: {
+        minWidth: "150px",
+        //fontSize: "9px",
+      },
     },
   ];
 
@@ -244,7 +260,7 @@ export default () => {
     {
       title: "Tarih",
       name: "tarih",
-      type: FormItemTypes.input
+      type: FormItemTypes.date
     },
     {
       title: "Proje Kodu",
@@ -285,6 +301,11 @@ export default () => {
       name: "stokOlcuBirimString",
       type: FormItemTypes.input
     },
+    {
+      title: "Durum",
+      name: "durum",
+      type: FormItemTypes.input
+    },
   ] as IFormItem[];
 
   return (
@@ -315,12 +336,13 @@ export default () => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <div className="table-responsive m-t-40">
+              <div className="table-responsive m-t-40" style={{ overflowX: 'auto' }}>
                 <AppTable
                   baseApi={api.ihtiyacPlanlama}
                   columns={columns}
                   key={"ihtiyacPlanlama"}
                   ref={myTable}
+
                   rowSelectable={false}
                   appendHeader={() => {
                     return (

@@ -174,9 +174,10 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
       <DataTable
         size="small"
         stripedRows
-        scrollHeight="620px"
+        //scrollHeight="620px"
         tableStyle={{ minWidth: '50rem' }}
         scrollable
+        scrollHeight="flex"
         ref={table}
         rowClassName={props.rowStyles}
         header={header}

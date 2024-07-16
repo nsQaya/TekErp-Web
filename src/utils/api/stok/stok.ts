@@ -28,6 +28,9 @@ export default ($axios: AxiosInstance) => ({
     getByKod(kod: string){
         return $axios.get<IBaseResponseValue<IStok>>(`/${controller}/GetByKod?Kod=${kod}`);
     },
+    delete(id: number){
+        return $axios.delete<IBaseResponseValue<IStok>>(`/${controller}/${id}`);
+    },
     get(id: number){
         return $axios.get<IBaseResponseValue<IStok>>(`/${controller}/${id}`);
     }

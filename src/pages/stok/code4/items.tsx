@@ -61,6 +61,12 @@ export default () => {
       sortable: true,
     },
     {
+      header: "Kodu",
+      field: "kodu",
+      sortable: true,
+      filter: true
+    },
+    {
       header: "Adı",
       field: "adi",
       sortable: true,

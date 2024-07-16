@@ -1,5 +1,5 @@
-import { AxiosInstance, AxiosResponse } from "axios";
-import { IBaseResponseValue, ICrudBaseAPI, IPagedResponse } from "../../types";
+import { AxiosInstance } from "axios";
+import { IBaseResponseValue,  IPagedResponse } from "../../types";
 
 import { DynamicQuery } from "../../transformFilter";
 import { IIhtiyacPlanlama } from "../../types/planlama/IIhtiyacPlanlama";

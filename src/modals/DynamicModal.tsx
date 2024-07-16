@@ -4,11 +4,13 @@ import { IBaseResponseValue, ICrudBaseAPI } from "../utils/types";
 import Select, { Options } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { AxiosResponse } from "axios";
+import { Calendar } from "primereact/calendar";
 
 export enum FormItemTypes {
     input,
     select,
-    creatable
+    creatable,
+    date
 }
 export interface FormSelectItem {
     label: string,
@@ -118,8 +120,6 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                                 <Select
                                     defaultValue={item.options.find(x=>x.value==item.value)}
                                     placeholder={item.title}
-                                    
-
                                     onChange={(selected: any) => item.setValue && item.setValue(selected)}
                                     options={item.options as Options<any>}
                                 />
@@ -128,11 +128,31 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
 
                             <div className="col-md-12 m-b-20" key={index}>
                                 <CreatableSelect
-                                    
                                     placeholder={item.title}
                                     isMulti
                                     onChange={(items:any)=>item.setValue && item.setValue(items.map((x:any)=>x.value))}
                                 />
+                            </div>
+                        ) : item.type === FormItemTypes.date ? (
+                            <div className="col-md-12 m-b-20" key={index}>
+                                 <Calendar 
+                                 placeholder={item.title}
+                                 onChange={
+                                    (e) =>
+                                        { if (e.value) {
+                                        // Date'i istediğiniz formatta string'e dönüştürün
+                                        const formattedDate = e.value.toLocaleDateString('en-US'); // örnek olarak 'en-US' formatı kullanıldı
+                                        item.setValue && item.setValue(formattedDate);
+                                      } else {
+                                        item.setValue && item.setValue('');
+                                      }
+                                    }
+                                } 
+                                 dateFormat="mm/dd/yy" 
+                                 //placeholder="mm/dd/yyyy" 
+                                 mask="99/99/9999" 
+                                 />
+
                             </div>
                         ) : null
                     ))}

@@ -199,6 +199,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
         sortField={sortColumn}
         sortOrder={sortDirection}
         first={first}
+        //virtualScrollerOptions={{ itemSize: 46 }} //Buna bakmak gerekiyor, uzun raporlarda, alt kısmı getirdiğinde sayfa çok yavaşlıyor.
         onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<DataTableValue[]>) => {
           setSelectedItems(e.value);
           props.onChangeSelected && props.onChangeSelected(e.value);

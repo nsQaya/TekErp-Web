@@ -9,6 +9,9 @@ export default ($axios: AxiosInstance) => ({
     getAllForGrid(page: number, take: number,dynamicQuery:DynamicQuery  ){
         return $axios.post<IBaseResponseValue<IPagedResponse<IIhtiyacPlanlamaRapor>>>(`/${controller}/GetListIhtiyacPlanlamaRaporQuery?PageIndex=${page}&PageSize=${take}`, dynamicQuery );
     },
+    getListForAmbarCikisFisi(dynamicQuery:DynamicQuery  ){
+        return $axios.post<IBaseResponseValue<IPagedResponse<IIhtiyacPlanlamaRapor>>>(`/${controller}/GetListIhtiyacPlanlamaRaporForAmbarCikisFisi`, dynamicQuery );
+    },
     getAll(page: number, take: number){
         return $axios.get<IBaseResponseValue<IPagedResponse<IIhtiyacPlanlamaRapor>>>(`/${controller}`, {
             params: {

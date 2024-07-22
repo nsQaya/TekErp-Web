@@ -505,19 +505,15 @@ const App = () => {
     const sortDirection = 1;
 
     const filters = {
-      projeKodu: { value: formDataDetay.projeKodu, matchMode: "equals" },
-      plasiyerKodu: { value: formDataDetay.uniteKodu, matchMode: "equals" },
+      ProjeKodu: { value: formDataDetay.projeKodu, matchMode: "equals" },
+      PlasiyerKodu: { value: formDataDetay.uniteKodu, matchMode: "equals" },
       //belgeNo: { value: "", matchMode: "equals" },
       miktar: { value: "0", matchMode: "gt" },
     };
     const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
 
     try {
-      const response = await api.ihtiyacPlanlamaRapor.getAllForGrid(
-        0,
-        9999,
-        dynamicQuery
-      );
+      const response = await api.ihtiyacPlanlamaRapor.getListForAmbarCikisFisi(dynamicQuery);
 
       if (response.data.value && response.data.value.count > 0) {
         document.getElementById("getirButton")!.hidden = true;

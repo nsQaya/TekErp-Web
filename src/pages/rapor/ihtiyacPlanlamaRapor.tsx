@@ -32,71 +32,82 @@ export default () => {
           })
         : "",
       sortable: true,
-      style: {
-        fontSize: "9px",
-      },
+      filter:true,
+      // style: {
+      //   fontSize: "9px",
+      // },
     
     },
     {
       header: "Proje Kodu",
       field: "projeKodu",
       sortable: true,
-      style: {
-        fontSize: "9px",
-      },
+      filter:true,
+      // style: {
+      //   fontSize: "9px",
+      // },
     },
     {
       header: "Proje Açıklama",
       field: "projeAciklama",
       sortable: true,
-      style: {
-        fontSize: "9px",
-      },
+      filter:true,
+      // style: {
+      //   fontSize: "9px",
+      // },
     },
     {
       header: "Plasiyer Kodu",
       field: "plasiyerKodu",
       sortable: true,
-      style: {
-        fontSize: "9px",
-      },
+      filter:true,
+      // style: {
+      //   fontSize: "9px",
+      // },
     },
     {
       header: "Plasiyer Açıklama",
       field: "plasiyerAciklama",
       sortable: true,
-      style: {
-        fontSize: "9px",
-      },
+      filter:true,
+      // style: {
+      //   fontSize: "9px",
+      // },
     },
     {
       header: "Mamül Adı",
       field: "mamulAdi",
       sortable: true,
-      style: {
-        fontSize: "9px",
-      },
+      filter:true,
+      // style: {
+      //   fontSize: "9px",
+      // },
     },
     {
       header: "Stok Kodu",
       field: "stokKodu",
       sortable: true,
+      filter:true,
       style: {
-        fontSize: "9px",
+        //fontSize: "9px",
+        minWidth:"200px"
       },
     },
     {
       header: "Stok Adı",
       field: "stokAdi",
       sortable: true,
+      filter:true,
       style: {
-        fontSize: "9px",
+        //fontSize: "9px",
+        minWidth:"250px"
       },
     },
     {
       header: "Miktar",
       field: "miktar",
       sortable: true,
+      filter:true,
       style: {
         fontSize: "9px",
       },
@@ -105,6 +116,7 @@ export default () => {
       header: "Ölçü Birimi",
       field: "olcuBirim",
       sortable: true,
+      filter:true,
       style: {
         fontSize: "9px",
       },
@@ -113,6 +125,7 @@ export default () => {
       header: "Belge No",
       field: "belgeNo",
       sortable: true,
+      filter:true,
       style: {
         fontSize: "9px",
       },
@@ -121,6 +134,7 @@ export default () => {
       header: "Çıkış Miktar",
       field: "cikisMiktar",
       sortable: true,
+      filter:true,
       style: {
         fontSize: "9px",
       },
@@ -129,6 +143,7 @@ export default () => {
       header: "Toplam İhtiyaç",
       field: "yuruyenIhtiyac",
       sortable: true,
+      filter:true,
       style: {
         fontSize: "9px",
       },

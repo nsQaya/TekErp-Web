@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Dialog } from "primereact/dialog";
-import {
-  DataTable,
-  DataTableStateEvent,
-  SortOrder,
-} from "primereact/datatable";
+import { DataTable, DataTableStateEvent, SortOrder } from "primereact/datatable";
 import { Column, ColumnProps } from "primereact/column";
 import { Button } from "primereact/button";
+import { FilterMatchMode } from "primereact/api";
 import { ICrudBaseAPI } from "../utils/types";
 import { transformFilter } from "../utils/transformFilter";
-import { FilterMatchMode } from "primereact/api";
+import { debounce } from "lodash-es";
 
 interface GenericDialogProps {
   visible: boolean;
@@ -26,38 +23,45 @@ const GenericDialog: React.FC<GenericDialogProps> = (props) => {
   const [filters, setFilters] = useState({});
   const [loading, setLoading] = useState(false);
 
+  const initializeFilters = useCallback(() => {
+    const newFilters = props.columns
+      .filter((column) => column.filter && column.field)
+      .reduce((acc: any, column) => {
+        if (column.field) {
+          acc[column.field] = { value: null, matchMode: FilterMatchMode.CONTAINS };
+        }
+        return acc;
+      }, {});
+    setFilters(newFilters);
+  },[]);
 
-  useEffect(()=>{
-    setFilters(props.columns
-        .filter(column => column.filter && column.field)
-        .reduce((acc: any, column) => {
-          if(column.field){
-            acc[column.field] = { value: null, matchMode: FilterMatchMode.CONTAINS };
-          }
-          return acc;
-        }, {} as any));
-  },[props.columns]);
-  
+
+  useEffect(() => {
+    initializeFilters();
+  }, [initializeFilters]);
+
+  const fetchData = useCallback(
+    debounce(async () => {
+      setLoading(true);
+      const dynamicQuery = transformFilter(filters || {}, "Id", 1 as SortOrder);
+      const response = await props.baseApi.getAllForGrid(0, 10, dynamicQuery);
+      setData(response.data.value.items);
+      setLoading(false);
+    }, 300),
+    [filters, props.baseApi]
+  );
+
   useEffect(() => {
     if (props.visible) {
       fetchData();
     }
-  }, [props.visible, filters]);
+  }, [props.visible, filters, fetchData]);
 
-  useEffect(()=>{
-    if(props.visible) return;
-    setFilters({});
-  },[props.visible]);
-
-  const fetchData = async () => {
-    setLoading(true);
-    const dynamicQuery = transformFilter(filters || {}, "Id", 1 as SortOrder);
-
-    const response = await props.baseApi.getAllForGrid(0, 10, dynamicQuery);
-
-    setData(response.data.value.items);
-    setLoading(false);
-  };
+  useEffect(() => {
+    if (!props.visible) {
+      initializeFilters();
+    }
+  }, [props.visible, initializeFilters]);
 
   const onRowSelect = (e: any) => {
     setSelectedItem(e.data);
@@ -74,10 +78,11 @@ const GenericDialog: React.FC<GenericDialogProps> = (props) => {
     fetchData();
   };
 
+
   const handleConfirm = () => {
     if (selectedItem) {
       props.onSelect({ Id: selectedItem.id, [props.returnField]: selectedItem[props.returnField] });
-        props.onHide();
+      props.onHide();
     }
   };
 
@@ -87,18 +92,19 @@ const GenericDialog: React.FC<GenericDialogProps> = (props) => {
   };
 
   const resetState = () => {
-    setFilters({});
+    initializeFilters();
     setSelectedItem(null);
     setData([]);
   };
+
   const handleHide = () => {
     resetState();
     props.onHide();
   };
 
-
   return (
     <Dialog visible={props.visible} onHide={handleHide} header="Rehber">
+      {/* {JSON.stringify(filters)} */}
       <DataTable
         size="small"
         value={data}
@@ -119,7 +125,6 @@ const GenericDialog: React.FC<GenericDialogProps> = (props) => {
           <Column key={index} {...col} />
         ))}
       </DataTable>
-
       <div className="p-d-flex p-jc-end">
         <Button
           label="Kapat"

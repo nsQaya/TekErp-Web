@@ -1,6 +1,9 @@
+import { IHucre } from "../tanimlamalar/IHucre";
+
 export interface IIhtiyacPlanlamaRapor {
     id: number,
     tarih?: Date,
+    hucre?:IHucre[],
     hucreId:number,
     projeKodu:string,
     projeAciklama?:string,

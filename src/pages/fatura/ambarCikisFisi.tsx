@@ -66,7 +66,7 @@ type FormDataDetay = {
 
 // Grid verileri için bir tip tanımı
 type GridData = {
-  id?: number;
+  id: number;
   stokKartiId: number;
   stokKodu: string;
   stokAdi?: string;
@@ -139,13 +139,15 @@ const App = () => {
 
   const [selectedHucre, setSelectedHucre] = useState<number | null>(null);
   const [selectedStokKodu, setSelectedStokKodu] = useState("");
+  const [selectedId, setSelectedId] = useState(0);
 
-  useEffect(() => {
-    setFormDataDetay((prevFormData) => ({
-      ...prevFormData,
-      stokKodu: selectedStokKodu,
-    }));
-  }, [selectedStokKodu]);
+  // useEffect(() => {
+  //   setFormDataDetay((prevFormData) => ({
+  //     ...prevFormData,
+  //     stokKoduu: selectedStokKodu,
+
+  //   }));
+  // }, [selectedStokKodu]);
 
   const handleHucreChange = (e: any) => {
     const selectedOption = hucreOptions.find(
@@ -161,7 +163,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (hucreOptions.length > 0) {
+    if (hucreOptions.length > 0 && !selectedHucre) {
       setSelectedHucre(hucreOptions[0].value);
       setFormDataDetay((prevFormData) => ({
         ...prevFormData,
@@ -169,7 +171,7 @@ const App = () => {
         hucreId: hucreOptions[0].value,
       }));
     }
-  }, [hucreOptions]);
+  }, [hucreOptions, selectedHucre]);
 
   useEffect(() => {
     const fetchSeriOptions = async () => {
@@ -228,7 +230,10 @@ const App = () => {
   useEffect(() => {
     const validateFormDataBaslik = () => {
       Object.keys(formDataBaslik).forEach((key) => {
-        if (formDataBaslik[key as keyof FormDataBaslik] === undefined || formDataBaslik[key as keyof FormDataBaslik] === null) {
+        if (
+          formDataBaslik[key as keyof FormDataBaslik] === undefined ||
+          formDataBaslik[key as keyof FormDataBaslik] === null
+        ) {
           toast.current?.show({
             severity: "warn",
             summary: "Uyarı",
@@ -301,27 +306,27 @@ const App = () => {
 
           switch (ambarFisi.cikisYeri) {
             case EAmbarFisiCikisYeri.AnaMamulGrubu:
-              cikisYeriKodu= await fetchCikisYeriKoduFromAnaMamulGrubu(
+              cikisYeriKodu = await fetchCikisYeriKoduFromAnaMamulGrubu(
                 ambarFisi.cikisYeriId
               );
               break;
             case EAmbarFisiCikisYeri.MaliyetGrubu:
-              cikisYeriKodu= await fetchCikisYeriKoduFromMaliyetGrubu(
+              cikisYeriKodu = await fetchCikisYeriKoduFromMaliyetGrubu(
                 ambarFisi.cikisYeriId
               );
               break;
             case EAmbarFisiCikisYeri.MasrafMerkezi:
-              cikisYeriKodu= await fetchCikisYeriKoduFromMasrafMerkezi(
+              cikisYeriKodu = await fetchCikisYeriKoduFromMasrafMerkezi(
                 ambarFisi.cikisYeriId
               );
               break;
             case EAmbarFisiCikisYeri.Serbest:
-              cikisYeriKodu= await fetchCikisYeriKoduFromSerbest(
+              cikisYeriKodu = await fetchCikisYeriKoduFromSerbest(
                 ambarFisi.cikisYeriId
               );
               break;
             case EAmbarFisiCikisYeri.StokKodu:
-              cikisYeriKodu= await fetchCikisYeriKoduFromStokKodu(
+              cikisYeriKodu = await fetchCikisYeriKoduFromStokKodu(
                 ambarFisi.cikisYeriId
               );
               break;
@@ -421,12 +426,16 @@ const App = () => {
           response.data.value.kodu === selectedStokKodu
         ) {
           const alreadyHas = gridData.find(
-            (x) => x.stokKodu == selectedStokKodu
+            (x) =>
+              x.stokKodu == selectedStokKodu &&
+              (selectedId ? x.id == selectedId : true)
           );
           const alreadyHasgMiktar = alreadyHas ? alreadyHas.miktar : 0;
           const alreadyHasgIstenilenMiktar = alreadyHas
             ? alreadyHas.istenilenMiktar
             : 0;
+          const alreadyHasHucreId = alreadyHas ? alreadyHas.hucreId : 0;
+          const alreadyHasHucreKodu = alreadyHas ? alreadyHas.hucreKodu : "";
 
           setFormDataDetay((prevFormData) => ({
             ...prevFormData,
@@ -435,7 +444,10 @@ const App = () => {
             olcuBr: response.data.value.stokOlcuBirim1.simge,
             miktar: alreadyHasgMiktar!,
             istenilenMiktar: alreadyHasgIstenilenMiktar!,
+            hucreId: alreadyHasHucreId,
+            hucreKodu: alreadyHasHucreKodu,
           }));
+          debugger;
 
           if (response.data.value.hucreOzets) {
             if (response.data.value.hucreOzets.length > 0) {
@@ -448,6 +460,17 @@ const App = () => {
               setHucreOptions(options);
             }
           }
+          if (alreadyHasHucreId) {
+            setSelectedHucre(alreadyHasHucreId);
+          } else if (alreadyHasHucreKodu) {
+            const selectedOption = hucreOptions.find(
+              (option) => option.label === alreadyHasHucreKodu
+            );
+            if (selectedOption) {
+              setSelectedHucre(selectedOption.value);
+            }
+          }
+
           // if (miktarRef.current) {
           //   miktarRef.current.focus();
         }
@@ -455,7 +478,7 @@ const App = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }, [gridData, selectedStokKodu]);
+  }, [gridData, selectedStokKodu, selectedId]);
 
   useEffect(() => {
     if (selectedStokKodu) {
@@ -487,7 +510,7 @@ const App = () => {
           [fieldName]: selectedValue[dialogFieldName],
           [`${fieldName}Id`]: selectedValue.Id,
         };
-
+        setSelectedId(0);
         return newFormData;
       });
     },
@@ -513,7 +536,9 @@ const App = () => {
     const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
 
     try {
-      const response = await api.ihtiyacPlanlamaRapor.getListForAmbarCikisFisi(dynamicQuery);
+      const response = await api.ihtiyacPlanlamaRapor.getListForAmbarCikisFisi(
+        dynamicQuery
+      );
 
       if (response.data.value && response.data.value.count > 0) {
         document.getElementById("getirButton")!.hidden = true;
@@ -527,6 +552,9 @@ const App = () => {
           id: maxId + index + 1,
           projeKodu: item.projeKodu,
           uniteKodu: item.plasiyerKodu,
+          hucreKodu: item.hucre
+            ? item.hucre.map((h) => h.kodu).join(" | ")
+            : "",
           numara: item.belgeNo,
           stokKartiId: item.stokKartiId,
           stokKodu: item.stokKodu,
@@ -552,6 +580,7 @@ const App = () => {
   //gride doldurma işlemleri
   const handleAddToGrid = useCallback(() => {
     const nStoK = selectedStokKodu;
+    debugger;
 
     if (!nStoK || formDataDetay.miktar === 0) {
       toast.current?.show({
@@ -564,11 +593,26 @@ const App = () => {
     }
 
     const alreadyHas = gridData.find((x) => x.stokKodu == nStoK);
+    const alreadyHasWithHucre = gridData.find(
+      (x) =>
+        (x.stokKodu == nStoK && x.miktar == 0) ||
+        (x.stokKodu == nStoK && x.hucreId == formDataDetay.hucreId)
+    );
+    debugger;
 
     if (alreadyHas) {
+      const toplamIstenilenMiktar = gridData
+        .filter((item) => item.stokKodu === nStoK)
+        .reduce((acc, curr) => acc + (curr.istenilenMiktar || 0), 0);
+
+      const toplamMiktar = gridData
+        .filter((item) => item.stokKodu === nStoK)
+        .reduce((acc, curr) => acc + (curr.miktar || 0), 0);
+
       if (
-        Number(formDataDetay.miktar) > Number(alreadyHas.istenilenMiktar) &&
-        Number(alreadyHas.istenilenMiktar) > 0
+        Number(toplamMiktar - alreadyHas.miktar + formDataDetay.miktar) >
+          Number(toplamIstenilenMiktar) &&
+        Number(toplamIstenilenMiktar) > 0
       ) {
         toast.current?.show({
           severity: "error",
@@ -578,14 +622,15 @@ const App = () => {
         });
         return;
       }
-
+    }
+    if (alreadyHasWithHucre) {
       setGridData((prevGridData) =>
         prevGridData.map((item) =>
-          item.stokKodu === nStoK
+          item.stokKodu === nStoK && item.id === alreadyHasWithHucre.id
             ? {
                 ...item,
                 miktar: formDataDetay.miktar!,
-                hucreKodu: formDataDetay.hucreKodu,
+                hucreKodu: hucreOptions.find(o=> o.value==selectedHucre)?.label,//formDataDetay.hucreKodu,
                 hucreId: formDataDetay.hucreId,
               }
             : item
@@ -614,6 +659,7 @@ const App = () => {
 
     document.getElementById("getirButton")!.hidden = true;
     setSelectedStokKodu("");
+    setSelectedId(0);
 
     // setFormDataDetay((prevFormData) => ({
     //   ...prevFormData,
@@ -1401,6 +1447,7 @@ const App = () => {
                     className="btn btn-info ms-1"
                     onClick={() => {
                       setSelectedStokKodu(rowData.stokKodu);
+                      setSelectedId(rowData.id);
                       // setSelectedItem(rowData);
                       // setFormDataDetay((prevFormData) => ({
                       //   ...prevFormData,

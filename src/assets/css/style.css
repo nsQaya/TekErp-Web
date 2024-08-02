@@ -21747,6 +21747,16 @@ File: scss
       max-width: 1200px; 
     }
 
+    .custom-modal-4 .modal-dialog {
+      max-width: 1200px; 
+    }
+    .custom-modal-2 .modal-dialog {
+      max-width: 800px; 
+    }
+    .custom-modal-1 .modal-dialog {
+      max-width: 500px; 
+    }
+
 
     .row-acik-yesil {
       background-color: #01c0c8;
@@ -21773,3 +21783,15 @@ File: scss
       color: white;
     }
     
+    
+    .p-dropdown-panel {
+      z-index: 1060 !important; /* Bootstrap modal z-index değeri 1040 olduğu için 1050 yapıldı */
+    }
+    
+    .modal-backdrop {
+      z-index: 1040 !important; /* Modal arka planı z-index değeri */
+    }
+    
+    .modal {
+      z-index: 1050 !important; /* Modal z-index değeri */
+    }

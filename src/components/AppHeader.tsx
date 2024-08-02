@@ -1,7 +1,7 @@
-import logo from '../assets/images/logo-icon.png'
-import lightLogo from '../assets/images/logo-light-icon.png'
-import textLogo from '../assets/images/logo-text.png'
-import textLightLogo from '../assets/images/logo-light-text.png'
+// import logo from '../assets/images/logo.png'
+// import lightLogo from '../assets/images/logo.png'
+import textLogo from '../assets/images/TeknomakLogo.jpg'
+import textLightLogo from '../assets/images/logo.png'
 //import userLogo from '../assets/images/users/1.jpg';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Navbar from 'react-bootstrap/Navbar';
@@ -48,7 +48,7 @@ export default () => {
         <div className="navbar-header">
 
           <Navbar.Brand href="index.html">
-            <b>
+            {/* <b>
               <img
                 src={logo}
                 alt="homepage"
@@ -60,7 +60,7 @@ export default () => {
                 alt="homepage"
                 className="light-logo"
               />
-            </b>
+            </b> */}
             <span className='hidden-sm-down'>
               <img
                 src={textLogo}

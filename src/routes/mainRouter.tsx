@@ -10,6 +10,14 @@ import StockCode3Items from "../pages/stok/code3/items";
 import StockCode4Items from "../pages/stok/code4/items";
 import StockCode5Items from "../pages/stok/code5/items";
 
+import CariItems from "../pages/cari/cari";
+import CariGrupKoduItems from "../pages/cari/cariGrupKod";
+import CariKod1Items from "../pages/cari/cariKod1";
+import CariKod2Items from "../pages/cari/cariKod2";
+import CariKod3Items from "../pages/cari/cariKod3";
+import CariKod4Items from "../pages/cari/cariKod4";
+import CariKod5Items from "../pages/cari/cariKod5";
+
 import IhtiyacPlanlama from "../pages/planlama/ihtiyacPlanlama"
 
 import IhtiyacPlanlamaRapor from "../pages/rapor/ihtiyacPlanlamaRapor"
@@ -114,6 +122,39 @@ export default createHashRouter([
           {
             path: "code5",
             element: <StockCode5Items />,
+          },
+        ],
+      },
+      {
+        path: "/cari",
+        children: [
+          {
+            path: "caris",
+            element: <CariItems />,
+          },
+          {
+            path: "groupCode",
+            element: <CariGrupKoduItems />,
+          },
+          {
+            path: "code1",
+            element: <CariKod1Items />,
+          },
+          {
+            path: "code2",
+            element: <CariKod2Items />,
+          },
+          {
+            path: "code3",
+            element: <CariKod3Items />,
+          },
+          {
+            path: "code4",
+            element: <CariKod4Items />,
+          },
+          {
+            path: "code5",
+            element: <CariKod5Items />,
           },
         ],
       },

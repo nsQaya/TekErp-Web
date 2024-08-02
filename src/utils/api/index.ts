@@ -16,12 +16,15 @@ import { IIl } from "../types/tanimlamalar/IIl";
 import { IUlke } from "../types/tanimlamalar/IUlke";
 import { IDovizTipi } from "../types/tanimlamalar/IDovizTipi";
 
+import cari from "./cari/cari";
 import {IIhtiyacPlanlamaRapor} from "../types/planlama/IIhtiyacPlanlamaRapor";
 import stokKod from "./stok/stokKod";
+import cariKod from "./cari/cariKod";
 import ulke  from "./tanimlamalar/ulke";
 import il from "./tanimlamalar/il";
 import ilce from "./tanimlamalar/ilce";
 import stokGrupKod from "./stok/stokGrupKod";
+import cariGrupKod from "./cari/cariGrupKod";
 import stokOlcuBirim from "./tanimlamalar/stokOlcuBirim";
 import dovizTipi from "./tanimlamalar/dovizTipi";
 import stokWithDetail from './stok/stokWithDetail';
@@ -47,6 +50,9 @@ import { IBelge, IBelgeNo } from "../types/fatura/IBelge";
 import belge from "../api/fatura/belge";
 import { IBelgeSeri } from "../types/tanimlamalar/IBelgeSeri";
 import belgeSeri from "../api/tanimlamalar/belgeSeri";
+import depolarArasiTransfer from "./fatura/depolarArasiTransfer";
+import { ICariKod } from "../types/cari/ICariKod";
+import { ICari } from "../types/cari/ICari";
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
@@ -110,6 +116,7 @@ instance.interceptors.response.use(onResponse, onResponseError);
 
 const repositories = {
   auth: auth(instance),
+
   stok: stok(instance) as unknown as IStokAPI,
   stokWithDetail: stokWithDetail(instance) as unknown as ICrudBaseAPI<IStokKartiWithDetail>,
   stokGrupKodu: stokGrupKod(instance) as unknown as ICrudBaseAPI<IStokKod>,
@@ -120,6 +127,15 @@ const repositories = {
   stokKod5: stokKod(instance, 5) as unknown as ICrudBaseAPI<IStokKod>,
   stokOlcuBirim: stokOlcuBirim(instance) as unknown as ICrudBaseAPI<IStokOlcuBirim>,
   stokHareket:stokHareket(instance) as unknown as ICrudBaseAPI<IStokHareket>,
+
+  cari: cari(instance) as unknown as ICrudBaseAPI<ICari>,
+  // stokWithDetail: stokWithDetail(instance) as unknown as ICrudBaseAPI<IStokKartiWithDetail>,
+  cariGrupKodu: cariGrupKod(instance) as unknown as ICrudBaseAPI<ICariKod>,
+  cariKod1: cariKod(instance, 1) as unknown as ICrudBaseAPI<IStokKod>,
+  cariKod2: cariKod(instance, 2) as unknown as ICrudBaseAPI<IStokKod>,
+  cariKod3: cariKod(instance, 3)as unknown  as ICrudBaseAPI<IStokKod>,
+  cariKod4: cariKod(instance, 4) as unknown as ICrudBaseAPI<IStokKod>,
+  cariKod5: cariKod(instance, 5) as unknown as ICrudBaseAPI<IStokKod>,
 
   ulke: ulke(instance) as unknown as ICrudBaseAPI<IUlke>,
   il: il(instance) as unknown as ICrudBaseAPI<IIl>,
@@ -135,8 +151,9 @@ const repositories = {
   ihtiyacPlanlamaRapor: ihtiyacPlanlamaRapor(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlamaRapor>,
   ihtiyacPlanlama: ihtiyacPlanlama(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlama>,
 
-  ambarFisi:ambarCikisFisi(instance) as unknown as ICrudBaseAPI<IAmbarFisi>,
   belge:belge(instance) as unknown as ICrudBaseAPI<IBelge>,
+  ambarFisi:ambarCikisFisi(instance) as unknown as ICrudBaseAPI<IAmbarFisi>,
+  depolarArasiTransfer:depolarArasiTransfer(instance) as unknown as ICrudBaseAPI<IAmbarFisi>,
   belgeNo:belge(instance) as unknown as ICrudBaseAPI<IBelgeNo>
 
 };

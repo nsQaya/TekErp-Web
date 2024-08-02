@@ -207,7 +207,7 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
         selectionMode={props.rowSelectable ? "multiple" : null}
         selection={selectedItems}
       >
-        {props.rowSelectable && <Column selectionMode="multiple" headerStyle={{ width: '1rem' }} />}
+        {props.rowSelectable && <Column selectionMode="multiple" headerStyle={{ width: '1rem' }} key="selectionMode" />}
         {props.columns.map((column, index) => (
           <Column key={index} {...column} />
         ))}

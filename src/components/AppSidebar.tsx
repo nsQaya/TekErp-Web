@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 export default () => {
 
-  const [tanimPages, _] =useState([
+  const [tanimPages] =useState([
     {title: "Ülke", href: "/tanimlamalar/ulkes"},
     {title: "İl", href: "/tanimlamalar/ils"},
     {title: "İlçe", href: "/tanimlamalar/ilces"},
@@ -18,13 +18,13 @@ export default () => {
     {title: "Belge Seri", href: "/tanimlamalar/belgeSeris"},
   ]);
 
-  const [kullaniciPages, __] =useState([
+  const [kullaniciPages] =useState([
     {title: "Kullanıcılar", href: "/"},
     {title: "Yetkiler", href: "/"},
     {title: "Kullanıcı Yetkileri", href: "/"},
   ]);
 
-  const [stokPages, ___] =useState([
+  const [stokPages] =useState([
     {title: "Stoklar", href: "/stok/stoks"},
     {title: "Grup Kodu", href: "/stok/groupCode"},
     {title: "Kod 1", href: "/stok/code1"},
@@ -35,9 +35,9 @@ export default () => {
     {title: "Hareketler", href: "/stok/"},
   ]);
 
-  const [cariPages, ____] =useState([
+  const [cariPages] =useState([
     {title: "Cariler", href: "/cari/caris"},
-    {title: "Grup Kodu", href: "/"},
+    {title: "Grup Kodu", href: "/cari/groupCode"},
     {title: "Kod 1", href: "/cari/code1"},
     {title: "Kod 2", href: "/cari/code2"},
     {title: "Kod 3", href: "/cari/code3"},
@@ -46,7 +46,7 @@ export default () => {
     {title: "Hareketler", href: "/"},
   ]);
 
-  const [faturaPages, _____] =useState([
+  const [faturaPages] =useState([
     {title: "Satış Faturası", href: "/fatura/satisfaturaliste"},
     {title: "Alış Faturası", href: "/fatura/alisfaturaliste"},
     {title: "Satış İrsaliyesi", href: "/fatura/satisirsaliyeliste"},
@@ -56,12 +56,12 @@ export default () => {
     {title: "Depolar Arası Transfer", href: "/fatura/depolararasitransferliste"},
   ]);
 
-  const [eBelgePages, ______] =useState([
+  const [eBelgePages] =useState([
     {title: "E-Fatura", href: "/"},
     {title: "E-İrsaliye", href: "/"},
   ]);
 
-  const [aktarimPages, _______] =useState([
+  const [aktarimPages] =useState([
     {title: "Stok Aktarım", href: "/"},
     {title: "Stok Kod1 Aktarım", href: "/"},
     {title: "Stok Kod2 Aktarım", href: "/"},
@@ -82,12 +82,12 @@ export default () => {
     {title: "Plasiyer Kodu Aktarım", href: "/"},
   ]);
 
-  const [raporPages, ________] =useState([
+  const [raporPages] =useState([
     {title: "İhtiyaç Planlama", href: "/rapor/ihtiyacPlanlamaRapor"},
     {title: "Sac Planlama", href: "/planlama/sacPlanlama"}
   ]);
 
-  const [planlamaPages, _________] =useState([
+  const [planlamaPages] =useState([
     {title: "İhtiyaç Planlama", href: "/planlama/ihtiyacPlanlama"},
     {title: "Sac Planlama", href: "/planlama/sacPlanlama"}
   ]);

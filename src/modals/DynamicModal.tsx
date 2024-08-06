@@ -5,7 +5,7 @@ import Select, { Options } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { AxiosResponse } from "axios";
 import { Calendar } from "primereact/calendar";
-import GenericDropdown, { Filters } from "../components/GenericDropdown"; // GenericDropdown bileşenini import edin
+import GenericDropdown, { Filter } from "../components/GenericDropdown"; // GenericDropdown bileşenini import edin
 
 export enum FormItemTypes {
     input,
@@ -31,7 +31,7 @@ export interface IFormItem {
     baseApi?: ICrudBaseAPI<any>;
     returnField?: string;
     labelField?: string;
-    additionalFilters?: Filters;
+    additionalFilters?: Filter[];
     columnSize?: number;
 }
 
@@ -172,11 +172,11 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                             </div>
                         ) : item.type === FormItemTypes.genericDropdown && item.baseApi && item.returnField && item.labelField ? (
                             <div className={`col-md-${item.columnSize || 12} m-b-20`} key={index}>
-                                {JSON.stringify(item)}
+                                {JSON.stringify(item.additionalFilters?.map(x=>({...x,value: formItems.find(y=>y.name==x.item)?.value})))}
                                 <GenericDropdown
                                     value={item.value}
                                     onChange={(selected) => {
-                                        item.setValue && item.setValue(selected?.value || null);
+                                        item.setValue && item.setValue(selected);
                                         if (props.onChange) {
                                             props.onChange(item.name, selected?.value || null);
                                         }
@@ -185,7 +185,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                                     returnField={item.returnField}
                                     labelField={item.labelField}
                                     placeholder={item.title}
-                                    additionalFilters={item.additionalFilters}
+                                    additionalFilters={item.additionalFilters?.map(x=>({...x,value: formItems.find(y=>y.name==x.item)?.value || -1}))}
                                     className="custom-dropdown"
                                 />
                             </div>

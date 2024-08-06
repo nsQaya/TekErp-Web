@@ -172,9 +172,12 @@ export default () => {
       baseApi: api.il,
       returnField: "id",
       labelField: "adi",
-      additionalFilters: {
-        ulkeId: { value: selectedUlkeId? selectedUlkeId?.toString() :"-1" , matchMode: "equals" }
-      },
+      additionalFilters: [
+        {
+          item: "ulkeId",
+          matchMode: "equals"
+        }
+      ],
       columnSize:4,
     },
     {
@@ -184,9 +187,12 @@ export default () => {
       baseApi: api.ilce,
       returnField: "id",
       labelField: "adi",
-      additionalFilters: {
-        ilId: { value: selectedIlId?  selectedIlId?.toString() : "-1", matchMode: "equals" }
-      },
+      additionalFilters: [
+        {
+          item: "ilId",
+          matchMode: "equals"
+        }
+      ],
       columnSize:4
     },
     {
@@ -279,15 +285,6 @@ export default () => {
     },
   ] as IFormItem[];
 
-  const handleModalChange = (name: string, value: any) => {
-    if (name==="ulkeId") {
-      setSelectedUlkeId(value);
-      setSelectedIlId(null);
-    }
-    if (name==="ilId") {
-      setSelectedIlId(value);
-     }
-  };
 
   return (
     <div className="container-fluid">
@@ -311,7 +308,6 @@ export default () => {
         onDone={onSuccess}
         selectedItem={selectedItem}
         onHide={() => setModalShowing(false)}
-        onChange={handleModalChange} 
         classEki="4"
       />
       <AppBreadcrumb title="" />

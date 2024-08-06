@@ -49,7 +49,7 @@ function transformFilter(gridFilters: FilterMeta, sortColumn: string, sortDirect
                   transformedFilters.push({
                       field: key,
                       operator: mapMatchModeToOperator(constraint.matchMode || 'eq'),
-                      value: constraint.value,
+                      value: constraint.value.toString(),
                       logic: "and",
                   });
               }
@@ -59,7 +59,7 @@ function transformFilter(gridFilters: FilterMeta, sortColumn: string, sortDirect
               transformedFilters.push({
                   field: key,
                   operator: mapMatchModeToOperator(filter.matchMode || 'eq'),
-                  value: filter.value,
+                  value: filter.value.toString(),
                   logic: "and",
               });
           }

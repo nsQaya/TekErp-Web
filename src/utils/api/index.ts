@@ -46,6 +46,7 @@ import unite from "./tanimlamalar/unite";
 import { IUnite } from "../types/tanimlamalar/IUnite";
 import { IStokHareket } from "../types/fatura/IStokHareket";
 import stokHareket from "../api/stok/stokHareket";
+import stokHareketSeri from "../api/stok/stokHareketSeri"
 import { IBelge, IBelgeNo } from "../types/fatura/IBelge";
 import belge from "../api/fatura/belge";
 import { IBelgeSeri } from "../types/tanimlamalar/IBelgeSeri";
@@ -53,6 +54,7 @@ import belgeSeri from "../api/tanimlamalar/belgeSeri";
 import depolarArasiTransfer from "./fatura/depolarArasiTransfer";
 import { ICariKod } from "../types/cari/ICariKod";
 import { ICari } from "../types/cari/ICari";
+import { IStokHareketSeri } from "../types/stok/IStokHareketSeri";
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
@@ -127,6 +129,7 @@ const repositories = {
   stokKod5: stokKod(instance, 5) as unknown as ICrudBaseAPI<IStokKod>,
   stokOlcuBirim: stokOlcuBirim(instance) as unknown as ICrudBaseAPI<IStokOlcuBirim>,
   stokHareket:stokHareket(instance) as unknown as ICrudBaseAPI<IStokHareket>,
+  stokHareketSeri:stokHareketSeri(instance) as unknown as ICrudBaseAPI<IStokHareketSeri>,
 
   cari: cari(instance) as unknown as ICrudBaseAPI<ICari>,
   // stokWithDetail: stokWithDetail(instance) as unknown as ICrudBaseAPI<IStokKartiWithDetail>,

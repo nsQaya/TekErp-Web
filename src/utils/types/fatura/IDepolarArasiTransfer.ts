@@ -3,7 +3,7 @@ import { EAmbarHareketTur } from "../enums/EAmbarHareketTur"
 
 import { IBelge } from "./IBelge"
 
-export interface IAmbarFisi
+export interface IDepolarArasiTransfer
 {
     id?:number,
     belge?:IBelge,

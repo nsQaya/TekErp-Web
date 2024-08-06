@@ -5,7 +5,7 @@ import { DynamicQuery } from "../../transformFilter";
 
 
 
-const controller="AmbarFisis";
+const controller="DepolarArasiTransfers";
 
 export default ($axios: AxiosInstance) => ({
     getAllForGrid(page: number, take: number,dynamicQuery:DynamicQuery  ){

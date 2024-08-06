@@ -43,6 +43,7 @@ export interface IEntity{
 
 export interface ICrudBaseAPI<T>{
   // getAll: (page: number, take: number)=> Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>
+  getListBakiyeByStokKodu(stokKodu: string): Promise<{ data: { value: { items: T[], count: number } } }>;
   getAllForGrid(page: number, take: number, dynamicQuery:DynamicQuery): Promise<{ data: { value: { items: T[], count: number } } }>;
   getListForAmbarCikisFisi( dynamicQuery:DynamicQuery): Promise<{ data: { value: { items: T[], count: number } } }>;
   getAll(page: number, take: number): Promise<{ data: { value: { items: T[], count: number } } }>;

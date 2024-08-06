@@ -69,7 +69,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
             }
         }));
         setFormItems(initializedItems);
-    }, [props.items, props.selectedItem,props.onChange]);
+    }, [props.items]);
 
     useEffect(() => {
         if (props.selectedItem) {
@@ -81,7 +81,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                 }))
             );
         }
-    }, [props.isShownig,props.selectedItem,props.onChange]);
+    }, [props.isShownig,props.selectedItem, props.onChange]);
 
     const onSubmit = useCallback(async () => {
         var requestItems = formItems.reduce((result: any, item: any) => {
@@ -172,6 +172,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                             </div>
                         ) : item.type === FormItemTypes.genericDropdown && item.baseApi && item.returnField && item.labelField ? (
                             <div className={`col-md-${item.columnSize || 12} m-b-20`} key={index}>
+                                {JSON.stringify(item)}
                                 <GenericDropdown
                                     value={item.value}
                                     onChange={(selected) => {

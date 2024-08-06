@@ -34,8 +34,10 @@ import UniteItem from "../pages/taminlamalar/unite/items";
 import BelgeSeriItem from "../pages/taminlamalar/belgeSeri/items";
 
 import AmbarCikisFisiListe from "../pages/fatura/ambarCikisFisiListe";
+import DepolarArasiTransferListe from "../pages/fatura/depolarArasiTransferListe";
 import AmbarFisiEkle from "../pages/fatura/ambarFisiEkle";
 import AmbarCikisFisi from "../pages/fatura/ambarCikisFisi";
+import DepolarArasiTransferFisi from "../pages/fatura/depolarArasiTransferFisi"
 
 
 export default createHashRouter([
@@ -190,8 +192,12 @@ export default createHashRouter([
             element: <AmbarCikisFisi />,
           },
           {
-            path: "depolararasitransfer",
-            element: <StockCode2Items />,
+            path: "depolararasitransferliste",
+            element: <DepolarArasiTransferListe />,
+          },
+          {
+            path: "depolararasitransferfisi",
+            element: <DepolarArasiTransferFisi />,
           },
           {
             path: "ambarfisiekle",

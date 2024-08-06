@@ -37,6 +37,7 @@ export interface IStok {
   alisKDVOrani: number;
   satisKDVOrani: number;
   seriTakibiVarMi: boolean;
+  seriMiktarKadarMi:boolean;
   en: number;
   boy: number;
   genislik: number;

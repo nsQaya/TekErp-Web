@@ -2,20 +2,20 @@ import { createRef, useCallback,  useEffect,  useRef,  useState } from "react";
 import AppBreadcrumb from "../../components/AppBreadcrumb";
 import api from "../../utils/api";
 import AppTable, { ITableRef } from "../../components/AppTable";
-import { IAmbarFisi } from "../../utils/types/fatura/IAmbarFisi";
 import { useNavigate } from "react-router-dom";
 import { ColumnProps } from "primereact/column";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
+import { IDepolarArasiTransfer } from "../../utils/types/fatura/IDepolarArasiTransfer";
 
 
 export default () => {
-  const myTable = createRef<ITableRef<IAmbarFisi>>();
+  const myTable = createRef<ITableRef<IDepolarArasiTransfer>>();
   
   const toast = useRef<Toast>(null);
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<IAmbarFisi | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<IDepolarArasiTransfer | null>(null);
 
   const navigate= useNavigate();
   
@@ -24,7 +24,7 @@ export default () => {
     if (itemToDelete) {
       try {
         await api.belge.delete(itemToDelete.belgeId as number);
-        await api.ambarFisi.delete(itemToDelete.id as number);
+        await api.depolarArasiTransfer.delete(itemToDelete.id as number);
         const stokHareketResponse= await api.stokHareket.getListByBelgeId(itemToDelete.belgeId);
         stokHareketResponse.data.value.items.forEach(async element => {
           await api.stokHareket.delete(element.id as number);
@@ -42,7 +42,7 @@ export default () => {
     }
   }, [itemToDelete]);
 
-  const deleteItem = (item: IAmbarFisi) => {
+  const deleteItem = (item: IDepolarArasiTransfer) => {
     setItemToDelete(item);
     setConfirmVisible(true);
   };
@@ -77,7 +77,7 @@ export default () => {
       dataType:"date",
       sortable: true,
       filter: true,
-      body: (row: IAmbarFisi) =>
+      body: (row: IDepolarArasiTransfer) =>
         row.belge!.tarih
           ? new Date(row.belge!.tarih).toLocaleDateString("tr-TR", {
               day: "2-digit",
@@ -99,7 +99,7 @@ export default () => {
     },
     {
       header: "İşlemler",
-      body: (row: IAmbarFisi) => (
+      body: (row: IDepolarArasiTransfer) => (
         
         <>
         <button className="btn btn-info ms-1" onClick={(e) => {
@@ -135,21 +135,21 @@ export default () => {
         acceptLabel="Evet"
         rejectLabel="Hayır"
       />
-      <AppBreadcrumb title="Ambar Çıkış Fişi Listesi" />
+      <AppBreadcrumb title="Depolar Arası Transfer Listesi" />
       <div className="row">
         <div className="col-12">
           <div className="card">
             <div className="card-body">
               <div className="table-responsive m-t-40">
                 <AppTable
-                    baseApi={api.ambarFisi}
+                    baseApi={api.depolarArasiTransfer}
                     columns={columns}
-                    key={"AmbarCikisFisi"}
+                    key={"DepolarArasiTransfer"}
                     ref={myTable}
                     rowSelectable={false}
                     appendHeader={() => {
                       return (
-                      <Button type="button" severity="help" onClick={(e)=>[e.preventDefault(), navigate(`/fatura/ambarcikisfisi`)]}>
+                      <Button type="button" severity="help" onClick={(e)=>[e.preventDefault(), navigate(`/fatura/depolararasitransferfisi`)]}>
                         Yeni
                       </Button>)
                     }}

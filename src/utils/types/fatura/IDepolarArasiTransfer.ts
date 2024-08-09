@@ -11,5 +11,6 @@ export interface IDepolarArasiTransfer
     cariId:number,
     cari:ICari,
     ambarHareketTur:EAmbarHareketTur,
+    kaynakBelgeNo:string,
  
 }

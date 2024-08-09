@@ -177,7 +177,15 @@ const App = () => {
   useEffect(() => {
     const fetchSeriOptions = async () => {
       try {
-        const response = await api.belgeSeri.getAll(0, 1000);
+        const sortColumn = "Id";
+        const sortDirection = 1;
+    
+        const filters = {
+          BelgeTip: { value: EBelgeTip.AmbarCikisFisi, matchMode: "equals" },
+        };
+
+        const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
+        const response = await api.belgeSeri.getAllForGrid(0, 1000,dynamicQuery);
         if (response.data.value) {
           const options = response.data.value.items.map((item: IBelgeSeri) => ({
             label: item.seri,
@@ -482,7 +490,7 @@ const App = () => {
     }
   }, [selectedStokKodu, handleKeyPress]);
 
-  const handleDialogSelect = useCallback(
+  const handleDialogSelect = useCallback( //TODU: bunu T type a geçirince kaldırmak gerekiyor ama güncellemeler için ne yapacağımı daha bilmediğimden bir süre durabilir 
     (
       fieldName: string,
       dialogFieldName: string,
@@ -1035,7 +1043,11 @@ const App = () => {
                     setDialogVisible({ ...dialogVisible, proje: false })
                   }
                   onSelect={(selectedValue) =>
-                    handleDialogSelect("projeKodu", "kodu", selectedValue)
+                    setFormDataDetay((prevFormDataBaslik) => ({
+                      ...prevFormDataBaslik,
+                      projeKodu: selectedValue.kodu,
+                      projeKoduId: selectedValue.id!,
+                    }))
                   }
                 />
               </div>
@@ -1070,7 +1082,11 @@ const App = () => {
                     setDialogVisible({ ...dialogVisible, unite: false })
                   }
                   onSelect={(selectedValue) =>
-                    handleDialogSelect("uniteKodu", "kodu", selectedValue)
+                    setFormDataDetay((prevFormDataBaslik) => ({
+                      ...prevFormDataBaslik,
+                      uniteKodu: selectedValue.kodu,
+                      uniteKoduId: selectedValue.id!,
+                    }))
                   }
                 />
               </div>
@@ -1213,11 +1229,11 @@ const App = () => {
                         });
                       }}
                       onSelect={(selectedValue) =>
-                        handleDialogSelect(
-                          "cikisYeriKodu",
-                          "kodu",
-                          selectedValue
-                        )
+                        setFormDataBaslik((prevFormDataBaslik) => ({
+                          ...prevFormDataBaslik,
+                          cikisYeriKodu: selectedValue.kodu,
+                          cikisYeriKoduId: selectedValue.id!,
+                        }))
                       }
                     />
                   </div>
@@ -1335,9 +1351,19 @@ const App = () => {
                   onHide={() =>
                     setDialogVisible({ ...dialogVisible, stok: false })
                   }
-                  onSelect={(selectedValue) => {
-                    handleDialogSelect("stokKodu", "kodu", selectedValue);
-                  }}
+                  onSelect={(selectedValue) =>
+                    {setFormDataDetay((prevFormDataBaslik) => ({
+                      ...prevFormDataBaslik,
+                      //stokKodu: selectedValue.kodu,
+                      stokAdi:selectedValue.adi,
+                      stokKartiId: selectedValue.id!,
+                    }));
+                    setSelectedStokKodu(selectedValue.kodu);
+                  }
+                  }
+                  // onSelect={(selectedValue) => {
+                  //   handleDialogSelect("stokKodu", "kodu", selectedValue);
+                  // }}
                 />
               </div>
               <InputText

@@ -18,9 +18,6 @@ export default () => {
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<ICari | null>(null);
 
-  const [selectedUlkeId, setSelectedUlkeId] = useState<string | null>(null);
-  const [selectedIlId, setSelectedIlId] = useState<string | null>(null);
-
   const onSuccess = () => {
     if (selectedItem) {
       toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla güncellendi !" });
@@ -96,8 +93,6 @@ export default () => {
           {/* {JSON.stringify(row.ilId)} */}
             <button className="btn btn-info ms-1" onClick={(e) => {
               e.preventDefault();
-              setSelectedIlId(row.ilce.ilId);
-              setSelectedUlkeId(row.ilce.il.ulkeId);
               setSelectedItem(row);
               setModalShowing(true);
             }}>

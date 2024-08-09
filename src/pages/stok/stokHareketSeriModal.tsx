@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import Select from "react-select";
-import { InputNumber } from "primereact/inputnumber";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { IStokHareketSeri } from "../../utils/types/stok/IStokHareketSeri";
@@ -13,6 +12,7 @@ interface StokHareketSeriTakibiModalProps {
   onHide: () => void;
   seriler: IStokSeriBakiye[];
   onSeriAdd: (seriler: IStokHareketSeri[]) => void;
+  toplamMiktar: number;
 }
 
 const SeriTakibiModal: React.FC<StokHareketSeriTakibiModalProps> = ({
@@ -20,6 +20,7 @@ const SeriTakibiModal: React.FC<StokHareketSeriTakibiModalProps> = ({
   onHide,
   seriler,
   onSeriAdd,
+  toplamMiktar,
 }) => {
   const [selectedSeri, setSelectedSeri] = useState<IStokSeriBakiye | null>(null);
   const [miktar, setMiktar] = useState<number>(0);
@@ -27,15 +28,11 @@ const SeriTakibiModal: React.FC<StokHareketSeriTakibiModalProps> = ({
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    if (selectedSeri) {
-      setMiktar(selectedSeri.miktar);
-    } else {
-      setMiktar(0);
-    }
+    setMiktar(0);
   }, [selectedSeri]);
 
   const handleAddSeri = () => {
-    if (!selectedSeri) return;
+    if (!selectedSeri || miktar <= 0) return;
 
     if (editIndex !== null) {
       const updatedList = [...seriList];
@@ -86,36 +83,40 @@ const SeriTakibiModal: React.FC<StokHareketSeriTakibiModalProps> = ({
     value: seri,
   }));
 
+  const toplamSeriMiktar = seriList.reduce((acc, seri) => acc + seri.miktar, 0);
+
   return (
     <Dialog visible={visible} onHide={onHide} header="Seri Takibi">
       <div className="p-fluid">
-        <div className="p-inputgroup">
-          <div className="field" style={{ flex: 1, marginRight: '1rem' }}>
-            <label htmlFor="seri">Seri No</label>
-           {JSON.stringify(seriler)}
-            <Select
-              id="seri"
-              value={selectedSeri ? { label: selectedSeri.seriNo, value: selectedSeri } : null}
-              onChange={(option) => setSelectedSeri(option ? option.value : null)}
-              options={seriOptions}
-              isClearable
-              isSearchable
-              placeholder="Seri No Girin veya Seçin"
-              getOptionLabel={(option) => option.value.seriNo}
-              getOptionValue={(option) => option.value.seriNo}
-              styles={{ container: (base) => ({ ...base, width: '100%' }) }}
-            />
-          </div>
-          <div className="field" style={{ flex: 1 }}>
-            <label htmlFor="miktar">Miktar</label>
-            <InputNumber
-              id="miktar"
-              min={0}
-              max={selectedSeri?.miktar}
-              value={miktar}
-              onChange={(e) => setMiktar(e.value ? e.value : 0)}
-              style={{ width: '100%' }}
-            />
+        <div className="row" style={{ minWidth: "500px" }}>
+          <div className="p-inputgroup">
+            <div className="field" style={{ flex: 1, marginRight: "1rem", minWidth: "350px" }}>
+              <label htmlFor="seri">Seri No</label>
+              <Select
+                id="seri"
+                value={selectedSeri ? { label: selectedSeri.seriNo, value: selectedSeri } : null}
+                onChange={(option) => setSelectedSeri(option ? option.value : null)}
+                options={seriOptions}
+                isClearable
+                isSearchable
+                placeholder="Seri No Girin veya Seçin"
+                getOptionLabel={(option) => option.value.seriNo}
+                getOptionValue={(option) => option.value.seriNo}
+                styles={{ container: (base) => ({ ...base, width: "100%" }) }}
+              />
+            </div>
+            <div className="field" style={{ flex: 1,minWidth: "150px",maxWidth:"150px" }}>
+              <label htmlFor="miktar">Miktar</label>
+              <input
+                type="number"
+                id="miktar"
+                min={0}
+                max={selectedSeri?.miktar}
+                value={miktar}
+                onChange={(e) => setMiktar(Number(e.target.value))}
+                style={{ width: "100%" }}
+              />
+            </div>
           </div>
         </div>
         <div className="p-d-flex p-jc-end mt-3">
@@ -127,21 +128,29 @@ const SeriTakibiModal: React.FC<StokHareketSeriTakibiModalProps> = ({
           <Column
             body={(rowData, { rowIndex }) => (
               <>
-                <Button
-                  icon="pi pi-pencil"
-                  className="p-button-rounded p-button-success mr-2"
+                <button
+                  className="btn btn-info ms-1"
                   onClick={() => handleEditSeri(rowData, rowIndex)}
-                />
-                <Button
-                  icon="pi pi-trash"
-                  className="p-button-rounded p-button-danger"
+                >
+                  <i className="ti-pencil"></i>
+                  </button>
+                <button
+                  className="btn btn-danger ms-1"
                   onClick={() => handleDeleteSeri(rowIndex)}
-                />
+                  >
+                <i className="ti-trash"></i>
+                </button>
+                
               </>
             )}
             header="İşlemler"
           />
         </DataTable>
+        <div className="mt-4">
+          <h5>Toplam Miktar: {toplamMiktar}</h5>
+          <h5>Serilerden Seçilen Miktar: {toplamSeriMiktar}</h5>
+          <h5>Kalan Miktar: {toplamMiktar - toplamSeriMiktar}</h5>
+        </div>
         <div className="p-d-flex p-jc-end mt-4">
           <Button label="Tamam" onClick={handleComplete} />
         </div>

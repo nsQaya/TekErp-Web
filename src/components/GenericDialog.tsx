@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import  { useState, useEffect, useCallback } from "react";
 import { Dialog } from "primereact/dialog";
 import { DataTable, DataTableStateEvent, SortOrder } from "primereact/datatable";
 import { Column, ColumnProps } from "primereact/column";
@@ -8,18 +8,18 @@ import { ICrudBaseAPI } from "../utils/types";
 import { transformFilter } from "../utils/transformFilter";
 import { debounce } from "lodash-es";
 
-interface GenericDialogProps {
+interface GenericDialogProps<T> {
   visible: boolean;
   onHide: () => void;
-  baseApi: ICrudBaseAPI<any>;
+  baseApi: ICrudBaseAPI<T>;
   columns: ColumnProps[];
-  returnField: string;
-  onSelect: (selectedItem: any) => void;
+  returnField: keyof T;
+  onSelect: (selectedItem: T) => void;
 }
 
-const GenericDialog: React.FC<GenericDialogProps> = (props) => {
-  const [data, setData] = useState<any[]>([]);
-  const [selectedItem, setSelectedItem] = useState<any | null>(null);
+const GenericDialog = <T extends {}>(props: GenericDialogProps<T>) => {
+  const [data, setData] = useState<T[]>([]);
+  const [selectedItem, setSelectedItem] = useState<T | null>(null);
   const [filters, setFilters] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -33,8 +33,7 @@ const GenericDialog: React.FC<GenericDialogProps> = (props) => {
         return acc;
       }, {});
     setFilters(newFilters);
-  },[]);
-
+  }, []);
 
   useEffect(() => {
     initializeFilters();
@@ -78,16 +77,15 @@ const GenericDialog: React.FC<GenericDialogProps> = (props) => {
     fetchData();
   };
 
-
   const handleConfirm = () => {
     if (selectedItem) {
-      props.onSelect({ Id: selectedItem.id, [props.returnField]: selectedItem[props.returnField] });
+      props.onSelect(selectedItem);
       props.onHide();
     }
   };
 
   const handleRowDoubleClick = (e: any) => {
-    props.onSelect({ Id: e.data.id, [props.returnField]: e.data[props.returnField] });
+    props.onSelect(e.data);
     props.onHide();
   };
 
@@ -104,7 +102,6 @@ const GenericDialog: React.FC<GenericDialogProps> = (props) => {
 
   return (
     <Dialog visible={props.visible} onHide={handleHide} header="Rehber">
-      {/* {JSON.stringify(filters)} */}
       <DataTable
         size="small"
         value={data}

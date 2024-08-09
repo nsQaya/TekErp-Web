@@ -1,10 +1,11 @@
 import { ColumnProps } from "primereact/column";
 import api from "../../utils/api";
 import GenericDialog from "../GenericDialog"
+import { IProje } from "../../utils/types/tanimlamalar/IProje";
 
 
 
-export default(props: {isVisible: boolean, onSelect: (item: any) => void, onHide: ()=> void})=>{
+const ProjeRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IProje) => void; onHide: () => void }> = (props) => {
     const columns: ColumnProps[] = [
         {
           header: "Kodu",
@@ -30,4 +31,5 @@ export default(props: {isVisible: boolean, onSelect: (item: any) => void, onHide
             onSelect={props.onSelect}
           />
     )
-}
+};
+export default ProjeRehberDialog;

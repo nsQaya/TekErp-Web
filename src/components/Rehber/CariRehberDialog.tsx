@@ -1,11 +1,11 @@
 import { ColumnProps } from "primereact/column";
 import api from "../../utils/api";
 import GenericDialog from "../GenericDialog"
-import { IStok } from "../../utils/types/stok/IStok";
+import { ICari } from "../../utils/types/cari/ICari";
 
 
 
-const StokRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IStok) => void; onHide: () => void }> = (props) => {
+const CariRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: ICari) => void; onHide: () => void }> = (props) => {
     const columns: ColumnProps[] = [
         {
           header: "Kodu",
@@ -20,14 +20,20 @@ const StokRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IStok) =
           filter: true,
         },
         {
-          header: "Grup Kodu",
-          field: "stokGrupKodu.adi",
+          header: "Vergi Dairesi",
+          field: "vergiDairesi",
           // sortable: true,
           filter: true,
         },
         {
-          header: "Kod 1",
-          field: "stokKod1.adi",
+          header: "Vergi Numarası",
+          field: "vergiNumarasi",
+          // sortable: true,
+          filter: true,
+        },
+        {
+          header: "TC Kimlik No",
+          field: "tcKimlikNo",
           // sortable: true,
           filter: true,
         },
@@ -38,11 +44,11 @@ const StokRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IStok) =
         <GenericDialog
             visible={props.isVisible}
             onHide={props.onHide}
-            baseApi={api.stok}
+            baseApi={api.cari}
             columns={columns}
             returnField="kodu"
             onSelect={props.onSelect}
           />
     )
 };
-export default StokRehberDialog;
+export default CariRehberDialog;

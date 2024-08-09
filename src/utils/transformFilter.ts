@@ -69,7 +69,7 @@ function transformFilter(gridFilters: FilterMeta, sortColumn: string, sortDirect
   if (transformedFilters.length === 0) {
     return {
       sort: transformedSort,
-      filter: { field: 'Id', operator: 'gte', value: '0' },
+      filter: { field: 'Id', operator: 'gte', value: '0',logic: " AND " },
     };
   }
 

@@ -55,6 +55,10 @@ import depolarArasiTransfer from "./fatura/depolarArasiTransfer";
 import { ICariKod } from "../types/cari/ICariKod";
 import { ICari } from "../types/cari/ICari";
 import { IStokHareketSeri } from "../types/stok/IStokHareketSeri";
+import { IStokSeriBakiye } from "../types/stok/IStokSeriBakiye";
+import { IDepolarArasiTransfer } from "../types/fatura/IDepolarArasiTransfer";
+import { IIsEmri } from "../types/planlama/IIsEmri";
+import isEmri from "../api/fatura/isEmri";
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
@@ -130,6 +134,7 @@ const repositories = {
   stokOlcuBirim: stokOlcuBirim(instance) as unknown as ICrudBaseAPI<IStokOlcuBirim>,
   stokHareket:stokHareket(instance) as unknown as ICrudBaseAPI<IStokHareket>,
   stokHareketSeri:stokHareketSeri(instance) as unknown as ICrudBaseAPI<IStokHareketSeri>,
+  stokSeriBakiye:stokHareketSeri(instance) as unknown as ICrudBaseAPI<IStokSeriBakiye>,
 
   cari: cari(instance) as unknown as ICrudBaseAPI<ICari>,
   // stokWithDetail: stokWithDetail(instance) as unknown as ICrudBaseAPI<IStokKartiWithDetail>,
@@ -153,10 +158,11 @@ const repositories = {
   dovizTipi: dovizTipi(instance) as unknown as ICrudBaseAPI<IDovizTipi>,
   ihtiyacPlanlamaRapor: ihtiyacPlanlamaRapor(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlamaRapor>,
   ihtiyacPlanlama: ihtiyacPlanlama(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlama>,
+  isEmri: isEmri(instance) as unknown as ICrudBaseAPI<IIsEmri>,
 
   belge:belge(instance) as unknown as ICrudBaseAPI<IBelge>,
   ambarFisi:ambarCikisFisi(instance) as unknown as ICrudBaseAPI<IAmbarFisi>,
-  depolarArasiTransfer:depolarArasiTransfer(instance) as unknown as ICrudBaseAPI<IAmbarFisi>,
+  depolarArasiTransfer:depolarArasiTransfer(instance) as unknown as ICrudBaseAPI<IDepolarArasiTransfer>,
   belgeNo:belge(instance) as unknown as ICrudBaseAPI<IBelgeNo>
 
 };

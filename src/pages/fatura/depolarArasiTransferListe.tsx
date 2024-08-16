@@ -104,7 +104,7 @@ export default () => {
         <>
         <button className="btn btn-info ms-1" onClick={(e) => {
           e.preventDefault();
-          navigate(`/fatura/ambarcikisfisi?belgeId=${row.belgeId}`)
+          navigate(`/fatura/depolararasitransferfisi?belgeId=${row.belgeId}`)
 
         }}>
           <i className="ti-pencil"></i>

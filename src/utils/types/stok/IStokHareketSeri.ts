@@ -2,8 +2,8 @@ import { IStokHareket } from "../fatura/IStokHareket";
 
 export interface IStokHareketSeri
 {
-    id?:number;
-    stokHareketId?:number;
+    id:number;
+    stokHareketId:number;
     stokhareket?:IStokHareket;
     seriNo1:string;
     seriNo2?:string;

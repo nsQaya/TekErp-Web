@@ -11,6 +11,7 @@ interface StokHareketSeriTakibiModalProps {
   visible: boolean;
   onHide: () => void;
   seriler: IStokSeriBakiye[];
+  seciliSeriler?:IStokHareketSeri[];
   onSeriAdd: (seriler: IStokHareketSeri[]) => void;
   toplamMiktar: number;
 }
@@ -21,11 +22,19 @@ const SeriTakibiModal: React.FC<StokHareketSeriTakibiModalProps> = ({
   seriler,
   onSeriAdd,
   toplamMiktar,
+  seciliSeriler=[],
 }) => {
   const [selectedSeri, setSelectedSeri] = useState<IStokSeriBakiye | null>(null);
   const [miktar, setMiktar] = useState<number>(0);
-  const [seriList, setSeriList] = useState<IStokHareketSeri[]>([]);
+  const [seriList, setSeriList] = useState<IStokHareketSeri[]>(seciliSeriler);
   const [editIndex, setEditIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (seciliSeriler.length > 0) {
+      debugger;
+      setSeriList(seciliSeriler);
+    }
+  }, [seciliSeriler]);
 
   useEffect(() => {
     setMiktar(0);
@@ -113,7 +122,10 @@ const SeriTakibiModal: React.FC<StokHareketSeriTakibiModalProps> = ({
                 min={0}
                 max={selectedSeri?.miktar}
                 value={miktar}
-                onChange={(e) => setMiktar(Number(e.target.value))}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (value >= 0 && value<=selectedSeri?.miktar! ) setMiktar(value);
+                }}
                 style={{ width: "100%" }}
               />
             </div>

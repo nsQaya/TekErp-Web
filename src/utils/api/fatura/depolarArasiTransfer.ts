@@ -2,6 +2,7 @@ import { AxiosInstance } from "axios";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { DynamicQuery } from "../../transformFilter";
 import { IDepolarArasiTransfer } from "../../types/fatura/IDepolarArasiTransfer";
+import { TransferData } from "../../types/fatura/ITransferDataDepolarArasiTransfer";
 
 
 
@@ -33,5 +34,8 @@ export default ($axios: AxiosInstance) => ({
     },
     getByBelgeId(id: number){
         return $axios.get<IBaseResponseValue<IDepolarArasiTransfer>>(`/${controller}/GetByBelgeId?BelgeId=${id}`);
-    }
+    },
+    save(params: Partial<TransferData>){
+        return $axios.post<IBaseResponseValue<TransferData>>(`/${controller}/save`, params);
+    },
 });

@@ -5,11 +5,11 @@ import { IBelge } from "./IBelge"
 
 export interface IDepolarArasiTransfer
 {
-    id?:number,
+    id:number,
     belge?:IBelge,
     belgeId:number,
     cariId:number,
-    cari:ICari,
+    cari?:ICari,
     ambarHareketTur:EAmbarHareketTur,
     kaynakBelgeNo:string,
  

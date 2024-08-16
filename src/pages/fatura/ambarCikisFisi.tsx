@@ -878,6 +878,7 @@ const App = () => {
       const stokHareketData: IStokHareket[] = gridData
         .filter((item) => item.miktar > 0)
         .map((item, index) => ({
+          id:0,
           belgeId: belgeId!,
           stokKartiId: item.stokKartiId,
           masrafStokKartiId: formDataBaslik.cikisYeriKoduId,

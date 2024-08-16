@@ -13,7 +13,6 @@ import { FloatLabel } from "primereact/floatlabel";
 import StokRehberDialog from "../../components/Rehber/StokRehberDialog";
 import { Dropdown } from "primereact/dropdown";
 import ProjeRehberDialog from "../../components/Rehber/ProjeRehberDialog";
-import UniteRehberDialog from "../../components/Rehber/UniteRehberDialog";
 import { InputNumber } from "primereact/inputnumber";
 import { transformFilter } from "../../utils/transformFilter";
 import api from "../../utils/api";
@@ -33,6 +32,11 @@ import SeriTakibiModal from "../stok/stokHareketSeriModal";
 import { IStokSeriBakiye } from "../../utils/types/stok/IStokSeriBakiye";
 import CariRehberDialog from "../../components/Rehber/CariRehberDialog";
 import IsEmriRehberDialog from "../../components/Rehber/IsEmriRehberDialog";
+import { TransferData } from "../../utils/types/fatura/ITransferDataDepolarArasiTransfer";
+import { IBelge } from "../../utils/types/fatura/IBelge";
+import { IDepolarArasiTransfer } from "../../utils/types/fatura/IDepolarArasiTransfer";
+import HucreRehberDialog from "../../components/Rehber/HucreRehberDialog";
+import UniteRehberDialog from "../../components/Rehber/UniteRehberDialog";
 
 type FormDataBaslik = {
   isEmriNo: string;
@@ -42,12 +46,13 @@ type FormDataBaslik = {
   tarih: Date;
   hareketTuru: EAmbarHareketTur;
   cariId: number; //bu artık cari kodu olacak
-  cariKodu:string;
-  cikisYeriKodu?: string; //bu artık carikartid olacak.
+  cariKodu: string;
+  //cikisYeriKodu?: string; //bu artık carikartid olacak.
   aciklama1?: string;
   aciklama2?: string;
   aciklama3?: string;
   eIrsaliye?: boolean;
+
 };
 
 type FormDataDetay = {
@@ -60,11 +65,13 @@ type FormDataDetay = {
   stokKartiId: number;
   stokAdi?: string;
   miktar: number;
-  seri?: IStokHareketSeri[];
+  seriler?: IStokHareketSeri[];
   istenilenMiktar?: number;
   fiyat?: number;
-  hucreId: number;
-  hucreKodu?: string;
+  cikisHucreId?: number;
+  cikisHucreKodu?: string;
+  girisHucreId?: number;
+  girisHucreKodu?: string;
   bakiye?: number;
   olcuBrId: number;
   olcuBr: string;
@@ -72,14 +79,20 @@ type FormDataDetay = {
 
 type GridData = {
   id: number;
+  projeKoduId: number;
+  projeKodu?: string;
+  uniteKoduId: number;
+  uniteKodu?: string;
   stokKartiId: number;
   stokKodu: string;
   stokAdi?: string;
   miktar: number;
   istenilenMiktar: number;
   fiyat: number;
-  hucreId: number;
-  hucreKodu?: string;
+  cikisHucreId?: number;
+  cikisHucreKodu?: string;
+  girisHucreId?: number;
+  girisHucreKodu?: string;
   bakiye?: number;
   olcuBirimId: number;
   olcuBr?: string;
@@ -90,6 +103,41 @@ const App: React.FC = () => {
   const currentDate = new Date();
   currentDate.setHours(3, 0, 0, 0);
 
+  const [formDataBelge,setFormDataBelge] = useState<IBelge>({
+    aktarimDurumu:EAktarimDurumu.AktarimSirada,
+    belgeTip:EBelgeTip.DepolarArasiTransfer,
+    no:"",
+    tarih:currentDate,
+    aciklama1:"",
+    aciklama2:"",
+    aciklama3:"",
+    tamamlandi:true,
+    id:0,
+  });
+
+  const[formDataDepolarArasiTransfer,setFormDataDepolarArasiTransfer] = useState<IDepolarArasiTransfer>({
+    id:0,
+    belgeId:formDataBelge.id,
+    cariId:0,
+    kaynakBelgeNo:"",
+    ambarHareketTur:EAmbarHareketTur.Depolar
+  });
+
+  const [formDataStokHareket,setFormDataStokHareket]=useState<IStokHareket>({
+    id:0,
+    belgeId:formDataBelge.id,
+    stokKartiId:0,
+    miktar:0,
+    istenilenMiktar:0,
+    fiyatTL:0,
+    olcuBirimId:0,
+    girisCikis:"",
+    projeId:0,
+    uniteId:0,
+    masrafStokKartiId:0,
+    sira:0
+  });
+
   const [formDataBaslik, setFormDataBaslik] = useState<FormDataBaslik>({
     isEmriNo: "",
     isEmriStokAdi: "",
@@ -97,9 +145,8 @@ const App: React.FC = () => {
     belgeNumara: "",
     tarih: currentDate,
     hareketTuru: EAmbarHareketTur.Devir,
-    cikisYeriKodu: "",
     cariId: 0,
-    cariKodu:"",
+    cariKodu: "",
     aciklama1: "",
     aciklama2: "",
     aciklama3: "",
@@ -118,8 +165,10 @@ const App: React.FC = () => {
     istenilenMiktar: 0,
     miktar: 0,
     fiyat: 0,
-    hucreId: 0,
-    hucreKodu: "",
+    cikisHucreId: 0,
+    cikisHucreKodu: "",
+    girisHucreId: 0,
+    girisHucreKodu: "",
     olcuBrId: 0,
     olcuBr: "",
   });
@@ -130,7 +179,10 @@ const App: React.FC = () => {
     stok: false,
     isEmri: false,
     cari: false,
+    girisHucre:false
   });
+
+  //const [hataMesaji, setHataMesaji] = useState("");
 
   const [gridData, setGridData] = useState<GridData[]>([]);
   const toast = useRef<Toast>(null);
@@ -138,53 +190,71 @@ const App: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<GridData | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingGetir, setLoadingGetir] = useState(false);
-  const [seriOptions, setSeriOptions] = useState<
-    { label: string; value: string }[]
-  >([]);
-  const [hucreOptions, setHucreOptions] = useState<
-    { label: string; value: number }[]
-  >([]);
+  const [seriOptions, setSeriOptions] = useState<{ label: string; value: string }[]>([]);
 
-  const [selectedHucre, setSelectedHucre] = useState<number | null>(null);
+  const [cikisHucreOptions, setCikisHucreOptions] = useState<{ label: string; value: number }[]>([]);
+  const [girisHucreOptions, setGirisHucreOptions] = useState<{ label: string; value: number }[]>([]);
+
+  const [selectedCikisHucre, setSelectedCikisHucre] = useState<number | null>(null);
+  const [selectedGirisHucre, setSelectedGirisHucre] = useState<number | null>(null);
+
   const [selectedStokKodu, setSelectedStokKodu] = useState("");
   const [tempStokKodu, setTempStokKodu] = useState(selectedStokKodu);
   const [selectedId, setSelectedId] = useState(0);
 
   const [showSeriTakibiModal, setShowSeriTakibiModal] = useState(false);
   const [seriBakiyeler, setSeriBakiyeler] = useState<IStokSeriBakiye[]>([]);
+  const [seciliSeriler, setSeciliSeriler] = useState<IStokHareketSeri[]>([]);
   const [selectedStokHareketSeriler, setSelectedStokHareketSeriler] = useState<
     IStokHareketSeri[]
   >([]);
 
-  const handleHucreChange = useCallback(
+  const handleCikisHucreChange = useCallback(
     (e: any) => {
-      const selectedOption = hucreOptions.find(
+      const selectedOption = cikisHucreOptions.find(
         (option) => option.value === e.value
       );
       setFormDataDetay((prevFormData) => ({
         ...prevFormData,
-        hucreKodu: selectedOption ? selectedOption.label : "",
-        hucreId: e.value,
+        cikisHucreKodu: selectedOption ? selectedOption.label : "",
+        cikisHucreId: e.value,
       }));
-      setSelectedHucre(e.value);
+      setSelectedCikisHucre(e.value);
     },
-    [hucreOptions]
+    [cikisHucreOptions]
   );
+
+  const handleGirisHucreChange = useCallback(
+    (e: any) => {
+      const selectedOption = girisHucreOptions.find(
+        (option) => option.value === e.value
+      );
+      setFormDataDetay((prevFormData) => ({
+        ...prevFormData,
+        girisHucreKodu: selectedOption ? selectedOption.label : "",
+        girisHucreId: e.value,
+      }));
+      setSelectedGirisHucre(e.value);
+    },
+    [girisHucreOptions]
+  );
+
+
 
   useEffect(() => {
     setTempStokKodu(selectedStokKodu);
   }, [selectedStokKodu]);
 
   useEffect(() => {
-    if (hucreOptions.length > 0 && !selectedHucre) {
-      setSelectedHucre(hucreOptions[0].value);
+    if (cikisHucreOptions.length > 0 && !selectedCikisHucre) {
+      setSelectedCikisHucre(cikisHucreOptions[0].value);
       setFormDataDetay((prevFormData) => ({
         ...prevFormData,
-        hucreKodu: hucreOptions[0].label,
-        hucreId: hucreOptions[0].value,
+        cikisHucreKodu: cikisHucreOptions[0].label,
+        cikisHucreId: cikisHucreOptions[0].value,
       }));
     }
-  }, [hucreOptions, selectedHucre]);
+  }, [cikisHucreOptions, selectedCikisHucre]);
 
   useEffect(() => {
     const fetchSeriOptions = async () => {
@@ -288,7 +358,7 @@ const App: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+  
     const fetchData = async () => {
       try {
         const response = await api.depolarArasiTransfer.getByBelgeId(
@@ -308,9 +378,8 @@ const App: React.FC = () => {
             belgeNumara: belgeNumara,
             tarih: currentDate,
             hareketTuru: depolarArasiTransfer.ambarHareketTur,
-            cikisYeriKodu: cariKodu,
             cariId: depolarArasiTransfer.cariId,
-            cariKodu:"",
+            cariKodu: cariKodu,
             aciklama1: belge.aciklama1,
             aciklama2: belge.aciklama2,
             aciklama3: belge.aciklama3,
@@ -323,14 +392,18 @@ const App: React.FC = () => {
             setGridData(
               gridResponse.data.value.items.map((item: IStokHareket) => ({
                 id: item.sira,
+                projeKoduId: item.projeId,
+                uniteKoduId: item.uniteId,
                 stokKartiId: item.stokKartiId,
                 stokKodu: item.stokKarti!.kodu,
                 stokAdi: item.stokKarti!.adi,
                 miktar: item.miktar,
                 istenilenMiktar: item.istenilenMiktar,
                 fiyat: item.fiyatTL,
-                hucreId: item.hucreId,
-                hucreKodu: item.hucre?.kodu,
+                cikisHucreId: item.cikisHucreId,
+                cikisHucreKodu: item.cikisHucre?.kodu,
+                girisHucreId:item.girisHucreId,
+                girisHucreKodu:item.girisHucre?.kodu,
                 bakiye: item.bakiye,
                 olcuBirimId: item.olcuBirimId,
                 olcuBr: item.olcuBirim?.simge,
@@ -357,10 +430,13 @@ const App: React.FC = () => {
       }
     };
 
+
+  useEffect(() => {
     if (updateBelgeId) {
       fetchData();
     }
-  }, [updateBelgeId, currentDate]);
+  }, [updateBelgeId]);
+
 
   const handleInputChangeBaslik = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -379,7 +455,8 @@ const App: React.FC = () => {
       hucreKodu: "",
       hucreId: 0,
     }));
-    setHucreOptions([]);
+    setSelectedCikisHucre(null);
+    setCikisHucreOptions([]);
     try {
       const response = await api.stok.getByKod(selectedStokKodu);
       if (response.status) {
@@ -395,11 +472,12 @@ const App: React.FC = () => {
           const alreadyHasgIstenilenMiktar = alreadyHas
             ? alreadyHas.istenilenMiktar
             : 0;
-          const alreadyHasHucreId = alreadyHas ? alreadyHas.hucreId : 0;
-          const alreadyHasHucreKodu = alreadyHas ? alreadyHas.hucreKodu : "";
+          const alreadyHasHucreId = alreadyHas ? alreadyHas.cikisHucreId : 0;
+          const alreadyHasHucreKodu = alreadyHas ? alreadyHas.cikisHucreKodu : "";
 
           setFormDataDetay((prevFormData) => ({
             ...prevFormData,
+            stokKartiId: response.data.value.id!,
             stokAdi: response.data.value.adi!,
             olcuBrId: response.data.value.stokOlcuBirim1Id,
             olcuBr: response.data.value.stokOlcuBirim1.simge,
@@ -419,17 +497,18 @@ const App: React.FC = () => {
                 value: item.hucre.id!,
               })
             );
-            setHucreOptions(options);
+            console.log(options);
+            setCikisHucreOptions(options);
           }
 
           if (alreadyHasHucreId) {
-            setSelectedHucre(alreadyHasHucreId);
+            setSelectedCikisHucre(alreadyHasHucreId);
           } else if (alreadyHasHucreKodu) {
-            const selectedOption = hucreOptions.find(
+            const selectedOption = cikisHucreOptions.find(
               (option) => option.label === alreadyHasHucreKodu
             );
             if (selectedOption) {
-              setSelectedHucre(selectedOption.value);
+              setSelectedCikisHucre(selectedOption.value);
             }
           }
 
@@ -449,36 +528,6 @@ const App: React.FC = () => {
     }
   }, [selectedStokKodu, handleKeyPress]);
 
-  // const handleDialogSelect = useCallback(
-  //   <T,>(
-  //     fieldName: keyof T,
-  //     dialogFieldName: keyof T,
-  //     selectedValue: T
-  //   ) => {
-  //     setFormDataBaslik((prevFormDataBaslik) => {
-  //       const newFormData = {
-  //         ...prevFormDataBaslik,
-  //         [fieldName]: selectedValue[dialogFieldName],
-  //         [`${fieldName}Id`]: (selectedValue as any).id,
-  //       };
-  //       if (fieldName === "stokKodu") {
-  //         setSelectedStokKodu(selectedValue[dialogFieldName] as unknown as string);
-  //       }
-  //       return newFormData;
-  //     });
-  //     setFormDataDetay((prevFormData) => {
-  //       const newFormData = {
-  //         ...prevFormData,
-  //         [fieldName]: selectedValue[dialogFieldName],
-  //         [`${fieldName}Id`]: (selectedValue as any).id,
-  //       };
-  //       setSelectedId(0);
-  //       return newFormData;
-  //     });
-  //   },
-  //   []
-  // );
-
   const handleGetir = async () => {
     if (!validateGetir()) {
       return;
@@ -489,16 +538,17 @@ const App: React.FC = () => {
     const sortDirection = 1;
 
     const filters = {
-      ProjeKodu: { value: formDataDetay.projeKodu, matchMode: "equals" },
-      PlasiyerKodu: { value: formDataDetay.uniteKodu, matchMode: "equals" },
+      BelgeNo: { value: formDataBaslik.isEmriNo, matchMode: "equals" },
+      //PlasiyerKodu: { value: formDataDetay.uniteKodu, matchMode: "equals" },
       miktar: { value: "0", matchMode: "gt" },
     };
     const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
 
     try {
-      const response = await api.ihtiyacPlanlamaRapor.getListForAmbarCikisFisi(
-        dynamicQuery
-      );
+      const response =
+        await api.ihtiyacPlanlamaRapor.getListForDepolarArasiTransferFisi(
+          dynamicQuery
+        );
 
       if (response.data.value && response.data.value.count > 0) {
         document.getElementById("getirButton")!.hidden = true;
@@ -517,15 +567,19 @@ const App: React.FC = () => {
             : 0;
         const newGridData: GridData[] = data.items.map((item, index) => ({
           id: maxId + index + 1,
+          projeKoduId: item.projeKoduId,
+          projeKodu: item.projeKodu,
           stokKartiId: item.stokKartiId,
+          uniteKoduId: item.uniteKoduId,
+          uniteKodu: item.plasiyerKodu,
           stokKodu: item.stokKodu,
           stokAdi: item.stokAdi,
           miktar: 0,
           fiyat: 0,
           istenilenMiktar: item.miktar,
           bakiye: item.bakiye,
-          hucreId: item.hucreId,
-          hucreKodu: item.hucre
+          cikisHucreId: item.hucreId,
+          cikisHucreKodu: item.hucre
             ? item.hucre.map((h) => h.kodu).join(" | ")
             : "",
           olcuBirimId: item.olcuBirimId,
@@ -558,7 +612,7 @@ const App: React.FC = () => {
     const alreadyHasWithHucre = gridData.find(
       (x) =>
         (x.stokKodu === nStoK && x.miktar === 0) ||
-        (x.stokKodu === nStoK && x.hucreId === formDataDetay.hucreId)
+        (x.stokKodu === nStoK && x.cikisHucreId === formDataDetay.cikisHucreId)
     );
 
     if (alreadyHas) {
@@ -583,26 +637,34 @@ const App: React.FC = () => {
         });
         return;
       }
-      if (
-        Number(toplamMiktar - alreadyHas.miktar + formDataDetay.miktar) >
-        Number(alreadyHas.bakiye)
-      ) {
-        toast.current?.show({
-          severity: "error",
-          summary: "Hata",
-          detail: "Depo bakiyesinden fazla çıkış ekleyemezsin.",
-          life: 3000,
-        });
-        return;
-      }
+      // if (
+      //   Number(toplamMiktar - alreadyHas.miktar + formDataDetay.miktar) >
+      //   Number(alreadyHas.bakiye)
+      // ) {
+      //   toast.current?.show({
+      //     severity: "error",
+      //     summary: "Hata",
+      //     detail: "Depo bakiyesinden fazla çıkış ekleyemezsin.",
+      //     life: 3000,
+      //   });
+      //   return;
+      //}
     }
-
+    //setHataMesaji("");
     const response = await api.stok.getByKod(nStoK);
     if (response.status && response.data.status) {
-      if (response.data.value.seriTakibiVarMi) {
+      let formSeriMiktar = formDataDetay.seriler?.reduce(
+        (acc, curr) => acc + curr.miktar,
+        0
+      );
+      if (
+        response.data.value.seriTakibiVarMi &&
+        formDataDetay.miktar != formSeriMiktar
+      ) {
         const responseSeriList =
           await api.stokSeriBakiye.getListBakiyeByStokKodu(nStoK);
         setSeriBakiyeler(responseSeriList.data.value.items);
+        setSeciliSeriler(formDataDetay.seriler || []);
         setShowSeriTakibiModal(true);
       } else {
         if (alreadyHasWithHucre) {
@@ -612,11 +674,11 @@ const App: React.FC = () => {
                 ? {
                     ...item,
                     miktar: formDataDetay.miktar!,
-                    hucreKodu: hucreOptions.find(
-                      (o) => o.value === selectedHucre
+                    cikisHucreKodu: cikisHucreOptions.find(
+                      (o) => o.value === selectedCikisHucre
                     )?.label,
-                    hucreId: formDataDetay.hucreId,
-                    seriler: formDataDetay.seri, // Seri bilgilerini ekleme
+                    cikisHucreId: formDataDetay.cikisHucreId,
+                    seriler: formDataDetay.seriler, // Seri bilgilerini ekleme
                   }
                 : item
             )
@@ -629,18 +691,22 @@ const App: React.FC = () => {
 
           const newGridData: GridData = {
             id: maxId + 1,
+            projeKoduId: formDataDetay.projeKoduId,
+            uniteKoduId: formDataDetay.uniteKoduId,
             stokKartiId: formDataDetay.stokKartiId,
             stokKodu: selectedStokKodu,
             stokAdi: formDataDetay.stokAdi,
             miktar: formDataDetay.miktar,
-            hucreKodu: formDataDetay.hucreKodu,
-            hucreId: formDataDetay.hucreId,
+            cikisHucreKodu: formDataDetay.cikisHucreKodu,
+            cikisHucreId: formDataDetay.cikisHucreId,
+            girisHucreKodu: formDataDetay.girisHucreKodu,
+            girisHucreId: formDataDetay.girisHucreId,
             istenilenMiktar: 0,
             fiyat: 0,
             bakiye: 0,
             olcuBirimId: formDataDetay.olcuBrId,
             olcuBr: formDataDetay.olcuBr,
-            seriler: formDataDetay.seri, // Seri bilgilerini ekleme
+            seriler: formDataDetay.seriler, // Seri bilgilerini ekleme
           };
           setGridData((prevGridData) => [...prevGridData, newGridData]);
         }
@@ -649,22 +715,33 @@ const App: React.FC = () => {
         setSelectedStokKodu("");
         setFormDataDetay((formData) => ({
           ...formData,
+          stokKartiId: 0,
           stokAdi: "",
           miktar: 0,
           istenilenMiktar: 0,
           seri: [], // Seri bilgilerini temizleme
         }));
         setSelectedId(0);
-        setHucreOptions([]);
+        setSelectedCikisHucre(null);
+        setCikisHucreOptions([]);
       }
     }
-  }, [formDataDetay, gridData, hucreOptions, selectedStokKodu, selectedHucre]);
+    // if (formDataDetay.miktar != formDataDetay.seri?.reduce((acc,curr)=> acc+curr.miktar,0))
+    //   setHataMesaji(formDataDetay.miktar.toString() + " " + formDataDetay.seri?.reduce((acc,curr)=> acc+curr.miktar,0) +" hatalı");
+    // else
+    // setHataMesaji("");
+  }, [formDataDetay, gridData, cikisHucreOptions, selectedStokKodu, selectedCikisHucre]);
 
   const handleSeriAdd = (seriList: IStokHareketSeri[]) => {
     setFormDataDetay((prevFormData) => ({
       ...prevFormData,
-      seri: [...(prevFormData.seri || []), ...seriList],
+      seriler: seriList,
+      //seri: [...(prevFormData.seri || []), ...seriList],
     }));
+    // if (formDataDetay.miktar != formDataDetay.seri?.reduce((acc,curr)=> acc+curr.miktar,0))
+    //   setHataMesaji(formDataDetay.miktar.toString() + " " + formDataDetay.seri?.reduce((acc,curr)=> acc+curr.miktar,0) +" hatalı");
+    // else
+    //   setHataMesaji("");
   };
 
   const handleSeriTakibiComplete = () => {
@@ -674,7 +751,7 @@ const App: React.FC = () => {
       const alreadyHasWithHucre = gridData.find(
         (x) =>
           (x.stokKodu === nStoK && x.miktar === 0) ||
-          (x.stokKodu === nStoK && x.hucreId === formDataDetay.hucreId)
+          (x.stokKodu === nStoK && x.cikisHucreId === formDataDetay.cikisHucreId)
       );
 
       if (alreadyHasWithHucre) {
@@ -684,9 +761,9 @@ const App: React.FC = () => {
               ? {
                   ...item,
                   miktar: formDataDetay.miktar!,
-                  hucreKodu: hucreOptions.find((o) => o.value === selectedHucre)
+                  cikisHucreKodu: cikisHucreOptions.find((o) => o.value === selectedCikisHucre)
                     ?.label,
-                  hucreId: formDataDetay.hucreId,
+                  cikisHucreId: formDataDetay.cikisHucreId,
                   seriler: [...(item.seriler || []), selectedStokHareketSeri],
                 }
               : item
@@ -704,8 +781,12 @@ const App: React.FC = () => {
           stokKodu: selectedStokKodu,
           stokAdi: formDataDetay.stokAdi,
           miktar: formDataDetay.miktar,
-          hucreKodu: formDataDetay.hucreKodu,
-          hucreId: formDataDetay.hucreId,
+          projeKoduId: formDataDetay.projeKoduId,
+          uniteKoduId: formDataDetay.uniteKoduId,
+          cikisHucreKodu: formDataDetay.cikisHucreKodu,
+          cikisHucreId: formDataDetay.cikisHucreId,
+          girisHucreKodu: formDataDetay.girisHucreKodu,
+          girisHucreId: formDataDetay.girisHucreId,
           istenilenMiktar: 0,
           fiyat: 0,
           bakiye: 0,
@@ -721,12 +802,14 @@ const App: React.FC = () => {
     setSelectedStokKodu("");
     setFormDataDetay((formData) => ({
       ...formData,
+      stokKartiId: 0,
       stokAdi: "",
       miktar: 0,
       istenilenMiktar: 0,
     }));
     setSelectedId(0);
-    setHucreOptions([]);
+    setSelectedCikisHucre(null);
+    setCikisHucreOptions([]);
     setShowSeriTakibiModal(false);
     setSelectedStokHareketSeriler([]);
   };
@@ -790,21 +873,11 @@ const App: React.FC = () => {
   };
 
   const validateGetir = () => {
-    if (!formDataDetay.projeKodu) {
+    if (!formDataBaslik.isEmriNo) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
-        detail: "Proje kodu boş olamaz",
-        life: 3000,
-      });
-      return false;
-    }
-
-    if (!formDataDetay.uniteKodu) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Hata",
-        detail: "Ünite kodu boş olamaz",
+        detail: "İş Emri Seçiniz",
         life: 3000,
       });
       return false;
@@ -812,184 +885,224 @@ const App: React.FC = () => {
     return true;
   };
 
-  const handleSave = useCallback(async () => {
-    if (!validateForm()) {
-      return;
-    }
-    setLoading(true);
-    try {
-      if (updateBelgeId !== 0) {
-        const updateStokHareketResponse =
-          await api.stokHareket.getListByBelgeId(updateBelgeId);
-        if (updateStokHareketResponse.data.value) {
-          await Promise.all(
-            updateStokHareketResponse.data.value.items.map(async (element) => {
-              const silHareket = await api.stokHareket.delete(element.id!);
-              if (!silHareket.data.status) {
-                throw new Error(
-                  (silHareket.data.errors &&
-                    silHareket.data.errors[0].Errors &&
-                    silHareket.data.errors[0].Errors[0]) ||
-                    "Stok Hareket Silme İşleminde Hata"
-                );
-              }
-            })
-          );
-        }
-      }
+  // const handleSave = useCallback(async () => {
+  //   if (!validateForm()) {
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   try {
+  //     if (updateBelgeId !== 0) {
+  //       const updateStokHareketResponse = await api.stokHareket.getListByBelgeId(updateBelgeId);
+  //       if (updateStokHareketResponse.data.value) {
+  //         await Promise.all(
+  //           updateStokHareketResponse.data.value.items.map(async (element) => {
+  //             const stokHareketSeriResponse = await api.stokHareketSeri.getListByBelgeId(element.id!);
+  //             if (stokHareketSeriResponse.data.value) {
+  //               await Promise.all(
+  //                 stokHareketSeriResponse.data.value.items.map(async (seriElement) => {
+  //                   const silSeriHareket = await api.stokHareketSeri.delete(seriElement.id!);
+  //                   if (!silSeriHareket.data.status) {
+  //                     throw new Error(
+  //                       (silSeriHareket.data.errors &&
+  //                         silSeriHareket.data.errors[0].Errors &&
+  //                         silSeriHareket.data.errors[0].Errors[0]) ||
+  //                         "Stok Hareket Seri Silme İşleminde Hata"
+  //                     );
+  //                   }
+  //                 })
+  //               );
+  //             }
 
-      let belgeResponse;
+  //             const silHareket = await api.stokHareket.delete(element.id!);
+  //             if (!silHareket.data.status) {
+  //               throw new Error(
+  //                 (silHareket.data.errors &&
+  //                   silHareket.data.errors[0].Errors &&
+  //                   silHareket.data.errors[0].Errors[0]) ||
+  //                   "Stok Hareket Silme İşleminde Hata"
+  //               );
+  //             }
+  //           })
+  //         );
+  //       }
+  //     }
 
-      if (updateBelgeId !== 0) {
-        belgeResponse = await api.belge.update({
-          id: updateBelgeId,
-          belgeTip: EBelgeTip.DepolarArasiTransfer,
-          no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
-          tarih: formDataBaslik.tarih,
-          aciklama1: formDataBaslik.aciklama1,
-          aciklama2: formDataBaslik.aciklama2,
-          aciklama3: formDataBaslik.aciklama3,
-          tamamlandi: false,
-        });
-      } else {
-        belgeResponse = await api.belge.create({
-          belgeTip: EBelgeTip.DepolarArasiTransfer,
-          no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
-          tarih: formDataBaslik.tarih,
-          aciklama1: formDataBaslik.aciklama1,
-          aciklama2: formDataBaslik.aciklama2,
-          aciklama3: formDataBaslik.aciklama3,
-          tamamlandi: false,
-        });
-      }
+  //     let belgeResponse;
 
-      const belgeId = belgeResponse.data.value.id;
+  //     if (updateBelgeId !== 0) {
+  //       belgeResponse = await api.belge.update({
+  //         id: updateBelgeId,
+  //         belgeTip: EBelgeTip.DepolarArasiTransfer,
+  //         no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
+  //         tarih: formDataBaslik.tarih,
+  //         aciklama1: formDataBaslik.aciklama1,
+  //         aciklama2: formDataBaslik.aciklama2,
+  //         aciklama3: formDataBaslik.aciklama3,
+  //         tamamlandi: false,
+  //       });
+  //     } else {
+  //       belgeResponse = await api.belge.create({
+  //         belgeTip: EBelgeTip.DepolarArasiTransfer,
+  //         no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
+  //         tarih: formDataBaslik.tarih,
+  //         aciklama1: formDataBaslik.aciklama1,
+  //         aciklama2: formDataBaslik.aciklama2,
+  //         aciklama3: formDataBaslik.aciklama3,
+  //         tamamlandi: false,
+  //       });
+  //     }
 
-      if (!belgeResponse.data.status) {
-        setLoading(false);
-        throw new Error(
-          (belgeResponse.data.errors &&
-            belgeResponse.data.errors[0].Errors &&
-            belgeResponse.data.errors[0].Errors[0]) ||
-            "Belge oluştururken-güncellenirken hata oldu"
-        );
-      }
+  //     const belgeId = belgeResponse.data.value.id;
 
-      let ambarFisiResponse;
+  //     if (!belgeResponse.data.status) {
+  //       setLoading(false);
+  //       throw new Error(
+  //         (belgeResponse.data.errors &&
+  //           belgeResponse.data.errors[0].Errors &&
+  //           belgeResponse.data.errors[0].Errors[0]) ||
+  //           "Belge oluştururken-güncellenirken hata oldu"
+  //       );
+  //     }
 
-      if (updateBelgeId !== 0) {
-        const updateAmbarFisiResponse = await api.ambarFisi.getByBelgeId(
-          updateBelgeId
-        );
+  //     let ambarFisiResponse;
 
-        if (!updateAmbarFisiResponse.data.status) {
-          throw new Error(
-            (updateAmbarFisiResponse.data.errors &&
-              updateAmbarFisiResponse.data.errors[0].Errors &&
-              updateAmbarFisiResponse.data.errors[0].Errors[0]) ||
-              "Ambar fişi bulunamadı"
-          );
-        }
+  //     if (updateBelgeId !== 0) {
+  //       const updateAmbarFisiResponse =
+  //         await api.depolarArasiTransfer.getByBelgeId(updateBelgeId);
 
-        ambarFisiResponse = await api.depolarArasiTransfer.update({
-          id: updateAmbarFisiResponse.data.value.id!,
-          belgeId: belgeId!,
-          ambarHareketTur: formDataBaslik.hareketTuru,
-          cariId: formDataBaslik.cariId,
-        });
-      } else {
-        ambarFisiResponse = await api.depolarArasiTransfer.create({
-          belgeId: belgeId!,
-          ambarHareketTur: formDataBaslik.hareketTuru,
-          cariId: formDataBaslik.cariId,
-        });
-      }
+  //       if (!updateAmbarFisiResponse.data.status) {
+  //         throw new Error(
+  //           (updateAmbarFisiResponse.data.errors &&
+  //             updateAmbarFisiResponse.data.errors[0].Errors &&
+  //             updateAmbarFisiResponse.data.errors[0].Errors[0]) ||
+  //             "Ambar fişi bulunamadı"
+  //         );
+  //       }
 
-      if (!ambarFisiResponse.data.status) {
-        setLoading(false);
-        throw new Error(
-          (ambarFisiResponse.data.errors &&
-            ambarFisiResponse.data.errors[0].Errors &&
-            ambarFisiResponse.data.errors[0].Errors[0]) ||
-            "AmbarFişi oluştururken hata oldu"
-        );
-      }
+  //       ambarFisiResponse = await api.depolarArasiTransfer.update({
+  //         id: updateAmbarFisiResponse.data.value.id!,
+  //         belgeId: belgeId!,
+  //         ambarHareketTur: formDataBaslik.hareketTuru,
+  //         cariId: formDataBaslik.cariId,
+  //         kaynakBelgeNo: formDataBaslik.isEmriNo,
+  //       });
+  //     } else {
+  //       ambarFisiResponse = await api.depolarArasiTransfer.create({
+  //         belgeId: belgeId!,
+  //         ambarHareketTur: formDataBaslik.hareketTuru,
+  //         cariId: formDataBaslik.cariId,
+  //         kaynakBelgeNo: formDataBaslik.isEmriNo,
+  //       });
+  //     }
 
-      const stokHareketData: IStokHareket[] = gridData
-        .filter((item) => item.miktar > 0)
-        .map((item, index) => ({
-          belgeId: belgeId!,
-          stokKartiId: item.stokKartiId,
-          masrafStokKartiId: formDataBaslik.cariId,
-          miktar: item.miktar,
-          istenilenMiktar: 0,
-          fiyatTL: item.fiyat,
-          hucreId: item.hucreId,
-          aciklama1: formDataBaslik.aciklama1,
-          aciklama2: formDataBaslik.aciklama2,
-          aciklama3: formDataBaslik.aciklama3,
-          projeId: formDataDetay.projeKoduId,
-          uniteId: formDataDetay.uniteKoduId,
-          sira: index + 1,
-          girisCikis: "C",
-          olcuBirimId: item.olcuBirimId,
-          stokKartiKodu: "",
-        }));
+  //     if (!ambarFisiResponse.data.status) {
+  //       setLoading(false);
+  //       throw new Error(
+  //         (ambarFisiResponse.data.errors &&
+  //           ambarFisiResponse.data.errors[0].Errors &&
+  //           ambarFisiResponse.data.errors[0].Errors[0]) ||
+  //           "AmbarFişi oluştururken hata oldu"
+  //       );
+  //     }
 
-      for (const stokHareket of stokHareketData) {
-        const stokHareketResponse = await api.stokHareket.create(stokHareket);
-        if (!stokHareketResponse.data.status) {
-          setLoading(false);
-          throw new Error(
-            (stokHareketResponse.data.errors &&
-              stokHareketResponse.data.errors[0].Errors &&
-              stokHareketResponse.data.errors[0].Errors[0]) ||
-              "StokHareket oluştururken hata oldu"
-          );
-        }
-      }
+  //     const stokHareketData: IStokHareket[] = gridData
+  //       .filter((item) => item.miktar > 0)
+  //       .map((item, index) => ({
+  //         id:0,
+  //         belgeId: belgeId!,
+  //         stokKartiId: item.stokKartiId,
+  //         masrafStokKartiId: item.stokKartiId, // TODO: buraya bi şey düşünmek lazım. iş emri stok kodu mu yazılacak nolacak bak
+  //         miktar: item.miktar,
+  //         istenilenMiktar: 0,
+  //         fiyatTL: item.fiyat,
+  //         cikisHucreId: item.cikisHucreId,
+  //         girisHucreId:item.girisHucreId,
+  //         aciklama1: formDataBaslik.aciklama1,
+  //         aciklama2: formDataBaslik.aciklama2,
+  //         aciklama3: formDataBaslik.aciklama3,
+  //         projeId: formDataDetay.projeKoduId,
+  //         uniteId: formDataDetay.uniteKoduId,
+  //         sira: index + 1,
+  //         girisCikis: "C",
+  //         olcuBirimId: item.olcuBirimId,
+  //         stokKartiKodu: "",
+  //         seriler: item.seriler,
+  //       }));
 
-      const belgeUpdateResponse = await api.belge.update({
-        id: belgeId,
-        tamamlandi: true,
-        belgeTip: EBelgeTip.DepolarArasiTransfer,
-        no: formDataBaslik.belgeSeri + formDataBaslik.belgeSeri,
-        tarih: formDataBaslik.tarih,
-        aciklama1: formDataBaslik.aciklama1,
-        aciklama2: formDataBaslik.aciklama2,
-        aciklama3: formDataBaslik.aciklama3,
-        aktarimDurumu: EAktarimDurumu.AktarimSirada,
-      });
+  //     for (const stokHareket of stokHareketData) {
+  //       const stokHareketResponse = await api.stokHareket.create(stokHareket);
+  //       debugger;
 
-      if (!belgeUpdateResponse.data.status) {
-        setLoading(false);
-        throw new Error(
-          (belgeUpdateResponse.data.errors &&
-            belgeUpdateResponse.data.errors[0].Errors &&
-            belgeUpdateResponse.data.errors[0].Errors[0]) ||
-            "Belge güncellenirken oluştururken hata oldu"
-        );
-      }
+  //       if (!stokHareketResponse.data.status) {
+  //         setLoading(false);
+  //         throw new Error(
+  //           (stokHareketResponse.data.errors &&
+  //             stokHareketResponse.data.errors[0].Errors &&
+  //             stokHareketResponse.data.errors[0].Errors[0]) ||
+  //             "StokHareket oluştururken hata oldu"
+  //         );
+  //       } else {
+  //         if (stokHareket.seriler && stokHareket.seriler?.length>0) {
+  //           for (const element of stokHareket.seriler) {
+  //             element.stokHareketId=stokHareketResponse.data.value.id;
+  //             const stokHareketSeriResponse = await api.stokHareketSeri.create(
+  //               element
+  //             );
+  //             if (!stokHareketSeriResponse.data.status) {
+  //               setLoading(false);
+  //               throw new Error(
+  //                 (stokHareketSeriResponse.data.errors &&
+  //                   stokHareketSeriResponse.data.errors[0].Errors &&
+  //                   stokHareketSeriResponse.data.errors[0].Errors[0]) ||
+  //                   "StokHareketSeri oluştururken hata oldu"
+  //               );
+  //             }
+  //           };
+  //         }
+  //       }
+  //     }
 
-      toast.current?.show({
-        severity: "success",
-        summary: "Başarılı",
-        detail: "Veriler başarıyla kaydedildi",
-        life: 3000,
-      });
-      resetForm();
-    } catch (error: any) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Hata",
-        detail: error.message || "Veriler kaydedilemedi",
-        life: 3000,
-      });
-      console.error("Error saving data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [formDataBaslik, gridData, formDataDetay, updateBelgeId]);
+  //     const belgeUpdateResponse = await api.belge.update({
+  //       id: belgeId,
+  //       tamamlandi: true,
+  //       belgeTip: EBelgeTip.DepolarArasiTransfer,
+  //       no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
+  //       tarih: formDataBaslik.tarih,
+  //       aciklama1: formDataBaslik.aciklama1,
+  //       aciklama2: formDataBaslik.aciklama2,
+  //       aciklama3: formDataBaslik.aciklama3,
+  //       aktarimDurumu: EAktarimDurumu.AktarimSirada,
+  //     });
+
+  //     if (!belgeUpdateResponse.data.status) {
+  //       setLoading(false);
+  //       throw new Error(
+  //         (belgeUpdateResponse.data.errors &&
+  //           belgeUpdateResponse.data.errors[0].Errors &&
+  //           belgeUpdateResponse.data.errors[0].Errors[0]) ||
+  //           "Belge güncellenirken oluştururken hata oldu"
+  //       );
+  //     }
+      
+  //     toast.current?.show({
+  //       severity: "success",
+  //       summary: "Başarılı",
+  //       detail: "Veriler başarıyla kaydedildi",
+  //       life: 3000,
+  //     });
+  //     resetForm();
+  //   } catch (error: any) {
+  //     toast.current?.show({
+  //       severity: "error",
+  //       summary: "Hata",
+  //       detail: error.message || "Veriler kaydedilemedi",
+  //       life: 3000,
+  //     });
+  //     console.error("Error saving data:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, [formDataBaslik, gridData, formDataDetay, updateBelgeId]);
 
   const resetForm = () => {
     setFormDataBaslik({
@@ -999,9 +1112,8 @@ const App: React.FC = () => {
       belgeNumara: "",
       tarih: currentDate,
       hareketTuru: EAmbarHareketTur.Devir,
-      cikisYeriKodu: "",
       cariId: 0,
-      cariKodu:"",
+      cariKodu: "",
       aciklama1: "",
       aciklama2: "",
       aciklama3: "",
@@ -1020,8 +1132,10 @@ const App: React.FC = () => {
       istenilenMiktar: 0,
       miktar: 0,
       fiyat: 0,
-      hucreId: 0,
-      hucreKodu: "",
+      cikisHucreId: 0,
+      cikisHucreKodu: "",
+      girisHucreId: 0,
+      girisHucreKodu: "",
       olcuBrId: 0,
       olcuBr: "",
     });
@@ -1032,14 +1146,109 @@ const App: React.FC = () => {
       stok: false,
       isEmri: false,
       cari: false,
+      girisHucre:false
     });
 
     setGridData([]);
     setSelectedItem(null);
     setSelectedStokKodu("");
-    setSelectedHucre(null);
-    setHucreOptions([]);
+    setSelectedCikisHucre(null);
+    setCikisHucreOptions([]);
   };
+
+  const handleSave = useCallback(async () => {
+    if (!validateForm()) {
+      return;
+    }
+    setLoading(true);
+    try {
+      debugger;
+      const transferData: TransferData = {
+        belgeDto: {
+            id: updateBelgeId !== 0 ? updateBelgeId : 0, 
+            belgeTip: EBelgeTip.DepolarArasiTransfer,
+            no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
+            tarih: formDataBaslik.tarih,
+            aciklama1: formDataBaslik.aciklama1,
+            aciklama2: formDataBaslik.aciklama2,
+            aciklama3: formDataBaslik.aciklama3,
+            tamamlandi: true,
+            aktarimDurumu: EAktarimDurumu.AktarimSirada  
+        },
+        depolarArasiTransferDto: {
+            id: 0,//updateBelgeId !== 0 ? await getAmbarFisiId(updateBelgeId) : 0,  
+            belgeId: updateBelgeId !== 0 ? updateBelgeId : 0,  
+            ambarHareketTur: formDataBaslik.hareketTuru,
+            cariId: formDataBaslik.cariId,
+            kaynakBelgeNo: formDataBaslik.isEmriNo! ,
+
+        },
+        stokHareketDto: gridData.filter(item => item.miktar > 0).map((item, index) => ({
+          id:0,// item.id,
+          belgeId: updateBelgeId !== 0 ? updateBelgeId : 0, 
+          stokKartiId: item.stokKartiId ?? 0,
+          masrafStokKartiId: item.stokKartiId ?? 0,
+          miktar: item.miktar ?? 0,
+          fiyatTL: item.fiyat ?? 0,
+          fiyatDoviz: 0,
+          fiyatDovizTipiId: 1,
+          cikisHucreId: item.cikisHucreId ?? 0,
+          girisHucreId: formDataDetay.girisHucreId ?? 0,
+          aciklama1: formDataBaslik.aciklama1 ?? "",
+          aciklama2: formDataBaslik.aciklama2 ?? "",
+          aciklama3: formDataBaslik.aciklama3 ?? "",
+          projeId: formDataDetay.projeKoduId ?? 0,
+          uniteId: formDataDetay.uniteKoduId ?? 0,
+          sira: index + 1,
+          girisCikis: "C",
+          olcuBirimId: item.olcuBirimId ?? 0,
+          seriKodu: "",
+          stokHareketSeries: item.seriler || []
+      }))
+    };
+  
+      // API'ye tek seferde gönderim
+      const response = await api.TransferData.save(transferData);
+  
+      if (!response.data.status) {
+        throw new Error(
+          (response.data.errors && response.data.errors[0].Errors && response.data.errors[0].Errors[0]) ||
+          "Veriler kaydedilirken bir hata oluştu."
+        );
+      }
+  
+      // Başarılı durum mesajı
+      toast.current?.show({
+        severity: "success",
+        summary: "Başarılı",
+        detail: "Veriler başarıyla kaydedildi",
+        life: 3000,
+      });
+  
+      resetForm();
+  
+    } catch (error: any) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: error.message || "Veriler kaydedilemedi",
+        life: 3000,
+      });
+      console.error("Error saving data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [formDataBaslik, gridData, formDataDetay, updateBelgeId]);
+  
+  const getAmbarFisiId = async (belgeId: number) => {
+    const response = await api.depolarArasiTransfer.getByBelgeId(belgeId);
+    if (response.data.status) {
+      return response.data.value.id;
+    } else {
+      throw new Error("Ambar Fişi bulunamadı.");
+    }
+  };
+  
 
   return (
     <div className="container-fluid">
@@ -1089,16 +1298,17 @@ const App: React.FC = () => {
                 />
               </div>
             </FloatLabel>
-            
           </div>
-          <div className="col-md-5 col-sm-6 mt-4"><InputText
+          <div className="col-md-5 col-sm-6 mt-4">
+            <InputText
               id="isEmriStokAdi"
               name="isEmriStokAdi"
               value={formDataBaslik.isEmriStokAdi}
               readOnly
               disabled
               //type="hidden"
-            /></div>
+            />
+          </div>
 
           <div className="col-md-1 col-sm-6 mt-4">
             <div className="p-inputgroup">
@@ -1145,6 +1355,8 @@ const App: React.FC = () => {
                   </FloatLabel>
                 </div>
               </div>
+
+              
               <div className="col-md-3 col-sm-6 mt-4">
                 <div className="p-inputgroup flex">
                   <FloatLabel>
@@ -1172,6 +1384,55 @@ const App: React.FC = () => {
                     <label htmlFor="hareketTuru">Hareket Türü</label>
                   </FloatLabel>
                 </div>
+              </div>
+
+              <div className="col-md-3 col-sm-6 mt-4">
+                <FloatLabel>
+                  <label htmlFor="girisHucreId">Giriş Hücre</label>
+                  <div className="p-inputgroup">
+                    <InputText
+                      id="girisHucreKodu"
+                      name="girisHucreKodu"
+                      value={formDataDetay.girisHucreKodu?.toString()}
+                      readOnly
+                      disabled
+                    />
+                    <Button
+                      label="..."
+                      onClick={() =>
+                        setDialogVisible({
+                          ...dialogVisible,
+                          girisHucre: true,
+                        })
+                      }
+                    />
+                    <HucreRehberDialog
+                      isVisible={dialogVisible.girisHucre}
+                      onHide={() => {
+                        setDialogVisible({
+                          ...dialogVisible,
+                          girisHucre: false,
+                        });
+                      }}
+                      onSelect={(selectedValue) =>
+                        setFormDataDetay((prevFormDataBaslik) => ({
+                          ...prevFormDataBaslik,
+                          girisHucreKodu: selectedValue.kodu,
+                          girisHucreId: selectedValue.id!,
+                        }))
+                      }
+                      // onSelect={(selectedValue) =>
+                      //   handleDialogSelect("cariKodu","kodu",selectedValue)
+                      // }
+                    />
+                  </div>
+                  <InputText
+                    id="girisHucreId"
+                    name="girisHucreId"
+                    value={formDataDetay.girisHucreId?.toString()}
+                    type="hidden"
+                  />
+                </FloatLabel>
               </div>
 
               <div className="col-md-3 col-sm-6 mt-4">
@@ -1293,9 +1554,6 @@ const App: React.FC = () => {
                       uniteKoduId: selectedValue.id!,
                     }))
                   }
-                  // onSelect={(selectedValue) =>
-                  //   handleDialogSelect("uniteKodu", "kodu", selectedValue)
-                  // }
                 />
               </div>
               <InputText
@@ -1306,6 +1564,7 @@ const App: React.FC = () => {
               />
             </FloatLabel>
           </div>
+              
             </div>
 
             <div className="row">
@@ -1411,16 +1670,15 @@ const App: React.FC = () => {
                   onHide={() =>
                     setDialogVisible({ ...dialogVisible, stok: false })
                   }
-                  onSelect={(selectedValue) =>
-                    {setFormDataDetay((prevFormDataBaslik) => ({
+                  onSelect={(selectedValue) => {
+                    setFormDataDetay((prevFormDataBaslik) => ({
                       ...prevFormDataBaslik,
                       //stokKodu: selectedValue.kodu,
-                      stokAdi:selectedValue.adi,
+                      stokAdi: selectedValue.adi,
                       stokKartiId: selectedValue.id!,
                     }));
                     setSelectedStokKodu(selectedValue.kodu);
-                  }
-                  }
+                  }}
                   // onSelect={(selectedValue) => {
                   //   handleDialogSelect("stokKodu", "kodu", selectedValue);
                   // }}
@@ -1488,18 +1746,22 @@ const App: React.FC = () => {
           </div>
           <div className="col-md-2 col-sm-6 mt-4">
             <FloatLabel>
-              <label htmlFor="hucre">Hucre</label>
+              <label htmlFor="cikisHucre">Çıkış Hücre</label>
               <Dropdown
-                id="hucre"
-                name="hucre"
-                value={selectedHucre}
-                options={hucreOptions}
-                onChange={handleHucreChange}
+                id="cikisHucre"
+                name="cikisHucre"
+                value={selectedCikisHucre}
+                options={cikisHucreOptions}
+                onChange={handleCikisHucreChange}
                 className="w-full md:w-14rem"
               />
             </FloatLabel>
           </div>
         </div>
+        {/* { hataMesaji!="" && (
+        <div className="p-d-flex p-jc-end mt-3" >
+         {hataMesaji}
+        </div>)} */}
         <div className="p-col-12  mt-3">
           <Button label="Ekle" icon="pi pi-plus" onClick={handleAddToGrid} />
         </div>
@@ -1521,7 +1783,7 @@ const App: React.FC = () => {
             <Column field="stokAdi" header="Stok Adı" />
             <Column field="miktar" header="Miktar" />
             <Column field="istenilenMiktar" header="İstenilen Miktar" />
-            <Column field="hucreKodu" header="Hücre" />
+            <Column field="cikisHucreKodu" header="Hücre" />
             <Column field="bakiye" header="Depo Bakiye" />
             <Column
               body={(rowData) => (
@@ -1555,14 +1817,14 @@ const App: React.FC = () => {
         visible={showSeriTakibiModal}
         onHide={() => setShowSeriTakibiModal(false)}
         seriler={seriBakiyeler}
+        seciliSeriler={seciliSeriler}
         onSeriAdd={handleSeriAdd}
         toplamMiktar={formDataDetay.miktar}
       />
       <div className="p-col-12 mt-3">
-        <Button label="Tamam" onClick={handleSeriTakibiComplete} />
+        <Button label="TamamA" onClick={handleSeriTakibiComplete} />
       </div>
     </div>
   );
 };
-
 export default App;

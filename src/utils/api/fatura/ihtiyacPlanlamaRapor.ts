@@ -12,6 +12,9 @@ export default ($axios: AxiosInstance) => ({
     getListForAmbarCikisFisi(dynamicQuery:DynamicQuery  ){
         return $axios.post<IBaseResponseValue<IPagedResponse<IIhtiyacPlanlamaRapor>>>(`/${controller}/GetListIhtiyacPlanlamaRaporForAmbarCikisFisi`, dynamicQuery );
     },
+    getListForDepolarArasiTransferFisi(dynamicQuery:DynamicQuery  ){
+        return $axios.post<IBaseResponseValue<IPagedResponse<IIhtiyacPlanlamaRapor>>>(`/${controller}/GetListIhtiyacPlanlamaRaporForDepolarArasiTransferFisi`, dynamicQuery );
+    },
     getAll(page: number, take: number){
         return $axios.get<IBaseResponseValue<IPagedResponse<IIhtiyacPlanlamaRapor>>>(`/${controller}`, {
             params: {

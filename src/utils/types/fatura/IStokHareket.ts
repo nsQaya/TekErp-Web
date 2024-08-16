@@ -1,11 +1,12 @@
 import { IStok } from "../stok/IStok";
+import { IStokHareketSeri } from "../stok/IStokHareketSeri";
 import { IHucre } from "../tanimlamalar/IHucre";
 import { IProje } from "../tanimlamalar/IProje";
 import { IStokOlcuBirim } from "../tanimlamalar/IStokOlcuBirim";
 import { IUnite } from "../tanimlamalar/IUnite";
 
 export interface IStokHareket {
-    id?:number;
+    id:number;
     belgeId:number;
     stokKartiId:number;
     stokKarti?:IStok;
@@ -16,8 +17,10 @@ export interface IStokHareket {
     fiyatDovizTipId?:number;
     olcuBirimId:number;
     olcuBirim?:IStokOlcuBirim;
-    hucreId:number;
-    hucre?:IHucre;
+    cikisHucreId?:number;
+    cikisHucre?:IHucre;
+    girisHucreId?:number;
+    girisHucre?:IHucre;
     bakiye?:number;
     girisCikis:string;
     aciklama1?:string;
@@ -30,4 +33,5 @@ export interface IStokHareket {
     masrafStokKartiId:number;
     sira:number;
     seriKodu?:string;
+    seriler?:IStokHareketSeri[];
 }

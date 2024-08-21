@@ -23,13 +23,12 @@ export default () => {
   const confirmDelete = useCallback(async () => {
     if (itemToDelete) {
       try {
+
+        // const stokHareketResponse= await api.stokHareket.getListByBelgeId(itemToDelete.belgeId);
+        // stokHareketResponse.data.value.items.forEach(async element => {
+        //   await api.stokHareket.delete(element.id as number);
+        // });
         await api.belge.delete(itemToDelete.belgeId as number);
-        await api.ambarFisi.delete(itemToDelete.id as number);
-        const stokHareketResponse= await api.stokHareket.getListByBelgeId(itemToDelete.belgeId);
-        stokHareketResponse.data.value.items.forEach(async element => {
-          await api.stokHareket.delete(element.id as number);
-        });
-        await api.stokHareket.delete(itemToDelete.belgeId as number);
         myTable.current?.refresh();
         toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla silindi !" });
       } catch (error) {

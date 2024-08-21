@@ -18,7 +18,7 @@ import { transformFilter } from "../../utils/transformFilter";
 import api from "../../utils/api";
 import { Checkbox } from "primereact/checkbox";
 import { Accordion, AccordionTab } from "primereact/accordion";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { EAmbarHareketTur } from "../../utils/types/enums/EAmbarHareketTur";
@@ -32,11 +32,11 @@ import SeriTakibiModal from "../stok/stokHareketSeriModal";
 import { IStokSeriBakiye } from "../../utils/types/stok/IStokSeriBakiye";
 import CariRehberDialog from "../../components/Rehber/CariRehberDialog";
 import IsEmriRehberDialog from "../../components/Rehber/IsEmriRehberDialog";
-import { TransferData } from "../../utils/types/fatura/ITransferDataDepolarArasiTransfer";
-import { IBelge } from "../../utils/types/fatura/IBelge";
-import { IDepolarArasiTransfer } from "../../utils/types/fatura/IDepolarArasiTransfer";
+import { ITransferDataDepolarArasiTransfer } from "../../utils/types/fatura/ITransferDataDepolarArasiTransfer";
 import HucreRehberDialog from "../../components/Rehber/HucreRehberDialog";
 import UniteRehberDialog from "../../components/Rehber/UniteRehberDialog";
+
+
 
 type FormDataBaslik = {
   isEmriNo: string;
@@ -102,41 +102,7 @@ type GridData = {
 const App: React.FC = () => {
   const currentDate = new Date();
   currentDate.setHours(3, 0, 0, 0);
-
-  const [formDataBelge,setFormDataBelge] = useState<IBelge>({
-    aktarimDurumu:EAktarimDurumu.AktarimSirada,
-    belgeTip:EBelgeTip.DepolarArasiTransfer,
-    no:"",
-    tarih:currentDate,
-    aciklama1:"",
-    aciklama2:"",
-    aciklama3:"",
-    tamamlandi:true,
-    id:0,
-  });
-
-  const[formDataDepolarArasiTransfer,setFormDataDepolarArasiTransfer] = useState<IDepolarArasiTransfer>({
-    id:0,
-    belgeId:formDataBelge.id,
-    cariId:0,
-    kaynakBelgeNo:"",
-    ambarHareketTur:EAmbarHareketTur.Depolar
-  });
-
-  const [formDataStokHareket,setFormDataStokHareket]=useState<IStokHareket>({
-    id:0,
-    belgeId:formDataBelge.id,
-    stokKartiId:0,
-    miktar:0,
-    istenilenMiktar:0,
-    fiyatTL:0,
-    olcuBirimId:0,
-    girisCikis:"",
-    projeId:0,
-    uniteId:0,
-    masrafStokKartiId:0,
-    sira:0
-  });
+  const navigate= useNavigate();
 
   const [formDataBaslik, setFormDataBaslik] = useState<FormDataBaslik>({
     isEmriNo: "",
@@ -193,10 +159,8 @@ const App: React.FC = () => {
   const [seriOptions, setSeriOptions] = useState<{ label: string; value: string }[]>([]);
 
   const [cikisHucreOptions, setCikisHucreOptions] = useState<{ label: string; value: number }[]>([]);
-  const [girisHucreOptions, setGirisHucreOptions] = useState<{ label: string; value: number }[]>([]);
 
   const [selectedCikisHucre, setSelectedCikisHucre] = useState<number | null>(null);
-  const [selectedGirisHucre, setSelectedGirisHucre] = useState<number | null>(null);
 
   const [selectedStokKodu, setSelectedStokKodu] = useState("");
   const [tempStokKodu, setTempStokKodu] = useState(selectedStokKodu);
@@ -223,22 +187,6 @@ const App: React.FC = () => {
     },
     [cikisHucreOptions]
   );
-
-  const handleGirisHucreChange = useCallback(
-    (e: any) => {
-      const selectedOption = girisHucreOptions.find(
-        (option) => option.value === e.value
-      );
-      setFormDataDetay((prevFormData) => ({
-        ...prevFormData,
-        girisHucreKodu: selectedOption ? selectedOption.label : "",
-        girisHucreId: e.value,
-      }));
-      setSelectedGirisHucre(e.value);
-    },
-    [girisHucreOptions]
-  );
-
 
 
   useEffect(() => {
@@ -364,7 +312,7 @@ const App: React.FC = () => {
         const response = await api.depolarArasiTransfer.getByBelgeId(
           updateBelgeId
         );
-        if (response.data.status) {
+        if (response.data.status && response.data.value) {
           const depolarArasiTransfer = response.data.value;
           const belge = depolarArasiTransfer.belge!;
           const belgeSeri = belge.no.substring(0, 3);
@@ -398,7 +346,7 @@ const App: React.FC = () => {
                 stokKodu: item.stokKarti!.kodu,
                 stokAdi: item.stokKarti!.adi,
                 miktar: item.miktar,
-                istenilenMiktar: item.istenilenMiktar,
+                istenilenMiktar: item.istenilenMiktar?item.istenilenMiktar:0,
                 fiyat: item.fiyatTL,
                 cikisHucreId: item.cikisHucreId,
                 cikisHucreKodu: item.cikisHucre?.kodu,
@@ -407,17 +355,19 @@ const App: React.FC = () => {
                 bakiye: item.bakiye,
                 olcuBirimId: item.olcuBirimId,
                 olcuBr: item.olcuBirim?.simge,
+                seriler:item.seriler
               }))
             );
-
+          debugger;
             setFormDataDetay((prevFormDataDetay) => ({
               ...prevFormDataDetay,
               projeKoduId: gridResponse.data.value.items[0].projeId,
               projeKodu: gridResponse.data.value.items[0].proje?.kodu,
               uniteKoduId: gridResponse.data.value.items[0].uniteId,
               uniteKodu: gridResponse.data.value.items[0].unite?.kodu,
+              girisHucreId:gridResponse .data.value.items[0].girisHucreId,
+              girisHucreKodu:gridResponse .data.value.items[0].girisHucre?.kodu,
               stokKartiId: 0,
-              hucreId: 0,
               miktar: 0,
               istenilenMiktar: 0,
               olcuBrId: 0,
@@ -461,7 +411,7 @@ const App: React.FC = () => {
       const response = await api.stok.getByKod(selectedStokKodu);
       if (response.status) {
         if (response.data.status) {
-          setSelectedStokKodu(response.data.value.kodu);
+          //setSelectedStokKodu(response.data.value.kodu);
           const alreadyHas = gridData.find(
             (x) =>
               x.stokKodu === response.data.value.kodu &&
@@ -483,8 +433,10 @@ const App: React.FC = () => {
             olcuBr: response.data.value.stokOlcuBirim1.simge,
             miktar: alreadyHasgMiktar - alreadyHasgBakiyeMiktar!,
             istenilenMiktar: alreadyHasgIstenilenMiktar!,
-            hucreId: alreadyHasHucreId,
-            hucreKodu: alreadyHasHucreKodu,
+            cikisHucreId: alreadyHasHucreId,
+            cikisHucreKodu: alreadyHasHucreKodu,
+            seriler:alreadyHas?.seriler,
+            bakiye:response.data.value.bakiye
           }));
 
           if (
@@ -497,7 +449,6 @@ const App: React.FC = () => {
                 value: item.hucre.id!,
               })
             );
-            console.log(options);
             setCikisHucreOptions(options);
           }
 
@@ -637,20 +588,19 @@ const App: React.FC = () => {
         });
         return;
       }
-      // if (
-      //   Number(toplamMiktar - alreadyHas.miktar + formDataDetay.miktar) >
-      //   Number(alreadyHas.bakiye)
-      // ) {
-      //   toast.current?.show({
-      //     severity: "error",
-      //     summary: "Hata",
-      //     detail: "Depo bakiyesinden fazla çıkış ekleyemezsin.",
-      //     life: 3000,
-      //   });
-      //   return;
-      //}
+      if (
+        Number(toplamMiktar - alreadyHas.miktar + formDataDetay.miktar) >
+        Number(alreadyHas.bakiye)
+      ) {
+        toast.current?.show({
+          severity: "error",
+          summary: "Hata",
+          detail: "Depo bakiyesinden fazla çıkış ekleyemezsin.",
+          life: 3000,
+        });
+        return;
+      }
     }
-    //setHataMesaji("");
     const response = await api.stok.getByKod(nStoK);
     if (response.status && response.data.status) {
       let formSeriMiktar = formDataDetay.seriler?.reduce(
@@ -703,7 +653,7 @@ const App: React.FC = () => {
             girisHucreId: formDataDetay.girisHucreId,
             istenilenMiktar: 0,
             fiyat: 0,
-            bakiye: 0,
+            bakiye: formDataDetay.bakiye,
             olcuBirimId: formDataDetay.olcuBrId,
             olcuBr: formDataDetay.olcuBr,
             seriler: formDataDetay.seriler, // Seri bilgilerini ekleme
@@ -719,6 +669,7 @@ const App: React.FC = () => {
           stokAdi: "",
           miktar: 0,
           istenilenMiktar: 0,
+          bakiye:0,
           seri: [], // Seri bilgilerini temizleme
         }));
         setSelectedId(0);
@@ -1131,6 +1082,7 @@ const App: React.FC = () => {
       stokAdi: "",
       istenilenMiktar: 0,
       miktar: 0,
+      bakiye:0,
       fiyat: 0,
       cikisHucreId: 0,
       cikisHucreKodu: "",
@@ -1163,7 +1115,7 @@ const App: React.FC = () => {
     setLoading(true);
     try {
       debugger;
-      const transferData: TransferData = {
+      const transferData: ITransferDataDepolarArasiTransfer = {
         belgeDto: {
             id: updateBelgeId !== 0 ? updateBelgeId : 0, 
             belgeTip: EBelgeTip.DepolarArasiTransfer,
@@ -1189,6 +1141,7 @@ const App: React.FC = () => {
           stokKartiId: item.stokKartiId ?? 0,
           masrafStokKartiId: item.stokKartiId ?? 0,
           miktar: item.miktar ?? 0,
+          istenilenMiktar:item.istenilenMiktar,
           fiyatTL: item.fiyat ?? 0,
           fiyatDoviz: 0,
           fiyatDovizTipiId: 1,
@@ -1208,7 +1161,7 @@ const App: React.FC = () => {
     };
   
       // API'ye tek seferde gönderim
-      const response = await api.TransferData.save(transferData);
+      const response = await api.depolarArasiTransferSave.save(transferData);
   
       if (!response.data.status) {
         throw new Error(
@@ -1216,6 +1169,7 @@ const App: React.FC = () => {
           "Veriler kaydedilirken bir hata oluştu."
         );
       }
+      navigate(`/fatura/depolararasitransferliste`)
   
       // Başarılı durum mesajı
       toast.current?.show({
@@ -1239,15 +1193,6 @@ const App: React.FC = () => {
       setLoading(false);
     }
   }, [formDataBaslik, gridData, formDataDetay, updateBelgeId]);
-  
-  const getAmbarFisiId = async (belgeId: number) => {
-    const response = await api.depolarArasiTransfer.getByBelgeId(belgeId);
-    if (response.data.status) {
-      return response.data.value.id;
-    } else {
-      throw new Error("Ambar Fişi bulunamadı.");
-    }
-  };
   
 
   return (
@@ -1705,7 +1650,7 @@ const App: React.FC = () => {
           </div>
           <div className="col-md-1 col-sm-6 mt-4">
             <FloatLabel>
-              <label htmlFor="miktar">İstenilen Miktar</label>
+              <label htmlFor="istenilenMiktar">İstenilen Miktar</label>
               <InputNumber
                 id="istenilenMiktar"
                 name="istenilenMiktar"

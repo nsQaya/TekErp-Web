@@ -1,10 +1,9 @@
-
 import { IStokHareketSeri } from "../stok/IStokHareketSeri";
+import { IAmbarFisi } from "./IAmbarFisi";
 import { IBelge } from "./IBelge";
-import { IDepolarArasiTransfer } from "./IDepolarArasiTransfer";
 
-export interface ITransferDataDepolarArasiTransfer  {
-    depolarArasiTransferDto: IDepolarArasiTransfer;
+export interface ITransferDataAmbarFisi  {
+    ambarFisiDto: IAmbarFisi;
     belgeDto: IBelge;
     stokHareketDto: StokHareketDto[];
 }
@@ -18,8 +17,8 @@ export interface StokHareketDto {
     fiyatDoviz?: number;
     fiyatDovizTipiId?: number;
     olcuBirimId: number;
-    cikisHucreId: number;
-    girisHucreId: number;
+    cikisHucreId?: number;
+    girisHucreId?: number;
     girisCikis: string;
     aciklama1?: string;
     aciklama2?: string;

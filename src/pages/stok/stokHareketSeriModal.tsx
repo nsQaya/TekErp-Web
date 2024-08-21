@@ -54,12 +54,14 @@ const SeriTakibiModal: React.FC<StokHareketSeriTakibiModalProps> = ({
       setEditIndex(null);
     } else {
       const yeniSeri: IStokHareketSeri = {
+        id:0,
         seriNo1: selectedSeri.seriNo,
         seriNo2: "",
         seriTarih1: new Date(),
         seriTarih2: new Date(),
         miktar: miktar,
         sira: seriList.length + 1,
+        stokHareketId:0
       };
       setSeriList((prevList) => [...prevList, yeniSeri]);
     }

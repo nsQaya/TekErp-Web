@@ -2,6 +2,7 @@ import { AxiosInstance } from "axios";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
 import { IAmbarFisi } from "../../types/fatura/IAmbarFisi";
 import { DynamicQuery } from "../../transformFilter";
+import { ITransferDataAmbarFisi } from "../../types/fatura/ITransferDataAmbarFisi";
 
 
 
@@ -33,5 +34,8 @@ export default ($axios: AxiosInstance) => ({
     },
     getByBelgeId(id: number){
         return $axios.get<IBaseResponseValue<IAmbarFisi>>(`/${controller}/GetByBelgeId?BelgeId=${id}`);
-    }
+    },
+    save(params: Partial<ITransferDataAmbarFisi>){
+        return $axios.post<IBaseResponseValue<ITransferDataAmbarFisi>>(`/${controller}/save`, params);
+    },
 });

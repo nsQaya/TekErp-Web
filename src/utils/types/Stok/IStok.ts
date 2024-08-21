@@ -46,4 +46,5 @@ export interface IStok {
   azamiStokMiktari: number;
   minimumSiparisMiktari: number;
   aktarimDurumu: number;
+  bakiye:number;
 }

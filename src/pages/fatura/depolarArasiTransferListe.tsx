@@ -1,4 +1,4 @@
-import { createRef, useCallback,  useEffect,  useRef,  useState } from "react";
+import { createRef, useCallback, useEffect, useRef, useState } from "react";
 import AppBreadcrumb from "../../components/AppBreadcrumb";
 import api from "../../utils/api";
 import AppTable, { ITableRef } from "../../components/AppTable";
@@ -9,32 +9,48 @@ import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { IDepolarArasiTransfer } from "../../utils/types/fatura/IDepolarArasiTransfer";
 
-
 export default () => {
   const myTable = createRef<ITableRef<IDepolarArasiTransfer>>();
-  
+
   const toast = useRef<Toast>(null);
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<IDepolarArasiTransfer | null>(null);
+  const [itemToDelete, setItemToDelete] =
+    useState<IDepolarArasiTransfer | null>(null);
 
-  const navigate= useNavigate();
-  
+  const navigate = useNavigate();
 
   const confirmDelete = useCallback(async () => {
     if (itemToDelete) {
       try {
-        await api.belge.delete(itemToDelete.belgeId as number);
-        await api.depolarArasiTransfer.delete(itemToDelete.id as number);
-        const stokHareketResponse= await api.stokHareket.getListByBelgeId(itemToDelete.belgeId);
-        stokHareketResponse.data.value.items.forEach(async element => {
-          await api.stokHareket.delete(element.id as number);
-        });
-        await api.stokHareket.delete(itemToDelete.belgeId as number);
+        //TODO: buraya stokhareket seri silme konulacak.
+        // const stokHareketResponse = await api.stokHareket.getListByBelgeId(
+        //   itemToDelete.belgeId
+        // );
+        // stokHareketResponse.data.value.items.forEach(async (element) => {
+        //   const stokHareketSeriResponse =
+        //     await api.stokHareketSeri.getListByBelgeId(itemToDelete.belgeId);
+        //   stokHareketSeriResponse.data.value.items.forEach(
+        //     async (elementSeri) => {
+        //       await api.stokHareketSeri.delete(elementSeri.id as number);
+        //     }
+        //   );
+        //   await api.stokHareket.delete(element.id as number);
+        // });
+
+        await api.belge.delete(itemToDelete.belgeId as number);//transaction yapısı bacend e yüklendi.
         myTable.current?.refresh();
-        toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla silindi !" });
+        toast.current?.show({
+          severity: "success",
+          summary: "Başarılı",
+          detail: "Başarıyla silindi !",
+        });
       } catch (error) {
         console.error("Silme işleminde hata:", error);
-        toast.current?.show({ severity: "error", summary: "Hata", detail: "Silme işleminde hata oluştu !" });
+        toast.current?.show({
+          severity: "error",
+          summary: "Hata",
+          detail: "Silme işleminde hata oluştu !",
+        });
       } finally {
         setItemToDelete(null);
         setConfirmVisible(false);
@@ -68,13 +84,12 @@ export default () => {
       field: "belge.no",
       header: "Belge No",
       sortable: true,
-      filter: true
-      
+      filter: true,
     },
     {
       header: "Tarih",
       field: "belge.tarih",
-      dataType:"date",
+      dataType: "date",
       sortable: true,
       filter: true,
       body: (row: IDepolarArasiTransfer) =>
@@ -90,7 +105,7 @@ export default () => {
       header: "Hareket Türü",
       field: "ambarHareketTur",
       sortable: false,
-      filter: true
+      filter: true,
     },
     {
       header: "Çıkış Yeri",
@@ -100,23 +115,28 @@ export default () => {
     {
       header: "İşlemler",
       body: (row: IDepolarArasiTransfer) => (
-        
         <>
-        <button className="btn btn-info ms-1" onClick={(e) => {
-          e.preventDefault();
-          navigate(`/fatura/depolararasitransferfisi?belgeId=${row.belgeId}`)
-
-        }}>
-          <i className="ti-pencil"></i>
-        </button>
-        <button className="btn btn-danger ms-1" onClick={(e) => {
-          e.preventDefault();
-          deleteItem(row);
-        }}>
-          <i className="ti-trash"></i>
-        </button>
-      </>
-        
+          <button
+            className="btn btn-info ms-1"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(
+                `/fatura/depolararasitransferfisi?belgeId=${row.belgeId}`
+              );
+            }}
+          >
+            <i className="ti-pencil"></i>
+          </button>
+          <button
+            className="btn btn-danger ms-1"
+            onClick={(e) => {
+              e.preventDefault();
+              deleteItem(row);
+            }}
+          >
+            <i className="ti-trash"></i>
+          </button>
+        </>
       ),
     },
   ];
@@ -142,17 +162,25 @@ export default () => {
             <div className="card-body">
               <div className="table-responsive m-t-40">
                 <AppTable
-                    baseApi={api.depolarArasiTransfer}
-                    columns={columns}
-                    key={"DepolarArasiTransfer"}
-                    ref={myTable}
-                    rowSelectable={false}
-                    appendHeader={() => {
-                      return (
-                      <Button type="button" severity="help" onClick={(e)=>[e.preventDefault(), navigate(`/fatura/depolararasitransferfisi`)]}>
+                  baseApi={api.depolarArasiTransfer}
+                  columns={columns}
+                  key={"DepolarArasiTransfer"}
+                  ref={myTable}
+                  rowSelectable={false}
+                  appendHeader={() => {
+                    return (
+                      <Button
+                        type="button"
+                        severity="help"
+                        onClick={(e) => [
+                          e.preventDefault(),
+                          navigate(`/fatura/depolararasitransferfisi`),
+                        ]}
+                      >
                         Yeni
-                      </Button>)
-                    }}
+                      </Button>
+                    );
+                  }}
                 />
               </div>
             </div>

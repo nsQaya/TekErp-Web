@@ -59,7 +59,9 @@ import { IStokSeriBakiye } from "../types/stok/IStokSeriBakiye";
 import { IDepolarArasiTransfer } from "../types/fatura/IDepolarArasiTransfer";
 import { IIsEmri } from "../types/planlama/IIsEmri";
 import isEmri from "../api/fatura/isEmri";
-import { TransferData } from "../types/fatura/ITransferDataDepolarArasiTransfer";
+import { ITransferDataDepolarArasiTransfer } from "../types/fatura/ITransferDataDepolarArasiTransfer";
+import { ITransferDataAmbarFisi } from "../types/fatura/ITransferDataAmbarFisi";
+
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
@@ -163,8 +165,9 @@ const repositories = {
 
   belge:belge(instance) as unknown as ICrudBaseAPI<IBelge>,
   ambarFisi:ambarCikisFisi(instance) as unknown as ICrudBaseAPI<IAmbarFisi>,
+  ambarFisiSave:ambarCikisFisi(instance) as unknown as ICrudBaseAPI<ITransferDataAmbarFisi>,
   depolarArasiTransfer:depolarArasiTransfer(instance) as unknown as ICrudBaseAPI<IDepolarArasiTransfer>,
-  TransferData:depolarArasiTransfer(instance) as unknown as ICrudBaseAPI<TransferData>,
+  depolarArasiTransferSave:depolarArasiTransfer(instance) as unknown as ICrudBaseAPI<ITransferDataDepolarArasiTransfer>,
   belgeNo:belge(instance) as unknown as ICrudBaseAPI<IBelgeNo>
 
 };

@@ -19,9 +19,9 @@ export default () => {
   ]);
 
   const [kullaniciPages] =useState([
-    {title: "Kullanıcılar", href: "/"},
+    {title: "Kullanıcılar", href: "/kullanicilar/kullanici"},
     {title: "Yetkiler", href: "/"},
-    {title: "Kullanıcı Yetkileri", href: "/"},
+    {title: "Kullanıcı Yetkileri", href: "/kullanicilar/kullaniciyetki"},
   ]);
 
   const [stokPages] =useState([
@@ -32,7 +32,7 @@ export default () => {
     {title: "Kod 3", href: "/stok/code3"},
     {title: "Kod 4", href: "/stok/code4"},
     {title: "Kod 5", href: "/stok/code5"},
-    {title: "Hareketler", href: "/stok/"},
+    {title: "Hareketler", href: "/stok/stokHareketler"},
   ]);
 
   const [cariPages] =useState([

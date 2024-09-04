@@ -79,9 +79,10 @@ export default () => {
       field: "mamulAdi",
       sortable: true,
       filter:true,
-      // style: {
+       style: {
       //   fontSize: "9px",
-      // },
+      minWidth:"350px"
+       },
     },
     {
       header: "Stok Kodu",
@@ -109,7 +110,7 @@ export default () => {
       sortable: true,
       filter:true,
       style: {
-        fontSize: "9px",
+       // fontSize: "9px",
       },
     },
     {
@@ -118,7 +119,7 @@ export default () => {
       sortable: true,
       filter:true,
       style: {
-        fontSize: "9px",
+        //fontSize: "9px",
       },
     },
     {
@@ -127,7 +128,8 @@ export default () => {
       sortable: true,
       filter:true,
       style: {
-        fontSize: "9px",
+        //fontSize: "9px",
+        minWidth:"150px"
       },
     },
     {
@@ -136,7 +138,7 @@ export default () => {
       sortable: true,
       filter:true,
       style: {
-        fontSize: "9px",
+        //fontSize: "9px",
       },
     },
     {
@@ -145,7 +147,7 @@ export default () => {
       sortable: true,
       filter:true,
       style: {
-        fontSize: "9px",
+        //fontSize: "9px",
       },
     },
     {
@@ -153,7 +155,7 @@ export default () => {
       field: "bakiye",
       sortable: true,
       style: {
-        fontSize: "9px",
+        //fontSize: "9px",
       },
     },
     {
@@ -161,7 +163,7 @@ export default () => {
       field: "stokTalepMiktari",
       sortable: true,
       style: {
-        fontSize: "9px",
+        //fontSize: "9px",
       },
     },
     {
@@ -169,7 +171,7 @@ export default () => {
       field: "stokSiparisMiktari",
       sortable: true,
       style: {
-        fontSize: "9px",
+        //fontSize: "9px",
       },
     },
     {
@@ -177,7 +179,7 @@ export default () => {
       field: "yuruyenBakiye",
       sortable: true,
       style: {
-        fontSize: "9px",
+        //fontSize: "9px",
       },
     },
     // {
@@ -239,9 +241,8 @@ export default () => {
                       </button>
                       <button
                       type="button"
-                      disabled
                       className="btn btn-info btn-rounded m-t-10 float-end text-white"
-                      onClick={(e)=>[e.preventDefault(), navigate(`/fatura/ambarcikisfisi`)]}
+                      onClick={(e)=>[e.preventDefault(), navigate(`/fatura/depolararasitransferfisi`)]}
                       >
                     Depolar Arası Transfer
                     </button>

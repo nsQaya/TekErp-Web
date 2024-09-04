@@ -169,9 +169,7 @@ const App: React.FC = () => {
   const [showSeriTakibiModal, setShowSeriTakibiModal] = useState(false);
   const [seriBakiyeler, setSeriBakiyeler] = useState<IStokSeriBakiye[]>([]);
   const [seciliSeriler, setSeciliSeriler] = useState<IStokHareketSeri[]>([]);
-  const [selectedStokHareketSeriler, setSelectedStokHareketSeriler] = useState<
-    IStokHareketSeri[]
-  >([]);
+
 
   const handleCikisHucreChange = useCallback(
     (e: any) => {
@@ -358,7 +356,6 @@ const App: React.FC = () => {
                 seriler:item.seriler
               }))
             );
-          debugger;
             setFormDataDetay((prevFormDataDetay) => ({
               ...prevFormDataDetay,
               projeKoduId: gridResponse.data.value.items[0].projeId,
@@ -402,8 +399,8 @@ const App: React.FC = () => {
     setFormDataDetay((prevFormData) => ({
       ...prevFormData,
       stokAdi: "",
-      hucreKodu: "",
-      hucreId: 0,
+      cikishucreKodu: "",
+      cikisHucreId: 0,
     }));
     setSelectedCikisHucre(null);
     setCikisHucreOptions([]);
@@ -433,8 +430,14 @@ const App: React.FC = () => {
             olcuBr: response.data.value.stokOlcuBirim1.simge,
             miktar: alreadyHasgMiktar - alreadyHasgBakiyeMiktar!,
             istenilenMiktar: alreadyHasgIstenilenMiktar!,
-            cikisHucreId: alreadyHasHucreId,
-            cikisHucreKodu: alreadyHasHucreKodu,
+            cikisHucreId:  alreadyHasHucreId 
+            ? alreadyHasHucreId 
+            : response.data.value.hucreOzets.length > 0 
+              ? response.data.value.hucreOzets[0].hucre.id
+              : 0,
+            cikishucreKodu: alreadyHasHucreKodu
+            ? alreadyHasHucreKodu
+            : response.data.value.hucreOzets[0].hucre.kodu,
             seriler:alreadyHas?.seriler,
             bakiye:response.data.value.bakiye
           }));
@@ -549,11 +552,20 @@ const App: React.FC = () => {
   const handleAddToGrid = useCallback(async () => {
     const nStoK = selectedStokKodu;
 
-    if (!nStoK || formDataDetay.miktar === 0) {
+    if (!nStoK || formDataDetay.miktar === 0 || formDataDetay.miktar <= 0) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
         detail: "Stok Kodu ve Miktar alanlarını doldurmalısınız.",
+        life: 3000,
+      });
+      return;
+    }
+    if (formDataDetay.cikisHucreId === 0 || !formDataDetay.cikisHucreId || formDataDetay.cikisHucreId== undefined) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Hatalı çıkış hücresi seçimi",
         life: 3000,
       });
       return;
@@ -695,76 +707,6 @@ const App: React.FC = () => {
     //   setHataMesaji("");
   };
 
-  const handleSeriTakibiComplete = () => {
-    const nStoK = selectedStokKodu;
-
-    selectedStokHareketSeriler.forEach((selectedStokHareketSeri) => {
-      const alreadyHasWithHucre = gridData.find(
-        (x) =>
-          (x.stokKodu === nStoK && x.miktar === 0) ||
-          (x.stokKodu === nStoK && x.cikisHucreId === formDataDetay.cikisHucreId)
-      );
-
-      if (alreadyHasWithHucre) {
-        setGridData((prevGridData) =>
-          prevGridData.map((item) =>
-            item.stokKodu === nStoK && item.id === alreadyHasWithHucre.id
-              ? {
-                  ...item,
-                  miktar: formDataDetay.miktar!,
-                  cikisHucreKodu: cikisHucreOptions.find((o) => o.value === selectedCikisHucre)
-                    ?.label,
-                  cikisHucreId: formDataDetay.cikisHucreId,
-                  seriler: [...(item.seriler || []), selectedStokHareketSeri],
-                }
-              : item
-          )
-        );
-      } else {
-        const maxId =
-          gridData.length > 0
-            ? Math.max(...gridData.map((item) => item.id!))
-            : 0;
-
-        const newGridData: GridData = {
-          id: maxId + 1,
-          stokKartiId: formDataDetay.stokKartiId,
-          stokKodu: selectedStokKodu,
-          stokAdi: formDataDetay.stokAdi,
-          miktar: formDataDetay.miktar,
-          projeKoduId: formDataDetay.projeKoduId,
-          uniteKoduId: formDataDetay.uniteKoduId,
-          cikisHucreKodu: formDataDetay.cikisHucreKodu,
-          cikisHucreId: formDataDetay.cikisHucreId,
-          girisHucreKodu: formDataDetay.girisHucreKodu,
-          girisHucreId: formDataDetay.girisHucreId,
-          istenilenMiktar: 0,
-          fiyat: 0,
-          bakiye: 0,
-          olcuBirimId: formDataDetay.olcuBrId,
-          olcuBr: formDataDetay.olcuBr,
-          seriler: [selectedStokHareketSeri],
-        };
-        setGridData((prevGridData) => [...prevGridData, newGridData]);
-      }
-    });
-
-    document.getElementById("getirButton")!.hidden = true;
-    setSelectedStokKodu("");
-    setFormDataDetay((formData) => ({
-      ...formData,
-      stokKartiId: 0,
-      stokAdi: "",
-      miktar: 0,
-      istenilenMiktar: 0,
-    }));
-    setSelectedId(0);
-    setSelectedCikisHucre(null);
-    setCikisHucreOptions([]);
-    setShowSeriTakibiModal(false);
-    setSelectedStokHareketSeriler([]);
-  };
-
   const confirmDelete = useCallback(() => {
     if (selectedItem) {
       deleteItem(selectedItem);
@@ -820,6 +762,17 @@ const App: React.FC = () => {
       });
       return false;
     }
+
+    if (gridData.filter(item => item.miktar > 0).length<=0) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Çıkış yapılacak stok seçilmelidir",
+        life: 3000,
+      });
+      return false;
+    }
+
     return true;
   };
 
@@ -835,225 +788,6 @@ const App: React.FC = () => {
     }
     return true;
   };
-
-  // const handleSave = useCallback(async () => {
-  //   if (!validateForm()) {
-  //     return;
-  //   }
-  //   setLoading(true);
-  //   try {
-  //     if (updateBelgeId !== 0) {
-  //       const updateStokHareketResponse = await api.stokHareket.getListByBelgeId(updateBelgeId);
-  //       if (updateStokHareketResponse.data.value) {
-  //         await Promise.all(
-  //           updateStokHareketResponse.data.value.items.map(async (element) => {
-  //             const stokHareketSeriResponse = await api.stokHareketSeri.getListByBelgeId(element.id!);
-  //             if (stokHareketSeriResponse.data.value) {
-  //               await Promise.all(
-  //                 stokHareketSeriResponse.data.value.items.map(async (seriElement) => {
-  //                   const silSeriHareket = await api.stokHareketSeri.delete(seriElement.id!);
-  //                   if (!silSeriHareket.data.status) {
-  //                     throw new Error(
-  //                       (silSeriHareket.data.errors &&
-  //                         silSeriHareket.data.errors[0].Errors &&
-  //                         silSeriHareket.data.errors[0].Errors[0]) ||
-  //                         "Stok Hareket Seri Silme İşleminde Hata"
-  //                     );
-  //                   }
-  //                 })
-  //               );
-  //             }
-
-  //             const silHareket = await api.stokHareket.delete(element.id!);
-  //             if (!silHareket.data.status) {
-  //               throw new Error(
-  //                 (silHareket.data.errors &&
-  //                   silHareket.data.errors[0].Errors &&
-  //                   silHareket.data.errors[0].Errors[0]) ||
-  //                   "Stok Hareket Silme İşleminde Hata"
-  //               );
-  //             }
-  //           })
-  //         );
-  //       }
-  //     }
-
-  //     let belgeResponse;
-
-  //     if (updateBelgeId !== 0) {
-  //       belgeResponse = await api.belge.update({
-  //         id: updateBelgeId,
-  //         belgeTip: EBelgeTip.DepolarArasiTransfer,
-  //         no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
-  //         tarih: formDataBaslik.tarih,
-  //         aciklama1: formDataBaslik.aciklama1,
-  //         aciklama2: formDataBaslik.aciklama2,
-  //         aciklama3: formDataBaslik.aciklama3,
-  //         tamamlandi: false,
-  //       });
-  //     } else {
-  //       belgeResponse = await api.belge.create({
-  //         belgeTip: EBelgeTip.DepolarArasiTransfer,
-  //         no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
-  //         tarih: formDataBaslik.tarih,
-  //         aciklama1: formDataBaslik.aciklama1,
-  //         aciklama2: formDataBaslik.aciklama2,
-  //         aciklama3: formDataBaslik.aciklama3,
-  //         tamamlandi: false,
-  //       });
-  //     }
-
-  //     const belgeId = belgeResponse.data.value.id;
-
-  //     if (!belgeResponse.data.status) {
-  //       setLoading(false);
-  //       throw new Error(
-  //         (belgeResponse.data.errors &&
-  //           belgeResponse.data.errors[0].Errors &&
-  //           belgeResponse.data.errors[0].Errors[0]) ||
-  //           "Belge oluştururken-güncellenirken hata oldu"
-  //       );
-  //     }
-
-  //     let ambarFisiResponse;
-
-  //     if (updateBelgeId !== 0) {
-  //       const updateAmbarFisiResponse =
-  //         await api.depolarArasiTransfer.getByBelgeId(updateBelgeId);
-
-  //       if (!updateAmbarFisiResponse.data.status) {
-  //         throw new Error(
-  //           (updateAmbarFisiResponse.data.errors &&
-  //             updateAmbarFisiResponse.data.errors[0].Errors &&
-  //             updateAmbarFisiResponse.data.errors[0].Errors[0]) ||
-  //             "Ambar fişi bulunamadı"
-  //         );
-  //       }
-
-  //       ambarFisiResponse = await api.depolarArasiTransfer.update({
-  //         id: updateAmbarFisiResponse.data.value.id!,
-  //         belgeId: belgeId!,
-  //         ambarHareketTur: formDataBaslik.hareketTuru,
-  //         cariId: formDataBaslik.cariId,
-  //         kaynakBelgeNo: formDataBaslik.isEmriNo,
-  //       });
-  //     } else {
-  //       ambarFisiResponse = await api.depolarArasiTransfer.create({
-  //         belgeId: belgeId!,
-  //         ambarHareketTur: formDataBaslik.hareketTuru,
-  //         cariId: formDataBaslik.cariId,
-  //         kaynakBelgeNo: formDataBaslik.isEmriNo,
-  //       });
-  //     }
-
-  //     if (!ambarFisiResponse.data.status) {
-  //       setLoading(false);
-  //       throw new Error(
-  //         (ambarFisiResponse.data.errors &&
-  //           ambarFisiResponse.data.errors[0].Errors &&
-  //           ambarFisiResponse.data.errors[0].Errors[0]) ||
-  //           "AmbarFişi oluştururken hata oldu"
-  //       );
-  //     }
-
-  //     const stokHareketData: IStokHareket[] = gridData
-  //       .filter((item) => item.miktar > 0)
-  //       .map((item, index) => ({
-  //         id:0,
-  //         belgeId: belgeId!,
-  //         stokKartiId: item.stokKartiId,
-  //         masrafStokKartiId: item.stokKartiId, // TODO: buraya bi şey düşünmek lazım. iş emri stok kodu mu yazılacak nolacak bak
-  //         miktar: item.miktar,
-  //         istenilenMiktar: 0,
-  //         fiyatTL: item.fiyat,
-  //         cikisHucreId: item.cikisHucreId,
-  //         girisHucreId:item.girisHucreId,
-  //         aciklama1: formDataBaslik.aciklama1,
-  //         aciklama2: formDataBaslik.aciklama2,
-  //         aciklama3: formDataBaslik.aciklama3,
-  //         projeId: formDataDetay.projeKoduId,
-  //         uniteId: formDataDetay.uniteKoduId,
-  //         sira: index + 1,
-  //         girisCikis: "C",
-  //         olcuBirimId: item.olcuBirimId,
-  //         stokKartiKodu: "",
-  //         seriler: item.seriler,
-  //       }));
-
-  //     for (const stokHareket of stokHareketData) {
-  //       const stokHareketResponse = await api.stokHareket.create(stokHareket);
-  //       debugger;
-
-  //       if (!stokHareketResponse.data.status) {
-  //         setLoading(false);
-  //         throw new Error(
-  //           (stokHareketResponse.data.errors &&
-  //             stokHareketResponse.data.errors[0].Errors &&
-  //             stokHareketResponse.data.errors[0].Errors[0]) ||
-  //             "StokHareket oluştururken hata oldu"
-  //         );
-  //       } else {
-  //         if (stokHareket.seriler && stokHareket.seriler?.length>0) {
-  //           for (const element of stokHareket.seriler) {
-  //             element.stokHareketId=stokHareketResponse.data.value.id;
-  //             const stokHareketSeriResponse = await api.stokHareketSeri.create(
-  //               element
-  //             );
-  //             if (!stokHareketSeriResponse.data.status) {
-  //               setLoading(false);
-  //               throw new Error(
-  //                 (stokHareketSeriResponse.data.errors &&
-  //                   stokHareketSeriResponse.data.errors[0].Errors &&
-  //                   stokHareketSeriResponse.data.errors[0].Errors[0]) ||
-  //                   "StokHareketSeri oluştururken hata oldu"
-  //               );
-  //             }
-  //           };
-  //         }
-  //       }
-  //     }
-
-  //     const belgeUpdateResponse = await api.belge.update({
-  //       id: belgeId,
-  //       tamamlandi: true,
-  //       belgeTip: EBelgeTip.DepolarArasiTransfer,
-  //       no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
-  //       tarih: formDataBaslik.tarih,
-  //       aciklama1: formDataBaslik.aciklama1,
-  //       aciklama2: formDataBaslik.aciklama2,
-  //       aciklama3: formDataBaslik.aciklama3,
-  //       aktarimDurumu: EAktarimDurumu.AktarimSirada,
-  //     });
-
-  //     if (!belgeUpdateResponse.data.status) {
-  //       setLoading(false);
-  //       throw new Error(
-  //         (belgeUpdateResponse.data.errors &&
-  //           belgeUpdateResponse.data.errors[0].Errors &&
-  //           belgeUpdateResponse.data.errors[0].Errors[0]) ||
-  //           "Belge güncellenirken oluştururken hata oldu"
-  //       );
-  //     }
-      
-  //     toast.current?.show({
-  //       severity: "success",
-  //       summary: "Başarılı",
-  //       detail: "Veriler başarıyla kaydedildi",
-  //       life: 3000,
-  //     });
-  //     resetForm();
-  //   } catch (error: any) {
-  //     toast.current?.show({
-  //       severity: "error",
-  //       summary: "Hata",
-  //       detail: error.message || "Veriler kaydedilemedi",
-  //       life: 3000,
-  //     });
-  //     console.error("Error saving data:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [formDataBaslik, gridData, formDataDetay, updateBelgeId]);
 
   const resetForm = () => {
     setFormDataBaslik({
@@ -1114,7 +848,6 @@ const App: React.FC = () => {
     }
     setLoading(true);
     try {
-      debugger;
       const transferData: ITransferDataDepolarArasiTransfer = {
         belgeDto: {
             id: updateBelgeId !== 0 ? updateBelgeId : 0, 
@@ -1766,9 +1499,6 @@ const App: React.FC = () => {
         onSeriAdd={handleSeriAdd}
         toplamMiktar={formDataDetay.miktar}
       />
-      <div className="p-col-12 mt-3">
-        <Button label="TamamA" onClick={handleSeriTakibiComplete} />
-      </div>
     </div>
   );
 };

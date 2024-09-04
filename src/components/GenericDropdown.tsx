@@ -61,6 +61,8 @@ const GenericDropdown: React.FC<GenericDropdownProps> = (props) => {
       placeholder={props.placeholder || "Select an option"}
       className={props.className}
       isClearable={true} // Clearable özelliği eklendi
+      //required={true}
+      
     />
   );
 };

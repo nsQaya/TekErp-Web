@@ -21795,3 +21795,17 @@ File: scss
     .modal {
       z-index: 1050 !important; /* Modal z-index değeri */
     }
+
+   /* .p-datatable-tbody > tr > td {
+   /* padding: 0px 0px; /* Satır içi padding (boşlukları) azaltın */
+  /*  height: 10px; /* Satır yüksekliğini ayarlayın */
+/*}
+
+/*.p-datatable-tbody > tr {
+ /*   height: 10px; /* Satırların yüksekliğini daha kompakt hale getirin */
+/*}
+
+/* .p-datatable .p-datatable-thead > tr > th {
+/*    padding: 0px 0px; /* Başlık satırlarının padding değerini de azaltın */
+/*    height: 10px; /* Başlık satırlarının yüksekliğini ayarlayın */
+/*} */

@@ -498,6 +498,7 @@ export default (props: IStokModalProps) => {
 
             <div className="col-lg-6 m-b-20">
               <Select
+
                 value={stokKod3s.find((x) => x.value == stokKod3Id)}
                 placeholder="Kod3"
                 onChange={(selected: any) => setStokKod3Id(selected.value)}

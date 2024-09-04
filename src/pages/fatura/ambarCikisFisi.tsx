@@ -426,6 +426,7 @@ const App = () => {
       cikishucreKodu: "",
       cikisHucreId: 0,
     }));
+    setSelectedHucre(null);
     setHucreOptions([]);
     try {
       const response = await api.stok.getByKod(selectedStokKodu);
@@ -453,8 +454,15 @@ const App = () => {
             olcuBr: response.data.value.stokOlcuBirim1.simge,
             miktar: alreadyHasgMiktar - alreadyHasgBakiyeMiktar!,
             istenilenMiktar: alreadyHasgIstenilenMiktar!,
-            cikisHucreId: alreadyHasHucreId,
-            cikishucreKodu: alreadyHasHucreKodu,
+            cikisHucreId:  alreadyHasHucreId 
+            ? alreadyHasHucreId 
+            : response.data.value.hucreOzets.length > 0 
+              ? response.data.value.hucreOzets[0].hucre.id
+              : 0,
+            cikishucreKodu: alreadyHasHucreKodu
+            ? alreadyHasHucreKodu
+            : response.data.value.hucreOzets[0].hucre.kodu,
+            bakiye:response.data.value.bakiye
           }));
 
           if (
@@ -549,7 +557,6 @@ const App = () => {
       );
 
       if (response.data.value && response.data.value.count > 0) {
-        debugger;
         document.getElementById("getirButton")!.hidden = true;
 
         let tempCikisYeri: { Id: any; kodu: string };
@@ -597,11 +604,20 @@ const App = () => {
   const handleAddToGrid = useCallback(() => {
     const nStoK = selectedStokKodu;
 
-    if (!nStoK || formDataDetay.miktar === 0) {
+    if (!nStoK || formDataDetay.miktar === 0 || formDataDetay.miktar <= 0) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
         detail: "Stok Kodu ve Miktar alanlarını doldurmalısınız.",
+        life: 3000,
+      });
+      return;
+    }
+    if (formDataDetay.cikisHucreId === 0 || !formDataDetay.cikisHucreId || formDataDetay.cikisHucreId== undefined) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Hatalı çıkış hücresi seçimi",
         life: 3000,
       });
       return;
@@ -677,7 +693,7 @@ const App = () => {
         cikisHucreId: formDataDetay.cikisHucreId,
         istenilenMiktar: 0,
         fiyat: 0,
-        bakiye: 0,
+        bakiye: formDataDetay.bakiye,
         olcuBirimId: formDataDetay.olcuBrId,
         olcuBr: formDataDetay.olcuBr,
       };
@@ -745,6 +761,16 @@ const App = () => {
         severity: "error",
         summary: "Hata",
         detail: "Hareket Türü seçilmelidir",
+        life: 3000,
+      });
+      return false;
+    }
+
+    if (gridData.filter(item => item.miktar > 0).length<=0) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Çıkış yapılacak stok seçilmelidir",
         life: 3000,
       });
       return false;
@@ -965,7 +991,6 @@ const App = () => {
     }
     setLoading(true);
     try {
-      debugger;
       const transferData: ITransferDataAmbarFisi = {
         belgeDto: {
             id: updateBelgeId !== 0 ? updateBelgeId : 0, 
@@ -1425,7 +1450,6 @@ const App = () => {
                   onChange={(e) => setTempStokKodu(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      debugger;
                       setSelectedStokKodu(tempStokKodu);
                       handleKeyPress();
                       if (miktarRef.current) {

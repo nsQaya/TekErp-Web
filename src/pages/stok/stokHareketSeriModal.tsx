@@ -31,7 +31,6 @@ const SeriTakibiModal: React.FC<StokHareketSeriTakibiModalProps> = ({
 
   useEffect(() => {
     if (seciliSeriler.length > 0) {
-      debugger;
       setSeriList(seciliSeriler);
     }
   }, [seciliSeriler]);
@@ -79,7 +78,7 @@ const SeriTakibiModal: React.FC<StokHareketSeriTakibiModalProps> = ({
     }
   };
 
-  const handleDeleteSeri = (index: number) => {
+  const handleDeleteSeri = (index: number):void => {
     setSeriList((prevList) => prevList.filter((_, i) => i !== index));
   };
 

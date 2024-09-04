@@ -9,6 +9,7 @@ import StockCode2Items from "../pages/stok/code2/items";
 import StockCode3Items from "../pages/stok/code3/items";
 import StockCode4Items from "../pages/stok/code4/items";
 import StockCode5Items from "../pages/stok/code5/items";
+import StockHareketlerNetsis from "../pages/stok/stokHarehetNetsis";
 
 import CariItems from "../pages/cari/cari";
 import CariGrupKoduItems from "../pages/cari/cariGrupKod";
@@ -32,6 +33,9 @@ import PlasiyerItem from "../pages/taminlamalar/plasiyer/items";
 import ProjeItem from "../pages/taminlamalar/proje/items";
 import UniteItem from "../pages/taminlamalar/unite/items";
 import BelgeSeriItem from "../pages/taminlamalar/belgeSeri/items";
+
+import KullaniciItem from "../pages/kullanici/kullanici";
+import KullaniciYetkiItem from "../pages/kullanici/kullaniciYetki";
 
 import AmbarCikisFisiListe from "../pages/fatura/ambarCikisFisiListe";
 import DepolarArasiTransferListe from "../pages/fatura/depolarArasiTransferListe";
@@ -95,6 +99,19 @@ export default createHashRouter([
         ],
       },
       {
+        path: "/kullanicilar",
+        children: [
+          {
+            path: "kullanici",
+            element: <KullaniciItem />,
+          },
+          {
+            path: "kullaniciyetki",
+            element: <KullaniciYetkiItem />,
+          }
+        ],
+      },
+      {
         path: "/stok",
         children: [
           {
@@ -124,6 +141,10 @@ export default createHashRouter([
           {
             path: "code5",
             element: <StockCode5Items />,
+          },
+          {
+            path: "stokHareketler",
+            element: <StockHareketlerNetsis />,
           },
         ],
       },

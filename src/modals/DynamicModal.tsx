@@ -6,13 +6,15 @@ import CreatableSelect from 'react-select/creatable';
 import { AxiosResponse } from "axios";
 import { Calendar } from "primereact/calendar";
 import GenericDropdown, { Filter } from "../components/GenericDropdown"; // GenericDropdown bileşenini import edin
+import { Checkbox } from "primereact/checkbox";
 
 export enum FormItemTypes {
     input,
     select,
     creatable,
     date,
-    genericDropdown
+    genericDropdown,
+    boolean
 }
 
 export interface FormSelectItem {
@@ -124,7 +126,6 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                         
                         item.type === FormItemTypes.input ? (
                             <div className={`col-md-${item.columnSize || 12} m-b-20`} key={index}>
-
                                 <input
                                     type="text"
                                     className="form-control"
@@ -170,17 +171,27 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                                     mask="99/99/9999"
                                 />
                             </div>
-                        ) : item.type === FormItemTypes.genericDropdown && item.baseApi && item.returnField && item.labelField ? (
+                        ) : item.type === FormItemTypes.boolean ? (
                             <div className={`col-md-${item.columnSize || 12} m-b-20`} key={index}>
-                                {JSON.stringify(item.additionalFilters?.map(x=>({...x,value: formItems.find(y=>y.name==x.item)?.value})))}
+                                <label htmlFor="ingredient1" className="ml-2">{item.title}</label>
+                                <Checkbox
+                                    onChange={(e) => item.setValue && item.setValue(e.target.value)}
+                                    checked={item.value}
+                                >
+                                </Checkbox>
+                            </div>
+                        ): item.type === FormItemTypes.genericDropdown && item.baseApi && item.returnField && item.labelField ? (
+                            <div className={`col-md-${item.columnSize || 12} m-b-20`} key={index}>
+                                {/* {JSON.stringify(item.additionalFilters?.map(x=>({...x,value: formItems.find(y=>y.name==x.item)?.value})))} */}
                                 <GenericDropdown
                                     value={item.value}
                                     onChange={(selected) => {
-                                        item.setValue && item.setValue(selected);
+                                        item.setValue && item.setValue(selected?.value);
                                         if (props.onChange) {
                                             props.onChange(item.name, selected?.value || null);
                                         }
                                     }}
+                                    
                                     baseApi={item.baseApi}
                                     returnField={item.returnField}
                                     labelField={item.labelField}

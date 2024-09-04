@@ -1,42 +1,97 @@
-import { createRef, useCallback,  useState } from "react";
+import { createRef, useCallback, useEffect, useRef, useState } from "react";
 import AppBreadcrumb from "../../components/AppBreadcrumb";
 import api from "../../utils/api";
 import { IStok } from "../../utils/types/stok/IStok";
 import CreateOrEditModal from "../../modals/stok/createOrEdit";
 import AppTable, { ITableRef } from "../../components/AppTable";
 import { IStokKartiWithDetail } from "../../utils/types/stok/IStokKartiWithDetail";
-import {  stokbarkodURL } from "../../utils/config";
+import { stokbarkodURL } from "../../utils/config";
 import { ColumnProps } from "primereact/column";
 import { Button } from "primereact/button";
-
+import { Toast } from "primereact/toast";
+import { ConfirmDialog } from "primereact/confirmdialog";
+import { InputText } from "primereact/inputtext";
+import { ISapKod } from "../../utils/types/stok/ISapKod";
 
 export default () => {
   const myTable = createRef<ITableRef<IStokKartiWithDetail>>();
   const [isModalShowing, setModalShowing] = useState(false);
-  const [selectedItem, setSelectedItem]= useState<IStok>();
-  const [selectedStokIDS, setSelectedStokIDS]= useState<number[]>([]);
+  const [selectedItem, setSelectedItem] = useState<IStok>();
+  const [selectedStokIDS, setSelectedStokIDS] = useState<number[]>([]);
 
+  const toast = useRef<Toast>(null);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<IStokKartiWithDetail | null>(
+    null
+  );
 
-  const onDone= useCallback(()=>{
-    myTable?.current?.refresh();
-    setModalShowing(false);
-  },[]);
-  
-  const deleteItem= useCallback(async (item: IStok)=>{
-    if(!window.confirm("Emin misin ?")) return;
-    await api.stok.delete(item.id as number);
+  const [globalFilter, setGlobalFilter] = useState<string | null>(null);
+
+  const onSuccess = () => {
+    if (selectedItem) {
+      toast.current?.show({
+        severity: "success",
+        summary: "Başarılı",
+        detail: "Başarıyla güncellendi !",
+      });
+    } else {
+      toast.current?.show({
+        severity: "success",
+        summary: "Başarılı",
+        detail: "Başarıyla eklendi !",
+      });
+    }
     myTable.current?.refresh();
-  },[])
+    setModalShowing(false);
+  };
 
-  const writeBarkods= useCallback(async()=>{
-    const {data} = await api.stok.getBarkod(selectedStokIDS);
+  const confirmDelete = useCallback(async () => {
+    if (itemToDelete) {
+      try {
+        await api.stok.delete(itemToDelete.id as number);
+        myTable.current?.refresh();
+        toast.current?.show({
+          severity: "success",
+          summary: "Başarılı",
+          detail: "Başarıyla silindi !",
+        });
+      } catch (error) {
+        console.error("Silme işleminde hata:", error);
+        toast.current?.show({
+          severity: "error",
+          summary: "Hata",
+          detail: "Silme işleminde hata oluştu !",
+        });
+      } finally {
+        setItemToDelete(null);
+        setConfirmVisible(false);
+      }
+    }
+  }, [itemToDelete]);
 
-    if(!data.status){
-      return alert("Barkod oluşturulamadı")
+  const deleteItem = (item: IStokKartiWithDetail) => {
+    setItemToDelete(item);
+    setConfirmVisible(true);
+  };
+
+  useEffect(() => {
+    if (!confirmVisible && !itemToDelete) {
+      myTable.current?.refresh();
+    }
+  }, [confirmVisible, itemToDelete]);
+
+  const writeBarkods = useCallback(async () => {
+    const { data } = await api.stok.getBarkod(selectedStokIDS);
+
+    if (!data.status) {
+      return alert("Barkod oluşturulamadı");
     }
     //window.open(stokbarkodURL+data.value.url+".pdf", '_blank');
 
-    const newWindow = window.open(stokbarkodURL+data.value.url+".pdf", '_blank');
+    const newWindow = window.open(
+      stokbarkodURL + data.value.url + ".pdf",
+      "_blank"
+    );
     if (newWindow) {
       newWindow.onload = () => {
         newWindow.print();
@@ -44,56 +99,68 @@ export default () => {
     } else {
       console.error("Yeni sekme açılırken bir hata oluştu.");
     }
+  }, [selectedStokIDS]);
 
-  },[selectedStokIDS])
-
-  
-  const columns:  ColumnProps[] = [
+  const columns: ColumnProps[] = [
     {
       field: "id",
       header: "#",
-      sortable: true
+      //filter: true,
+      //sortable: true,
     },
     {
       field: "kodu",
-      header:"Kodu",
-      filter:true,
-      sortable: true,
+      header: "Kodu",
+      //filter: true,
+      //sortable: true,
     },
     {
       field: "adi",
-      header:"Adı",
-      filter:true,
-      sortable: true,
+      header: "Adı",
+      //filter: true,
+      //sortable: true,
     },
     {
-      field: "ingilizceIsim",
-      header:"İngilizce Adı",
-      filter:true,
-      sortable: true,
+      field: "sapKods",
+      header: "SAP Kod",
+      //filter: true,
+      //sortable: true,
+      body: (rowData) =>
+        rowData.sapKods.map((item: ISapKod) => item.kod).join(", "),
     },
     {
       field: "stokGrupKodu.adi",
-      header:"Grup Kodu",
-      filter:true,
-      sortable: true,
+      header: "Grup Kodu",
+      //filter: true,
+      //sortable: true,
     },
     {
       field: "stokKod1.adi",
-      header:"Kod 1",
-      filter:true,
-      sortable: true,
+      header: "Kod 1",
+      //filter: true,
+      //sortable: true,
     },
     {
       header: "işlemler",
-      style: {minWidth:"150px"},
+      style: { minWidth: "150px" },
       body: (row) => {
         return (
           <>
-            <button className="btn btn-info ms-1" onClick={(e)=>[e.preventDefault(),setSelectedItem(row), setModalShowing(true)]}>
+            {/* {JSON.stringify(row.sapKods.map((item: { kod: any; })=>item.kod).join())} */}
+            <button
+              className="btn btn-info ms-1"
+              onClick={(e) => [
+                e.preventDefault(),
+                setSelectedItem(row),
+                setModalShowing(true),
+              ]}
+            >
               <i className="ti-pencil"></i>
             </button>
-            <button className="btn btn-danger ms-1" onClick={(e)=>[e.preventDefault(), deleteItem(row)]}>
+            <button
+              className="btn btn-danger ms-1"
+              onClick={(e) => [e.preventDefault(), deleteItem(row)]}
+            >
               <i className="ti-trash"></i>
             </button>
           </>
@@ -113,9 +180,21 @@ export default () => {
 
   return (
     <div className="container-fluid">
+      <Toast ref={toast} />
+      <ConfirmDialog
+        visible={confirmVisible}
+        onHide={() => setConfirmVisible(false)}
+        message="Silmek istediğinizden emin misiniz?"
+        header="Onay"
+        icon="pi pi-exclamation-triangle"
+        accept={confirmDelete}
+        reject={() => setConfirmVisible(false)}
+        acceptLabel="Evet"
+        rejectLabel="Hayır"
+      />
       <CreateOrEditModal
         show={isModalShowing}
-        onDone= {onDone}
+        onDone={onSuccess}
         onHide={() => setModalShowing(false)}
         selectedItem={selectedItem}
       />
@@ -125,17 +204,20 @@ export default () => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-
               <div className="table-responsive m-t-40">
                 <AppTable
-                    baseApi={api.stokWithDetail}
-                    columns={columns}
-                    key={'Stoklar'}
-                    ref={myTable}
-                    rowSelectable={true}
-                    onChangeSelected={(selected)=>setSelectedStokIDS(selected.map(x=>Number(x.id)))}
-                    appendHeader={() => {
-                      return (<>
+                  baseApi={api.stokWithDetail}
+                  columns={columns}
+                  key={"Stoklar"}
+                  ref={myTable}
+                  globalFilter={globalFilter}
+                  rowSelectable={true}
+                  onChangeSelected={(selected) =>
+                    setSelectedStokIDS(selected.map((x) => Number(x.id)))
+                  }
+                  appendHeader={() => {
+                    return (
+                      <>
                         {/* <Button
                         type="button"
                         className="p-button-secondary"
@@ -143,25 +225,46 @@ export default () => {
                       >
                         Çıktı Al
                       </Button> */}
-        
-                      <Button
-                        type="button"
-                        className="p-button-secondary"
-                        onClick={(e) => [e.preventDefault(), setModalShowing(true)]}
-                      >
-                        Yeni
-                      </Button>
-        
-                      <Button 
-                        type="button" 
-                        className="p-button-secondary" 
-                        onClick={(e) => [e.preventDefault(), writeBarkods()]}
-                        disabled={selectedStokIDS.length <= 0}
-                      >
-                        Barkod Yazdır
-                      </Button></>
-                )
-                    }}
+                        
+
+                        <Button
+                          type="button"
+                          className="p-button-secondary"
+                          onClick={(e) => [
+                            e.preventDefault(),
+                            setModalShowing(true),
+                          ]}
+                        >
+                          Yeni
+                        </Button>
+
+                        <Button
+                          type="button"
+                          className="p-button-secondary"
+                          onClick={(e) => [e.preventDefault(), writeBarkods()]}
+                          disabled={selectedStokIDS.length <= 0}
+                        >
+                          Barkod Yazdır
+                        </Button>
+                        <div className="row">
+                        <div className="p-inputgroup">
+                          <span className="p-inputgroup-addon">
+                            <i className="pi pi-search"></i>
+                          </span>
+                          <InputText
+                            type="search"
+                            onInput={(e) =>
+                              setGlobalFilter(
+                                (e.target as HTMLInputElement).value
+                              )
+                            }
+                            placeholder="Genel arama"
+                          />
+                        </div>
+                        </div>
+                      </>
+                    );
+                  }}
                 />
               </div>
             </div>

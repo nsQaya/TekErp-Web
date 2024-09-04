@@ -7,7 +7,7 @@ import axios, {
 import { useUserStore } from "../../store/userStore";
 import auth from "./auth";
 import stok, { IStokAPI } from "./stok/stok";
-import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI } from "../types";
+import { IBaseResponse, IBaseResponseValue, ICrudBaseAPI, INetsisBaseAPI } from "../types";
 import { IStokKartiWithDetail } from "../types/stok/IStokKartiWithDetail";
 import { IStokOlcuBirim } from "../types/tanimlamalar/IStokOlcuBirim";
 import { IStokKod } from "../types/stok/IStokKod";
@@ -61,6 +61,16 @@ import { IIsEmri } from "../types/planlama/IIsEmri";
 import isEmri from "../api/fatura/isEmri";
 import { ITransferDataDepolarArasiTransfer } from "../types/fatura/ITransferDataDepolarArasiTransfer";
 import { ITransferDataAmbarFisi } from "../types/fatura/ITransferDataAmbarFisi";
+import { IKullanici } from "../types/kullanici/IKullanici";
+import { IKullaniciYetki } from "../types/kullanici/IKullaniciYetki";
+import kullanici from "../api/kullanici/kullanici";
+import kullaniciYetki from "../api/kullanici/kullaniciYetki";
+import yetki from "../api/kullanici/yetki";
+import { IYetki } from "../types/kullanici/IYetki";
+import { INetsisStokHareket } from "../types/stok/INetsisStokHareket";
+import netsisStokHareket from "../api/stok/netsisStokHareket";
+
+import netsisStokHareketSeri from "../api/stok/netsisStokHareketSeri";
 
 
 var instance: AxiosInstance = axios.create({
@@ -139,6 +149,9 @@ const repositories = {
   stokHareketSeri:stokHareketSeri(instance) as unknown as ICrudBaseAPI<IStokHareketSeri>,
   stokSeriBakiye:stokHareketSeri(instance) as unknown as ICrudBaseAPI<IStokSeriBakiye>,
 
+  netsisStokHareket:netsisStokHareket(instance) as unknown as INetsisBaseAPI<INetsisStokHareket>,
+  netsisStokHareketSeri:netsisStokHareketSeri(instance) as unknown as INetsisBaseAPI<INetsisStokHareket>,
+
   cari: cari(instance) as unknown as ICrudBaseAPI<ICari>,
   // stokWithDetail: stokWithDetail(instance) as unknown as ICrudBaseAPI<IStokKartiWithDetail>,
   cariGrupKodu: cariGrupKod(instance) as unknown as ICrudBaseAPI<ICariKod>,
@@ -157,6 +170,10 @@ const repositories = {
   proje: proje(instance) as unknown as ICrudBaseAPI<IProje>,
   unite: unite(instance) as unknown as ICrudBaseAPI<IUnite>,
   belgeSeri: belgeSeri(instance) as unknown as ICrudBaseAPI<IBelgeSeri>,
+
+  kullanici: kullanici(instance) as unknown as ICrudBaseAPI<IKullanici>,
+  kullaniciYetki: kullaniciYetki(instance) as unknown as ICrudBaseAPI<IKullaniciYetki>,
+  yetki: yetki(instance) as unknown as ICrudBaseAPI<IYetki>,
 
   dovizTipi: dovizTipi(instance) as unknown as ICrudBaseAPI<IDovizTipi>,
   ihtiyacPlanlamaRapor: ihtiyacPlanlamaRapor(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlamaRapor>,

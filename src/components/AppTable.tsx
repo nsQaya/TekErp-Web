@@ -51,6 +51,7 @@ interface ITableProps {
   rowSelectable?: boolean;
   onChangeSelected?: (data: DataTableValue[]) => void;
   appendHeader?: () => React.ReactNode;
+  globalFilter?:string|null;
 }
 
 export interface ITableRef<T> {
@@ -172,7 +173,10 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   return (
     <div className="mb-3">
       <DataTable
+
+globalFilter={props.globalFilter}
         size="small"
+        frozenWidth="200px"
         stripedRows
         //scrollHeight="620px"
         tableStyle={{ minWidth: '50rem' }}

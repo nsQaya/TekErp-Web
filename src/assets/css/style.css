@@ -21759,28 +21759,28 @@ File: scss
 
 
     .row-acik-yesil {
-      background-color: #01c0c8;
-      color: white;
+      background-color: #CCFFCC;
+      color: black;
     }
     
     .row-mavi {
-      background-color: #03a9f3;
-      color: white;
+      background-color: #99CCFF;
+      color: black;
     }
     
     .row-kirmizi {
-      background-color: #e46a76;
-      color: white;
+      background-color: #FFCC99;
+      color: black;
     }
     
     .row-sari {
-      background-color: #f1c40f;
-      color: white;
+      background-color: #FFFF99;
+      color: black;
     }
     
     .row-koyu-yesil {
-      background-color: #00c292;
-      color: white;
+      background-color: #339966;
+      color: black;
     }
     
     

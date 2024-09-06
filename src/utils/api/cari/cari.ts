@@ -29,7 +29,10 @@ export default ($axios: AxiosInstance) => ({
     },
     get(id: number){
         return $axios.get<IBaseResponseValue<ICari>>(`/${controller}/${id}`);
-    }
+    },
+    getByKod(kod: string){
+        return $axios.get<IBaseResponseValue<ICari>>(`/${controller}/GetByKod?CariKod=${kod}`);
+    },
 });
 
 

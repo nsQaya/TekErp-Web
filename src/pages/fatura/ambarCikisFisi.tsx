@@ -541,7 +541,7 @@ const App = () => {
     }
 
     setLoadingGetir(true);
-    const sortColumn = "Id";
+    const sortColumn = "cikisHucre.kodu";
     const sortDirection = 1;
 
     const filters = {
@@ -751,6 +751,16 @@ const App = () => {
         severity: "error",
         summary: "Hata",
         detail: "Numara alanı boş olamaz",
+        life: 3000,
+      });
+      return false;
+    }
+
+    if (formDataBaslik.belgeNumara.length!==15) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Numara alanı 15 karekter olamaz",
         life: 3000,
       });
       return false;
@@ -1219,7 +1229,9 @@ const App = () => {
           </div>
           <div className="col-md-3 col-sm-6 mt-4">
             <div className="p-inputgroup">
-              <Button id="getirButton" label="Getir" onClick={handleGetir} />
+              <Button id="getirButton" label="Getir" onClick={handleGetir} 
+              hidden={updateBelgeId>0 }
+              />
             </div>
           </div>
           <div className="col-md-3 col-sm-6 mt-4">
@@ -1228,6 +1240,7 @@ const App = () => {
               icon="pi pi-check"
               loading={loading}
               onClick={handleSave}
+              disabled={(gridData.filter(item => item.miktar > 0).length<=0) }
             />
           </div>
         </div>
@@ -1239,7 +1252,7 @@ const App = () => {
                 <div className="p-inputgroup flex">
                   <FloatLabel>
                     <Dropdown
-                      className="w-full md:w-14rem"
+                      className="w-full md:w-5rem"
                       showClear
                       placeholder="Seri"
                       value={formDataBaslik.belgeSeri}
@@ -1257,6 +1270,7 @@ const App = () => {
                       value={formDataBaslik.belgeNumara}
                       onChange={handleInputChangeBaslik}
                       style={{ width: "100%", minWidth: "250px" }}
+                      readOnly
                     />
                     <label htmlFor="belgeNumara">Numara</label>
                   </FloatLabel>

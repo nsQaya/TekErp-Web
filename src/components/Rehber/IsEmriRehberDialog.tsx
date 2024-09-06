@@ -19,7 +19,7 @@ const IsEmriRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IIsEmr
           field: "isEmriNoId",
           // sortable: true,
           filter: true,
-          hidden:false
+          hidden:true
         },
         {
           header: "Stok Kodu",
@@ -48,9 +48,28 @@ const IsEmriRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IIsEmr
         {
           header: "Tarih",
           field: "tarih",
-          // sortable: true,
           filter: true,
-        },
+          // filterFunction: (value, filter) => {
+          //   // Tarihi 'dd-MM-yyyy' formatına çevir
+          //   const formattedDate = new Date(value).toLocaleDateString('tr-TR', {
+          //     day: '2-digit',
+          //     month: '2-digit',
+          //     year: 'numeric',
+          //   }).replace(/\./g, '-'); // Noktaları tire ile değiştir
+        
+          //   return formattedDate.includes(filter);
+          // },
+          //  body: (rowData) => {
+          //    // Tarihi 'dd-MM-yyyy' formatında göster
+          //    const formattedDate = new Date(rowData.tarih).toLocaleDateString('tr-TR', {
+          //      day: '2-digit',
+          //      month: '2-digit',
+          //      year: 'numeric',
+          //    }).replace(/\./g, '-'); // Noktaları tire ile değiştir
+        
+          //    return formattedDate;
+          //  }
+        }
       ];
 
     return (

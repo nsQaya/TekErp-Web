@@ -30,5 +30,8 @@ export default ($axios: AxiosInstance) => ({
     },
     get(id: number){
         return $axios.get<IBaseResponseValue<IIsEmri>>(`/${controller}/${id}`);
-    }
+    },
+    getByKod(kod: string){
+        return $axios.get<IBaseResponseValue<IIsEmri>>(`/${controller}/GetByKod?IsEmriNo=${kod}`);
+    },
 });

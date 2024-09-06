@@ -12,6 +12,8 @@ import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { InputText } from "primereact/inputtext";
 import { ISapKod } from "../../utils/types/stok/ISapKod";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
 
 export default () => {
   const myTable = createRef<ITableRef<IStokKartiWithDetail>>();
@@ -25,7 +27,9 @@ export default () => {
     null
   );
 
-  const [globalFilter, setGlobalFilter] = useState<string | null>(null);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [debouncedFilter, setDebouncedFilter] = useState(""); 
+
 
   const onSuccess = () => {
     if (selectedItem) {
@@ -102,12 +106,12 @@ export default () => {
   }, [selectedStokIDS]);
 
   const columns: ColumnProps[] = [
-    {
-      field: "id",
-      header: "#",
-      //filter: true,
-      //sortable: true,
-    },
+    // {
+    //   field: "id",
+    //   header: "#",
+    //   //filter: true,
+    //   //sortable: true,
+    // },
     {
       field: "kodu",
       header: "Kodu",
@@ -126,7 +130,7 @@ export default () => {
       //filter: true,
       //sortable: true,
       body: (rowData) =>
-        rowData.sapKods.map((item: ISapKod) => item.kod).join(", "),
+        rowData.sapKods.map((item: ISapKod) => item.kod).join("-"),
     },
     {
       field: "stokGrupKodu.adi",
@@ -178,6 +182,22 @@ export default () => {
   //   saveAs(blob, 'data.xlsx');
   // },[myTable])
 
+    // Debounce the global filter input
+    const handleGlobalFilterChange = useCallback(
+      (e: { target: HTMLInputElement; }) => {
+        const value = (e.target as HTMLInputElement).value;
+        setGlobalFilter(value);
+  
+        // Clear the previous timer and set a new one
+        const timer = setTimeout(() => {
+          setDebouncedFilter(value); // Apply the filter after a delay
+        }, 500); // 500ms delay
+  
+        return () => clearTimeout(timer); // Clear the timer if the input changes again
+      },
+      [setGlobalFilter]
+    );
+
   return (
     <div className="container-fluid">
       <Toast ref={toast} />
@@ -199,7 +219,7 @@ export default () => {
         selectedItem={selectedItem}
       />
 
-      <AppBreadcrumb title="Stoklar" />
+      <AppBreadcrumb title="" />
       <div className="row">
         <div className="col-12">
           <div className="card">
@@ -210,7 +230,7 @@ export default () => {
                   columns={columns}
                   key={"Stoklar"}
                   ref={myTable}
-                  globalFilter={globalFilter}
+                  globalFilter={debouncedFilter}
                   rowSelectable={true}
                   onChangeSelected={(selected) =>
                     setSelectedStokIDS(selected.map((x) => Number(x.id)))
@@ -218,50 +238,48 @@ export default () => {
                   appendHeader={() => {
                     return (
                       <>
-                        {/* <Button
-                        type="button"
-                        className="p-button-secondary"
-                        onClick={(e) => [e.preventDefault(), onExport()]}
-                      >
-                        Çıktı Al
-                      </Button> */}
-                        
+                        <IconField iconPosition="left">
+                          <div className="flex justify-content-between align-items-center gap-2">
+                            {/* Butonlar sol tarafa hizalanacak */}
+                            <div className="flex gap-2 justify-content-start">
+                              <Button
+                                type="button"
+                                className="p-button-secondary"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setModalShowing(true);
+                                }}
+                              >
+                                Yeni
+                              </Button>
 
-                        <Button
-                          type="button"
-                          className="p-button-secondary"
-                          onClick={(e) => [
-                            e.preventDefault(),
-                            setModalShowing(true),
-                          ]}
-                        >
-                          Yeni
-                        </Button>
+                              <Button
+                                type="button"
+                                className="p-button-secondary"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  writeBarkods();
+                                }}
+                                disabled={selectedStokIDS.length <= 0}
+                              >
+                                Barkod Yazdır
+                              </Button>
+                            </div>
 
-                        <Button
-                          type="button"
-                          className="p-button-secondary"
-                          onClick={(e) => [e.preventDefault(), writeBarkods()]}
-                          disabled={selectedStokIDS.length <= 0}
-                        >
-                          Barkod Yazdır
-                        </Button>
-                        <div className="row">
-                        <div className="p-inputgroup">
-                          <span className="p-inputgroup-addon">
-                            <i className="pi pi-search"></i>
-                          </span>
-                          <InputText
-                            type="search"
-                            onInput={(e) =>
-                              setGlobalFilter(
-                                (e.target as HTMLInputElement).value
-                              )
-                            }
-                            placeholder="Genel arama"
-                          />
-                        </div>
-                        </div>
+                            {/* Arama kutusu sağda olacak */}
+                            <div className="flex justify-content-end">
+                              <IconField iconPosition="left">
+                                <InputIcon className="pi pi-search" />
+                                <InputText
+                                  value={globalFilter}
+                                  onChange={handleGlobalFilterChange} // Debounced handler
+                                  placeholder="Genel arama"
+                                  style={{ width: '500px' }}
+                                />
+                              </IconField>
+                            </div>
+                          </div>
+                        </IconField>
                       </>
                     );
                   }}

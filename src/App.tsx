@@ -5,6 +5,10 @@ import { locale, addLocale,} from 'primereact/api';
 import tr from "./utils/languages/tr";
 import "./assets/css/style.css";
 import { useCallback, useEffect, useState } from "react";
+import 'primeicons/primeicons.css'; // PrimeIcons css dosyasını dahil et
+import 'primereact/resources/themes/saga-blue/theme.css'; // PrimeReact tema
+import 'primereact/resources/primereact.min.css'; // PrimeReact CSS
+import 'primeflex/primeflex.css'; // PrimeFlex için (isteğe bağlı)
 
 import mainRouter from "./routes/mainRouter";
 import authRouter from "./routes/authRouter";

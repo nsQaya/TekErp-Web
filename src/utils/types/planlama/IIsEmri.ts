@@ -5,5 +5,5 @@ export interface IIsEmri{
     miktar:number;
     olcuBirim:string;
     projeKodu:string;
-    tarih:Date;
+    tarih:string;
 }

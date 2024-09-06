@@ -317,9 +317,11 @@ const App: React.FC = () => {
           const belgeNumara = belge.no.substring(3);
           const cariKodu = await fetchCariKodu(depolarArasiTransfer.cariId);
 
+          const isEmriResponse = await api.isEmri.getByKod(depolarArasiTransfer.kaynakBelgeNo);
+
           setFormDataBaslik({
             isEmriNo: depolarArasiTransfer.kaynakBelgeNo,
-            isEmriStokAdi: "",
+            isEmriStokAdi: isEmriResponse.data.value.stokAdi,
             belgeSeri: belgeSeri,
             belgeNumara: belgeNumara,
             tarih: currentDate,
@@ -539,6 +541,28 @@ const App: React.FC = () => {
           olcuBirimId: item.olcuBirimId,
           olcuBr: item.olcuBr,
         }));
+
+        const ilkData=data.items[0];
+
+        setFormDataDetay((pre)=> ({
+          ...pre,
+        projeKodu:ilkData.projeKodu,
+        projeKoduId:ilkData.projeKoduId,
+        uniteKodu:ilkData.plasiyerKodu,
+        uniteKoduId:ilkData.uniteKoduId
+        }));
+
+        const cariResponse= await api.cari.getByKod("X150-99-0001");
+        if (cariResponse.data && cariResponse.data.status && cariResponse.data.value)
+        {
+          setFormDataBaslik((pre)=> ({
+            ...pre,
+          cariKodu:cariResponse.data.value.kodu,
+          cariId:cariResponse.data.value.id!
+          }));
+        }
+
+
 
         setGridData(newGridData);
       }

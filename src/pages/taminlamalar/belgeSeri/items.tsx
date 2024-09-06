@@ -86,17 +86,17 @@ export default () => {
       sortable: true,
       filter: true,
     },
-    {
-      header: "No",
-      field: "no",
-      sortable: true,
-    },
-    {
-      header: "BelgeNo",
-      field: "belgeNo",
-      sortable: true,
-      filter: true,
-    },
+    // {
+    //   header: "No",
+    //   field: "no",
+    //   sortable: true,
+    // },
+    // {
+    //   header: "BelgeNo",
+    //   field: "belgeNo",
+    //   sortable: true,
+    //   filter: true,
+    // },
     {
       header: "işlemler",
       body: (row) => {

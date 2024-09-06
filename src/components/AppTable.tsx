@@ -18,17 +18,17 @@ import {
   DataTableValueArray,
   DataTable,
   SortOrder,
-} from 'primereact/datatable';
-import { Column,  ColumnHeaderOptions, ColumnProps } from 'primereact/column';
-import 'primereact/resources/themes/lara-light-cyan/theme.css';
+} from "primereact/datatable";
+import { Column, ColumnHeaderOptions, ColumnProps } from "primereact/column";
+import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { Button } from "primereact/button";
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
-import { saveAs } from 'file-saver';
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
+import { saveAs } from "file-saver";
 import { transformFilter } from "../utils/transformFilter";
 import { FilterMatchMode } from "primereact/api";
 
-declare module 'jspdf' {
+declare module "jspdf" {
   interface jsPDF {
     autoTable: (
       columns: {
@@ -51,7 +51,7 @@ interface ITableProps {
   rowSelectable?: boolean;
   onChangeSelected?: (data: DataTableValue[]) => void;
   appendHeader?: () => React.ReactNode;
-  globalFilter?:string|null;
+  globalFilter?: string | null;
 }
 
 export interface ITableRef<T> {
@@ -59,7 +59,10 @@ export interface ITableRef<T> {
   data: T[];
 }
 
-function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>) {
+function ITable(
+  props: ITableProps,
+  ref: ForwardedRef<ITableRef<DataTableValue>>
+) {
   const [selectedItems, setSelectedItems] = useState<DataTableValue[]>([]);
   const table = useRef<DataTable<DataTableValue[]>>(null);
   const [data, setData] = useState<DataTableValue[]>([]);
@@ -67,26 +70,38 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   const [first, setFirst] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(0);
-  const [perPage, setPerPage] = useState((props.rowPerPageOptions && props.rowPerPageOptions[0]) || 10);
-  const [sortColumn, setSortColumn] = useState<string>('Id');
+  const [perPage, setPerPage] = useState(
+    (props.rowPerPageOptions && props.rowPerPageOptions[0]) || 10
+  );
+  const [sortColumn, setSortColumn] = useState<string>("Id");
   const [sortDirection, setSortDirection] = useState<SortOrder>(0);
   const [filters, setFilters] = useState(() => {
     return props.columns
-      .filter(column => column.filter && column.field)
+      .filter((column) => column.filter && column.field)
       .reduce((acc: any, column) => {
-        if(column.field){
-          acc[column.field] = { value: null, matchMode: FilterMatchMode.CONTAINS };
+        if (column.field) {
+          acc[column.field] = {
+            value: null,
+            matchMode: FilterMatchMode.CONTAINS,
+          };
         }
         return acc;
       }, {} as any);
   });
 
-  const exportColumns = props.columns.map((col) => ({ title: col.header, dataKey: col.field }));
+  const exportColumns = props.columns.map((col) => ({
+    title: col.header,
+    dataKey: col.field,
+  }));
 
   const fetchItems = useCallback(async () => {
     setLoading(true);
 
-    const dynamicQuery = transformFilter(filters || {}, sortColumn, sortDirection);
+    const dynamicQuery = transformFilter(
+      filters || {},
+      sortColumn,
+      sortDirection
+    );
 
     const response = await props.baseApi.getAllForGrid(
       page,
@@ -96,11 +111,9 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
     setLoading(false);
     setData(response.data.value.items);
     setTotalRows(response.data.value.count);
-
   }, [page, perPage, sortColumn, sortDirection, props.baseApi, filters]);
 
   const handleTableEvent = useCallback((event: DataTableStateEvent) => {
-
     setFirst(event.first);
     setPage(event.page || 0);
     setPerPage(event.rows);
@@ -136,50 +149,75 @@ function ITable(props: ITableProps, ref: ForwardedRef<ITableRef<DataTableValue>>
   const exportPdf = () => {
     const doc = new jsPDF();
     doc.autoTable(exportColumns, data);
-    doc.save('products.pdf');
+    doc.save("products.pdf");
   };
 
   const exportExcel = async () => {
-    const xlsx = await import('xlsx');
+    const xlsx = await import("xlsx");
     const worksheet = xlsx.utils.json_to_sheet(data);
-    const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
     const excelBuffer = xlsx.write(workbook, {
-      bookType: 'xlsx',
-      type: 'array',
+      bookType: "xlsx",
+      type: "array",
     });
-    saveAsExcelFile(excelBuffer, 'products');
+    saveAsExcelFile(excelBuffer, "products");
   };
 
   const saveAsExcelFile = (buffer: any, fileName: string) => {
-    const data = new Blob([buffer], { type: 'application/octet-stream' });
+    const data = new Blob([buffer], { type: "application/octet-stream" });
     saveAs(data, `${fileName}.xlsx`);
   };
 
   const header = (
-    <div className="flex align-items-center justify-content-end gap-2">
-      <Button type="button" rounded onClick={() => exportCSV(false)} data-pr-tooltip="CSV">
-        CSV
-      </Button>
-      <Button type="button" severity="success" rounded onClick={exportExcel} data-pr-tooltip="XLS">
-        EXCEL
-      </Button>
-      <Button type="button" severity="warning" rounded onClick={exportPdf} data-pr-tooltip="PDF">
-        PDF
-      </Button>
-      {props.appendHeader && props.appendHeader()}
+    <div className="flex justify-content-between align-items-center gap-2">
+      {/* Butonlar sola hizalanacak */}
+      <div className="flex gap-2 justify-content-start">
+        <Button
+          type="button"
+          rounded
+          onClick={() => exportCSV(false)}
+          data-pr-tooltip="CSV"
+        >
+          CSV
+        </Button>
+        <Button
+          type="button"
+          severity="success"
+          rounded
+          onClick={exportExcel}
+          data-pr-tooltip="XLS"
+        >
+          EXCEL
+        </Button>
+        <Button
+          type="button"
+          severity="warning"
+          rounded
+          onClick={exportPdf}
+          data-pr-tooltip="PDF"
+        >
+          PDF
+        </Button>
+      </div>
+
+      {/* Genel arama sağa hizalanacak */}
+      {props.appendHeader && (
+        <div className="flex justify-content-end">{props.appendHeader()}</div>
+      )}
     </div>
   );
 
   return (
     <div className="mb-3">
       <DataTable
-
-globalFilter={props.globalFilter}
+        reorderableColumns={true}
+        resizableColumns
+        globalFilter={props.globalFilter}
         size="small"
         frozenWidth="200px"
         stripedRows
         //scrollHeight="620px"
-        tableStyle={{ minWidth: '50rem' }}
+        tableStyle={{ minWidth: "50rem" }}
         scrollable
         scrollHeight="flex"
         ref={table}
@@ -204,14 +242,23 @@ globalFilter={props.globalFilter}
         sortOrder={sortDirection}
         first={first}
         //virtualScrollerOptions={{ itemSize: 46 }} //Buna bakmak gerekiyor, uzun raporlarda, alt kısmı getirdiğinde sayfa çok yavaşlıyor.
-        onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<DataTableValue[]>) => {
+        onSelectionChange={(
+          e: DataTableSelectionMultipleChangeEvent<DataTableValue[]>
+        ) => {
           setSelectedItems(e.value);
           props.onChangeSelected && props.onChangeSelected(e.value);
         }}
         selectionMode={props.rowSelectable ? "multiple" : null}
         selection={selectedItems}
       >
-        {props.rowSelectable && <Column selectionMode="multiple" headerStyle={{ width: '1rem' }} key="selectionMode" />}
+        {props.rowSelectable && (
+          <Column
+            selectionMode="multiple"
+            headerStyle={{ width: "1rem" }}
+            key="selectionMode"
+           // header={<input type="checkbox" />}
+          />
+        )}
         {props.columns.map((column, index) => (
           <Column key={index} {...column} />
         ))}

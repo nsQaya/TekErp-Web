@@ -21796,6 +21796,19 @@ File: scss
       z-index: 1050 !important; /* Modal z-index değeri */
     }
 
+    .green-row {
+      background-color: #CCFFCC;
+    }
+    
+    .yellow-row {
+      background-color: #FFFF99;
+    }
+
+    html.fullscreen {
+      width: 100%;
+      height: 100%;
+    }
+
    /* .p-datatable-tbody > tr > td {
    /* padding: 0px 0px; /* Satır içi padding (boşlukları) azaltın */
   /*  height: 10px; /* Satır yüksekliğini ayarlayın */

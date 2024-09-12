@@ -3,8 +3,8 @@ import { IHucre } from "../tanimlamalar/IHucre";
 export interface IIhtiyacPlanlamaRapor {
     id: number,
     tarih?: Date,
-    hucre?:IHucre[],
-    hucreId:number,
+    cikisHucre?:IHucre[],
+    cikisHucreId:number,
     projeKoduId:number,
     projeKodu:string,
     projeAciklama?:string,
@@ -16,6 +16,7 @@ export interface IIhtiyacPlanlamaRapor {
     stokKodu:string,
     stokAdi?:string,
     miktar:number,
+    istenilenMiktar:number,
     olcuBirimId:number,
     olcuBirim?:string,
     belgeNo?:string,

@@ -55,11 +55,7 @@ export default () => {
   }, [confirmVisible, itemToDelete]);
 
   const columns: ColumnProps[] = [
-    {
-      header: "",
-      field: "id",
-      sortable: true,
-    },
+
     {
       header: "Kodu",
       field: "kodu",
@@ -148,7 +144,7 @@ export default () => {
                   columns={columns}
                   key={"Stok Kod 3'ler"}
                   ref={myTable}
-                  rowSelectable={true}
+                  rowSelectable={false}
                   appendHeader={() => {
                     return (
                       <Button className="p-button-secondary" onClick={(e) => {

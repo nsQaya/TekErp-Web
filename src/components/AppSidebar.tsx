@@ -1,9 +1,11 @@
 import Nav from 'react-bootstrap/Nav';
 import SideBarItem from './Sidebar/Item'
 import { useState } from 'react';
-
+import { useUserStore } from '../store/userStore';
 
 export default () => {
+
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const [tanimPages] =useState([
     {title: "Ülke", href: "/tanimlamalar/ulkes"},
@@ -91,6 +93,32 @@ export default () => {
     {title: "İhtiyaç Planlama", href: "/planlama/ihtiyacPlanlama"},
     {title: "Sac Planlama", href: "/planlama/sacPlanlama"}
   ]);
+  
+  const toggleFullscreen = () => {
+    if (!isFullscreen) {
+      enterFullscreen();
+    } else {
+      exitFullscreen();
+    }
+    setIsFullscreen(!isFullscreen);
+  };
+  const enterFullscreen = () => {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    }
+  };
+  
+  const exitFullscreen = () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  };
+  const resetUserStore = useUserStore(state => state.reset);
+  const handleLogout = () => {
+    resetUserStore();
+     window.location.href = '/';
+  };
 
   return (
     <aside className="left-sidebar">
@@ -107,7 +135,16 @@ export default () => {
             <SideBarItem icon='ti-cloud-up' name='E-Belge' items={eBelgePages} count={1}/>
             <SideBarItem icon='ti-clipboard' name='Planlama' items={planlamaPages} count={1}/>
             <SideBarItem icon='ti-exchange-vertical' name='Aktarım' items={aktarimPages} count={1}/>
-            <SideBarItem icon='ti-printer' name='Rapor' items={raporPages} count={1}/>
+            <SideBarItem icon='ti-printer' name='Rapor' items={raporPages} count={1} />
+            <li>
+            <button onClick={toggleFullscreen} style={{ backgroundColor: '#007bff', color: 'white', border: 'none', padding: '10px', borderRadius: '4px', cursor: 'pointer' }}>
+   Full </button>
+            </li>
+          
+            <li>
+            <button onClick={handleLogout} style={{ backgroundColor: '#007bff', color: 'white', border: 'none', padding: '10px', borderRadius: '4px', cursor: 'pointer' }}>
+            Çıkış </button>
+            </li>
           </ul>
         </Nav>
       </div>

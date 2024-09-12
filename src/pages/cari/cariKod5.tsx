@@ -56,11 +56,6 @@ export default () => {
 
   const columns: ColumnProps[] = [
     {
-      header: "",
-      field: "id",
-      sortable: true,
-    },
-    {
       header: "Kodu",
       field: "kodu",
       sortable: true,
@@ -148,7 +143,7 @@ export default () => {
                   columns={columns}
                   key={"CariKod5s"}
                   ref={myTable}
-                  rowSelectable={true}
+                  rowSelectable={false}
                   appendHeader={() => {
                     return (
                       <Button className="p-button-secondary" onClick={(e) => {

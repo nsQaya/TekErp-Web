@@ -28,8 +28,8 @@ function App() {
     setBodyClasses((prevClasses) => {
       const newClasses = new Set(prevClasses);
       if (width < 1170) {
-        newClasses.add("mini-sidebar");
-        document.querySelector(".sidebartoggler i")?.classList.add("ti-menu");
+      newClasses.add("mini-sidebar");
+      document.querySelector(".sidebartoggler i")?.classList.add("ti-menu");
       } else {
         newClasses.delete("mini-sidebar");
         document

@@ -103,6 +103,7 @@ const GenericDialog = <T extends {}>(props: GenericDialogProps<T>) => {
   return (
     <Dialog visible={props.visible} onHide={handleHide} header="Rehber">
       <DataTable
+      style={{  minHeight:'400px' }}
         size="small"
         value={data}
         tableStyle={{ minWidth: "50rem" }}

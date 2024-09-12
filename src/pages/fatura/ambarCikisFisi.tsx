@@ -311,6 +311,22 @@ const App = () => {
         if (response.data.status && response.data.value) {
           const ambarFisi = response.data.value;
           const belge = ambarFisi.belge!;
+          if (belge.aktarimDurumu === EAktarimDurumu.AktarimTamamlandi) {
+            toast.current?.show({
+              severity: "error",
+              summary: "Hata",
+              detail: "Netsis aktarımı tamamlanmış belgede değişiklik yapılamaz. Listeye yönlendiriliyorsunuz...",
+              life: 3000,
+            });
+    
+            // 2 saniye sonra başka bir sayfaya yönlendirme
+            setTimeout(() => {
+              navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
+            }, 2000);
+    
+            return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
+          }
+          
           const belgeSeri = belge.no.substring(0, 3);
           const belgeNumara = belge.no.substring(3);
           let cikisYeriKodu = "";
@@ -547,7 +563,7 @@ const App = () => {
     const filters = {
       ProjeKodu: { value: formDataDetay.projeKodu, matchMode: "equals" },
       PlasiyerKodu: { value: formDataDetay.uniteKodu, matchMode: "equals" },
-      miktar: { value: "0", matchMode: "gt" },
+      istenilenMiktar: { value: "0", matchMode: "gt" },
     };
     const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
 
@@ -575,8 +591,8 @@ const App = () => {
           id: maxId + index + 1,
           projeKodu: item.projeKodu,
           uniteKodu: item.plasiyerKodu,
-          cikishucreKodu: item.hucre
-            ? item.hucre.map((h) => h.kodu).join(" | ")
+          cikishucreKodu: item.cikisHucre
+            ? item.cikisHucre.map((h) => h.kodu).join(" | ")
             : "",
           belgeNumara: item.belgeNo,
           stokKartiId: item.stokKartiId,
@@ -584,9 +600,9 @@ const App = () => {
           stokAdi: item.stokAdi,
           miktar: 0,
           fiyat: 0,
-          istenilenMiktar: item.miktar,
+          istenilenMiktar: item.istenilenMiktar,
           bakiye: item.bakiye,
-          cikisHucreId: item.hucreId,
+          cikisHucreId: item.cikisHucreId,
           olcuBirimId: item.olcuBirimId,
           olcuBr: item.olcuBr,
         }));
@@ -751,16 +767,6 @@ const App = () => {
         severity: "error",
         summary: "Hata",
         detail: "Numara alanı boş olamaz",
-        life: 3000,
-      });
-      return false;
-    }
-
-    if (formDataBaslik.belgeNumara.length!==15) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Hata",
-        detail: "Numara alanı 15 karekter olamaz",
         life: 3000,
       });
       return false;
@@ -1157,6 +1163,7 @@ const App = () => {
                   value={formDataDetay.projeKodu}
                   readOnly
                   disabled
+                  autoComplete="off"
                 />
                 <Button
                   label="..."
@@ -1185,6 +1192,7 @@ const App = () => {
                 name="projeKoduId"
                 value={formDataDetay.projeKoduId?.toString()}
                 type="hidden"
+                autoComplete="off"
               />
             </FloatLabel>
           </div>
@@ -1198,6 +1206,7 @@ const App = () => {
                   value={formDataDetay.uniteKodu}
                   readOnly
                   disabled
+                  autoComplete="off"
                 />
                 <Button
                   label="..."
@@ -1224,6 +1233,7 @@ const App = () => {
                 name="uniteKoduId"
                 value={formDataDetay.uniteKoduId?.toString()}
                 type="hidden"
+                autoComplete="off"
               />
             </FloatLabel>
           </div>
@@ -1271,6 +1281,7 @@ const App = () => {
                       onChange={handleInputChangeBaslik}
                       style={{ width: "100%", minWidth: "250px" }}
                       readOnly
+                      autoComplete="off"
                     />
                     <label htmlFor="belgeNumara">Numara</label>
                   </FloatLabel>
@@ -1343,6 +1354,7 @@ const App = () => {
                       value={formDataBaslik.cikisYeriKodu?.toString()}
                       readOnly
                       disabled
+                      autoComplete="off"
                     />
                     <Button
                       label="..."
@@ -1375,6 +1387,7 @@ const App = () => {
                     name="cikisYeriKoduId"
                     value={formDataBaslik.cikisYeriKoduId?.toString()}
                     type="hidden"
+                    autoComplete="off"
                   />
                 </FloatLabel>
               </div>
@@ -1390,6 +1403,7 @@ const App = () => {
                       value={formDataBaslik.aciklama1}
                       onChange={handleInputChangeBaslik}
                       style={{ width: "100%", minWidth: "250px" }}
+                      autoComplete="off"
                     />
                     <label htmlFor="aciklama1">Açıklama 1</label>
                   </FloatLabel>
@@ -1404,6 +1418,7 @@ const App = () => {
                       value={formDataBaslik.aciklama2}
                       onChange={handleInputChangeBaslik}
                       style={{ width: "100%", minWidth: "250px" }}
+                      autoComplete="off"
                     />
                     <label htmlFor="aciklama2">Açıklama 2</label>
                   </FloatLabel>
@@ -1418,6 +1433,7 @@ const App = () => {
                       value={formDataBaslik.aciklama3}
                       onChange={handleInputChangeBaslik}
                       style={{ width: "100%", minWidth: "250px" }}
+                      autoComplete="off"
                     />
                     <label htmlFor="aciklama3">Açıklama 3</label>
                   </FloatLabel>
@@ -1458,6 +1474,7 @@ const App = () => {
               <label htmlFor="stokKodu">Stok Kodu</label>
               <div className="p-inputgroup">
                 <InputText
+                autoComplete="off"
                   id="stokKodu"
                   name="stokKodu"
                   value={tempStokKodu}
@@ -1503,6 +1520,7 @@ const App = () => {
                 name="stokKartiId"
                 value={formDataDetay.stokKartiId?.toString()}
                 type="hidden"
+                autoComplete="off"
               />
             </FloatLabel>
           </div>
@@ -1514,6 +1532,7 @@ const App = () => {
                 name="stokAdi"
                 value={formDataDetay.stokAdi}
                 disabled
+                autoComplete="off"
               />
             </FloatLabel>
           </div>
@@ -1584,8 +1603,17 @@ const App = () => {
             loading={loadingGetir}
             dataKey="id"
             scrollable
-            scrollHeight="450px"
+            scrollHeight="400px"
             emptyMessage="Kayıt yok."
+            rowClassName={(rowData) => {
+              if (rowData.miktar === rowData.istenilenMiktar) {
+                return "green-row";
+              } else if (rowData.miktar > 0 && rowData.miktar < rowData.istenilenMiktar) {
+                return "yellow-row";
+              } else {
+                return "";
+              }
+            }}
             virtualScrollerOptions={{ itemSize: 46 }}
           >
             <Column field="id" header="#" />

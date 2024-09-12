@@ -72,6 +72,10 @@ export default () => {
     }
   }, [confirmVisible, itemToDelete]);
 
+  const getEnumName = (value: number) => {
+    return EBelgeTip[value];
+  };
+
   const columns: ColumnProps[] = [
 
     {
@@ -79,6 +83,9 @@ export default () => {
       field: "belgeTip",
       sortable: true,
       filter: true,
+      body:(row)=> {
+        return getEnumName(row.belgeTip);
+      }
     },
     {
       header: "Seri",

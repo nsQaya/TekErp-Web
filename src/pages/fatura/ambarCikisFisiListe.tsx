@@ -8,6 +8,9 @@ import { ColumnProps } from "primereact/column";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
+import { EAmbarHareketTur } from "../../utils/types/enums/EAmbarHareketTur";
+import { EAmbarFisiCikisYeri } from "../../utils/types/enums/EAmbarFisiCikisYeri";
+import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
 
 
 export default () => {
@@ -28,6 +31,24 @@ export default () => {
         // stokHareketResponse.data.value.items.forEach(async element => {
         //   await api.stokHareket.delete(element.id as number);
         // });
+        const belgeResponse= await api.belge.get(itemToDelete.belgeId as number);
+        if (belgeResponse.status && belgeResponse.data.value ) {
+          if (belgeResponse.data.value.aktarimDurumu === EAktarimDurumu.AktarimTamamlandi) {
+            toast.current?.show({
+              severity: "error",
+              summary: "Hata",
+              detail: "Netsis aktarımı tamamlanmış belgede değişiklik yapılamaz. Listeye yönlendiriliyorsunuz...",
+              life: 3000,
+            });
+    
+            // 2 saniye sonra başka bir sayfaya yönlendirme
+            setTimeout(() => {
+              navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
+            }, 2000);
+    
+            return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
+          }
+        }
         await api.belge.delete(itemToDelete.belgeId as number);
         myTable.current?.refresh();
         toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla silindi !" });
@@ -54,16 +75,6 @@ export default () => {
 
   const columns: ColumnProps[] = [
     {
-      field: "id",
-      header: "#",
-      sortable: false,
-    },
-    {
-      field: "belgeId",
-      header: "#",
-      sortable: false,
-    },
-    {
       field: "belge.no",
       header: "Belge No",
       sortable: true,
@@ -89,12 +100,28 @@ export default () => {
       header: "Hareket Türü",
       field: "ambarHareketTur",
       sortable: false,
-      filter: true
+      filter: true,
+      body: (row)=> {
+        return getEnumNameHareketTur(row.ambarHareketTur);
+      }
     },
     {
       header: "Çıkış Yeri",
       field: "cikisYeri",
       sortable: false,
+      body: (row)=> {
+        return getEnumNameCikisYeri(row.ambarHareketTur);
+      }
+
+    },
+    {
+      header: "Aktarım Durumu",
+      field: "belge.aktarimDurumu",
+      sortable: false,
+      filter: true,
+      body: (row)=> {
+        return getEnumNameAktarimDurumu(row.belge.aktarimDurumu);
+      }
     },
     {
       header: "İşlemler",
@@ -120,6 +147,15 @@ export default () => {
     },
   ];
 
+  const getEnumNameHareketTur = (value: number) => {
+    return EAmbarHareketTur[value];
+  };
+  const getEnumNameCikisYeri = (value: number) => {
+    return EAmbarFisiCikisYeri[value];
+  };
+  const getEnumNameAktarimDurumu = (value: number) => {
+    return EAktarimDurumu[value];
+  };
   return (
     <div className="container-fluid">
       <Toast ref={toast} />

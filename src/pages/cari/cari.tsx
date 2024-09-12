@@ -57,11 +57,6 @@ export default () => {
 
   const columns: ColumnProps[] = [
     {
-      header: "",
-      field: "id",
-      sortable: true,
-    },
-    {
       header: "Kodu",
       field: "kodu",
       sortable: true,
@@ -70,18 +65,6 @@ export default () => {
     {
       header: "Adı",
       field: "adi",
-      sortable: true,
-      filter: true
-    },
-    {
-      header: "Ülke",
-      field: "ilce.ilId",
-      sortable: true,
-      filter: true
-    },
-    {
-      header: "Ülke",
-      field: "ilce.il.ulkeId",
       sortable: true,
       filter: true
     },
@@ -316,7 +299,7 @@ export default () => {
                   columns={columns}
                   key={"Caris"}
                   ref={myTable}
-                  rowSelectable={true}
+                  rowSelectable={false}
                   appendHeader={() => {
                     return (
                       <Button className="p-button-secondary" onClick={(e) => {

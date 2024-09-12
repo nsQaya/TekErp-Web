@@ -39,7 +39,6 @@ import KullaniciYetkiItem from "../pages/kullanici/kullaniciYetki";
 
 import AmbarCikisFisiListe from "../pages/fatura/ambarCikisFisiListe";
 import DepolarArasiTransferListe from "../pages/fatura/depolarArasiTransferListe";
-import AmbarFisiEkle from "../pages/fatura/ambarFisiEkle";
 import AmbarCikisFisi from "../pages/fatura/ambarCikisFisi";
 import DepolarArasiTransferFisi from "../pages/fatura/depolarArasiTransferFisi"
 
@@ -219,10 +218,6 @@ export default createHashRouter([
           {
             path: "depolararasitransferfisi",
             element: <DepolarArasiTransferFisi />,
-          },
-          {
-            path: "ambarfisiekle",
-            element: <AmbarFisiEkle />,
           },
         ],
       },

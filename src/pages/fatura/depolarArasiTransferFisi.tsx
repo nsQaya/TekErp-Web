@@ -313,6 +313,22 @@ const App: React.FC = () => {
         if (response.data.status && response.data.value) {
           const depolarArasiTransfer = response.data.value;
           const belge = depolarArasiTransfer.belge!;
+          debugger;
+          if (belge.aktarimDurumu === EAktarimDurumu.AktarimTamamlandi) {
+            toast.current?.show({
+              severity: "error",
+              summary: "Hata",
+              detail: "Netsis aktarımı tamamlanmış belgede değişiklik yapılamaz. Listeye yönlendiriliyorsunuz...",
+              life: 3000,
+            });
+    
+            // 2 saniye sonra başka bir sayfaya yönlendirme
+            setTimeout(() => {
+              navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
+            }, 2000);
+    
+            return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
+          }
           const belgeSeri = belge.no.substring(0, 3);
           const belgeNumara = belge.no.substring(3);
           const cariKodu = await fetchCariKodu(depolarArasiTransfer.cariId);
@@ -374,6 +390,7 @@ const App: React.FC = () => {
             }));
           }
         }
+        
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -496,7 +513,7 @@ const App: React.FC = () => {
     const filters = {
       BelgeNo: { value: formDataBaslik.isEmriNo, matchMode: "equals" },
       //PlasiyerKodu: { value: formDataDetay.uniteKodu, matchMode: "equals" },
-      miktar: { value: "0", matchMode: "gt" },
+      istenilenMiktar: { value: "0", matchMode: "gt" },
     };
     const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
 
@@ -532,11 +549,11 @@ const App: React.FC = () => {
           stokAdi: item.stokAdi,
           miktar: 0,
           fiyat: 0,
-          istenilenMiktar: item.miktar,
+          istenilenMiktar: item.istenilenMiktar,
           bakiye: item.bakiye,
-          cikisHucreId: item.hucreId,
-          cikisHucreKodu: item.hucre
-            ? item.hucre.map((h) => h.kodu).join(" | ")
+          cikisHucreId: item.cikisHucreId,
+          cikisHucreKodu: item.cikisHucre
+            ? item.cikisHucre.map((h) => h.kodu).join(" | ")
             : "",
           olcuBirimId: item.olcuBirimId,
           olcuBr: item.olcuBr,
@@ -978,6 +995,7 @@ const App: React.FC = () => {
                   value={formDataBaslik.isEmriNo}
                   readOnly
                   disabled
+                  autoComplete="off"
                 />
                 <Button
                   label="..."
@@ -1008,7 +1026,7 @@ const App: React.FC = () => {
               value={formDataBaslik.isEmriStokAdi}
               readOnly
               disabled
-              //type="hidden"
+              autoComplete="off"
             />
           </div>
 
@@ -1034,7 +1052,7 @@ const App: React.FC = () => {
                 <div className="p-inputgroup flex">
                   <FloatLabel>
                     <Dropdown
-                      className="w-full md:w-14rem"
+                      className="w-full md:w-5rem"
                       showClear
                       placeholder="Seri"
                       value={formDataBaslik.belgeSeri}
@@ -1051,7 +1069,8 @@ const App: React.FC = () => {
                       name="numara"
                       value={formDataBaslik.belgeNumara}
                       onChange={handleInputChangeBaslik}
-                      style={{ width: "100%", minWidth: "250px" }}
+                      style={{ width: "100%", minWidth: "250px" }} 
+                      autoComplete="off"
                     />
                     <label htmlFor="numara">Numara</label>
                   </FloatLabel>
@@ -1097,7 +1116,7 @@ const App: React.FC = () => {
                       name="girisHucreKodu"
                       value={formDataDetay.girisHucreKodu?.toString()}
                       readOnly
-                      disabled
+                      disabled autoComplete="off"
                     />
                     <Button
                       label="..."
@@ -1132,7 +1151,7 @@ const App: React.FC = () => {
                     id="girisHucreId"
                     name="girisHucreId"
                     value={formDataDetay.girisHucreId?.toString()}
-                    type="hidden"
+                    type="hidden" autoComplete="off"
                   />
                 </FloatLabel>
               </div>
@@ -1146,7 +1165,7 @@ const App: React.FC = () => {
                       name="cariKodu"
                       value={formDataBaslik.cariKodu?.toString()}
                       readOnly
-                      disabled
+                      disabled autoComplete="off"
                     />
                     <Button
                       label="..."
@@ -1181,7 +1200,7 @@ const App: React.FC = () => {
                     id="cariId"
                     name="cariId"
                     value={formDataBaslik.cariId?.toString()}
-                    type="hidden"
+                    type="hidden" autoComplete="off"
                   />
                 </FloatLabel>
               </div>
@@ -1194,7 +1213,7 @@ const App: React.FC = () => {
                       name="projeKodu"
                       value={formDataDetay.projeKodu}
                       readOnly
-                      disabled
+                      disabled autoComplete="off"
                     />
                     <Button
                       label="..."
@@ -1223,7 +1242,7 @@ const App: React.FC = () => {
                     id="projeKoduId"
                     name="projeKoduId"
                     value={formDataDetay.projeKoduId?.toString()}
-                    type="hidden"
+                    type="hidden" autoComplete="off"
                   />
                 </FloatLabel>
               </div>
@@ -1236,7 +1255,7 @@ const App: React.FC = () => {
                   name="uniteKodu"
                   value={formDataDetay.uniteKodu}
                   readOnly
-                  disabled
+                  disabled autoComplete="off"
                 />
                 <Button
                   label="..."
@@ -1262,7 +1281,7 @@ const App: React.FC = () => {
                 id="uniteKoduId"
                 name="uniteKoduId"
                 value={formDataDetay.uniteKoduId?.toString()}
-                type="hidden"
+                type="hidden" autoComplete="off"
               />
             </FloatLabel>
           </div>
@@ -1278,7 +1297,7 @@ const App: React.FC = () => {
                       name="aciklama1"
                       value={formDataBaslik.aciklama1}
                       onChange={handleInputChangeBaslik}
-                      style={{ width: "100%", minWidth: "250px" }}
+                      style={{ width: "100%", minWidth: "250px" }} autoComplete="off"
                     />
                     <label htmlFor="aciklama1">Açıklama 1</label>
                   </FloatLabel>
@@ -1292,7 +1311,7 @@ const App: React.FC = () => {
                       name="aciklama2"
                       value={formDataBaslik.aciklama2}
                       onChange={handleInputChangeBaslik}
-                      style={{ width: "100%", minWidth: "250px" }}
+                      style={{ width: "100%", minWidth: "250px" }} autoComplete="off"
                     />
                     <label htmlFor="aciklama2">Açıklama 2</label>
                   </FloatLabel>
@@ -1306,7 +1325,7 @@ const App: React.FC = () => {
                       name="aciklama3"
                       value={formDataBaslik.aciklama3}
                       onChange={handleInputChangeBaslik}
-                      style={{ width: "100%", minWidth: "250px" }}
+                      style={{ width: "100%", minWidth: "250px" }} autoComplete="off"
                     />
                     <label htmlFor="aciklama3">Açıklama 3</label>
                   </FloatLabel>
@@ -1346,7 +1365,7 @@ const App: React.FC = () => {
             <FloatLabel>
               <label htmlFor="stokKodu">Stok Kodu</label>
               <div className="p-inputgroup">
-                <InputText
+                <InputText  autoComplete="off"
                   id="stokKodu"
                   name="stokKodu"
                   value={tempStokKodu}
@@ -1390,7 +1409,7 @@ const App: React.FC = () => {
                 id="stokKartiId"
                 name="stokKartiId"
                 value={formDataDetay.stokKartiId?.toString()}
-                type="hidden"
+                type="hidden" autoComplete="off"
               />
             </FloatLabel>
           </div>
@@ -1401,7 +1420,7 @@ const App: React.FC = () => {
                 id="stokAdi"
                 name="stokAdi"
                 value={formDataDetay.stokAdi}
-                disabled
+                disabled autoComplete="off"
               />
             </FloatLabel>
           </div>
@@ -1476,8 +1495,17 @@ const App: React.FC = () => {
             loading={loadingGetir}
             dataKey="id"
             scrollable
-            scrollHeight="450px"
+            scrollHeight="400px"
             emptyMessage="Kayıt yok."
+            rowClassName={(rowData) => {
+              if (rowData.miktar === rowData.istenilenMiktar) {
+                return "green-row";
+              } else if (rowData.miktar > 0 && rowData.miktar < rowData.istenilenMiktar) {
+                return "yellow-row";
+              } else {
+                return "";
+              }
+            }}
             virtualScrollerOptions={{ itemSize: 46 }}
           >
             <Column field="id" header="#" />

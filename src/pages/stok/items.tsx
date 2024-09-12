@@ -106,13 +106,7 @@ export default () => {
   }, [selectedStokIDS]);
 
   const columns: ColumnProps[] = [
-    // {
-    //   field: "id",
-    //   header: "#",
-    //   //filter: true,
-    //   //sortable: true,
-    // },
-    {
+     {
       field: "kodu",
       header: "Kodu",
       //filter: true,

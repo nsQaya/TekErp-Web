@@ -8,6 +8,8 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { IDepolarArasiTransfer } from "../../utils/types/fatura/IDepolarArasiTransfer";
+import { EAmbarHareketTur } from "../../utils/types/enums/EAmbarHareketTur";
+import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
 
 export default () => {
   const myTable = createRef<ITableRef<IDepolarArasiTransfer>>();
@@ -36,6 +38,24 @@ export default () => {
         //   );
         //   await api.stokHareket.delete(element.id as number);
         // });
+        const belgeResponse= await api.belge.get(itemToDelete.belgeId as number);
+        if (belgeResponse.status && belgeResponse.data.value ) {
+          if (belgeResponse.data.value.aktarimDurumu === EAktarimDurumu.AktarimTamamlandi) {
+            toast.current?.show({
+              severity: "error",
+              summary: "Hata",
+              detail: "Netsis aktarımı tamamlanmış belgede değişiklik yapılamaz. Listeye yönlendiriliyorsunuz...",
+              life: 3000,
+            });
+    
+            // 2 saniye sonra başka bir sayfaya yönlendirme
+            setTimeout(() => {
+              navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
+            }, 2000);
+    
+            return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
+          }
+        }
 
         await api.belge.delete(itemToDelete.belgeId as number);//transaction yapısı bacend e yüklendi.
         myTable.current?.refresh();
@@ -69,17 +89,13 @@ export default () => {
     }
   }, [confirmVisible, itemToDelete]);
 
+  const getEnumName = (value: number) => {
+    return EAmbarHareketTur[value];
+  };
+  const getEnumNameAktarimDurumu = (value: number) => {
+    return EAktarimDurumu[value];
+  };
   const columns: ColumnProps[] = [
-    {
-      field: "id",
-      header: "#",
-      sortable: false,
-    },
-    {
-      field: "belgeId",
-      header: "#",
-      sortable: false,
-    },
     {
       field: "belge.no",
       header: "Belge No",
@@ -106,11 +122,18 @@ export default () => {
       field: "ambarHareketTur",
       sortable: false,
       filter: true,
+      body: (row)=> {
+        return getEnumName(row.ambarHareketTur);
+      }
     },
     {
-      header: "Çıkış Yeri",
-      field: "cikisYeri",
+      header: "Aktarım Durumu",
+      field: "belge.aktarimDurumu",
       sortable: false,
+      filter: true,
+      body: (row)=> {
+        return getEnumNameAktarimDurumu(row.belge.aktarimDurumu);
+      }
     },
     {
       header: "İşlemler",

@@ -100,6 +100,8 @@ export interface IRaporBaseAPI<T> {
 }
 
 export interface INetsisBaseAPI<T> {
+  getAllNetsisStokHareket: (kod: string,depoKodu:string,netsisSirketKodu:string) => Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>;
+  getAll2: (kod: string,depoKodu:string) => Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>;
   getAll: (kod: string) => Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>;
   get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
 }

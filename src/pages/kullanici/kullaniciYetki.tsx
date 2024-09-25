@@ -107,6 +107,10 @@ const KullaniciYetki: React.FC = () => {
   };
   const handleSave = async () => {
     if (selectedUser) {
+
+      await api.kullaniciYetki.deleteByString(selectedUser.id!);
+
+
       const kullaniciYetkiler: IKullaniciYetki[] = userPermissions.map(
         (permission) => ({
           userId: selectedUser.id!,

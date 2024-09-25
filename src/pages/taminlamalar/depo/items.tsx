@@ -65,6 +65,12 @@ export default () => {
       sortable: true,
       filter: true
     },
+    {
+      header: "Adı",
+      field:"adi",
+      sortable: true,
+      filter: true
+    },
 
     {
       header: "İşlemler",
@@ -99,6 +105,11 @@ export default () => {
     {
       title: "Kodu",
       name: "kodu",
+      type: FormItemTypes.input
+    },
+    {
+      title: "Adı",
+      name: "adi",
       type: FormItemTypes.input
     }
   ] as IFormItem[];

@@ -1244,6 +1244,13 @@ const App = () => {
               />
             </div>
           </div>
+          {/* <div className="col-md-3 col-sm-6 mt-4">
+            <div className="p-inputgroup">
+              <Button id="barkodButton" label="Barkod" onClick={handleGetir} 
+              hidden={updateBelgeId>0 }
+              />
+            </div>
+          </div> */}
           <div className="col-md-3 col-sm-6 mt-4">
             <Button
               label="Kaydet"

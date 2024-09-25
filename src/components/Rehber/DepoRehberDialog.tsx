@@ -1,11 +1,10 @@
 import { ColumnProps } from "primereact/column";
 import api from "../../utils/api";
 import GenericDialog from "../GenericDialog"
-import { IProje } from "../../utils/types/tanimlamalar/IProje";
+import { IDepo } from "../../utils/types/tanimlamalar/IDepo";
 
 
-
-const ProjeRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IProje) => void; onHide: () => void }> = (props) => {
+const HucreRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IDepo) => void; onHide: () => void }> = (props) => {
     const columns: ColumnProps[] = [
         {
           header: "Kodu",
@@ -14,18 +13,20 @@ const ProjeRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IProje)
           filter: true,
         },
         {
-          header: "Açıklama",
-          field: "aciklama",
+          header: "Adi",
+          field: "adi",
           sortable: true,
           filter: true,
-        },
+        }
+
+
       ];
 
     return (
         <GenericDialog
             visible={props.isVisible}
             onHide={props.onHide}
-            baseApi={api.proje}
+            baseApi={api.depo}
             columns={columns}
             returnField="kodu"
             onSelect={props.onSelect}
@@ -33,4 +34,4 @@ const ProjeRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IProje)
           />
     )
 };
-export default ProjeRehberDialog;
+export default HucreRehberDialog;

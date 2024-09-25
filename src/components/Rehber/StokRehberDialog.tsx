@@ -10,13 +10,13 @@ const StokRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IStok) =
         {
           header: "Kodu",
           field: "kodu",
-          // sortable: true,
+          sortable: true,
           filter: true,
         },
         {
           header: "Adı",
           field: "adi",
-          // sortable: true,
+          sortable: true,
           filter: true,
         },
         {
@@ -42,6 +42,7 @@ const StokRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IStok) =
             columns={columns}
             returnField="kodu"
             onSelect={props.onSelect}
+            defaultSortField="kodu"
           />
     )
 };

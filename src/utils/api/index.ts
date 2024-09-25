@@ -71,6 +71,8 @@ import { INetsisStokHareket } from "../types/stok/INetsisStokHareket";
 import netsisStokHareket from "../api/stok/netsisStokHareket";
 
 import netsisStokHareketSeri from "../api/stok/netsisStokHareketSeri";
+import { INetsisSirket } from "../types/tanimlamalar/INetsisSirket";
+import netsisSirket from "../api/tanimlamalar/netsisSirket";
 
 
 var instance: AxiosInstance = axios.create({
@@ -170,6 +172,7 @@ const repositories = {
   proje: proje(instance) as unknown as ICrudBaseAPI<IProje>,
   unite: unite(instance) as unknown as ICrudBaseAPI<IUnite>,
   belgeSeri: belgeSeri(instance) as unknown as ICrudBaseAPI<IBelgeSeri>,
+  netsisSirket: netsisSirket(instance) as unknown as ICrudBaseAPI<INetsisSirket>,
 
   kullanici: kullanici(instance) as unknown as ICrudBaseAPI<IKullanici>,
   kullaniciYetki: kullaniciYetki(instance) as unknown as ICrudBaseAPI<IKullaniciYetki>,

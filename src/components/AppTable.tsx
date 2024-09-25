@@ -52,6 +52,7 @@ interface ITableProps {
   onChangeSelected?: (data: DataTableValue[]) => void;
   appendHeader?: () => React.ReactNode;
   globalFilter?: string | null;
+  scrollHeight?: string | null;
 }
 
 export interface ITableRef<T> {
@@ -219,7 +220,7 @@ function ITable(
         //scrollHeight="620px"
         tableStyle={{ minWidth: "50rem" }}
         scrollable
-        scrollHeight="flex"
+        scrollHeight= {props.scrollHeight? props.scrollHeight:"flex"}
         ref={table}
         rowClassName={props.rowStyles}
         header={header}

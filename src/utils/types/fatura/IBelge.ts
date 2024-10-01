@@ -3,7 +3,7 @@ import { EBelgeTip } from "../enums/EBelgeTip";
 
 
 export  interface IBelge{
-    id:number,
+    id?:number,
     belgeTip:EBelgeTip,
     no:string,
     tarih:Date,

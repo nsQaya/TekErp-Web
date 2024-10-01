@@ -35,4 +35,5 @@ export enum EBelgeTip{
     Irsaliye=904,
     EFatura=905,
     EIrsaliye=906,
+    SatinalmaTalep=907
     }

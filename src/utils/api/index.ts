@@ -74,6 +74,12 @@ import netsisStokHareketSeri from "../api/stok/netsisStokHareketSeri";
 import { INetsisSirket } from "../types/tanimlamalar/INetsisSirket";
 import netsisSirket from "../api/tanimlamalar/netsisSirket";
 
+import { ITalepTeklif } from "../types/fatura/ITalepTeklif";
+import talepTeklif from "../api/fatura/talepTeklif";
+import { ITalepTeklifSaveData } from "../types/fatura/ITalepTeklifSaveData";
+import talepTeklifStokHareket from "../api/fatura/talepTeklifStokHareket";
+import { ITalepTeklifStokHareket } from "../types/fatura/ITalepTeklifStokHareket";
+
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
@@ -184,11 +190,18 @@ const repositories = {
   isEmri: isEmri(instance) as unknown as ICrudBaseAPI<IIsEmri>,
 
   belge:belge(instance) as unknown as ICrudBaseAPI<IBelge>,
+
   ambarFisi:ambarCikisFisi(instance) as unknown as ICrudBaseAPI<IAmbarFisi>,
   ambarFisiSave:ambarCikisFisi(instance) as unknown as ICrudBaseAPI<ITransferDataAmbarFisi>,
+
   depolarArasiTransfer:depolarArasiTransfer(instance) as unknown as ICrudBaseAPI<IDepolarArasiTransfer>,
   depolarArasiTransferSave:depolarArasiTransfer(instance) as unknown as ICrudBaseAPI<ITransferDataDepolarArasiTransfer>,
-  belgeNo:belge(instance) as unknown as ICrudBaseAPI<IBelgeNo>
+
+  belgeNo:belge(instance) as unknown as ICrudBaseAPI<IBelgeNo>,
+
+  talepTeklif:talepTeklif(instance) as unknown as ICrudBaseAPI<ITalepTeklif>,
+  talepTeklifSave:talepTeklif(instance) as unknown as ICrudBaseAPI<ITalepTeklifSaveData>,
+  talepTeklifStokHareket:talepTeklifStokHareket(instance) as unknown as ICrudBaseAPI<ITalepTeklifStokHareket>
 
 };
 

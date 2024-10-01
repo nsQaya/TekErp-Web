@@ -150,6 +150,8 @@ const App: React.FC = () => {
 
   //const [hataMesaji, setHataMesaji] = useState("");
 
+  const[belgeReadOnly,setBelgeReadOnly]=useState<boolean>(false);
+
   const [gridData, setGridData] = useState<GridData[]>([]);
   const toast = useRef<Toast>(null);
   const [visible, setVisible] = useState(false);
@@ -170,6 +172,7 @@ const App: React.FC = () => {
   const [seriBakiyeler, setSeriBakiyeler] = useState<IStokSeriBakiye[]>([]);
   const [seciliSeriler, setSeciliSeriler] = useState<IStokHareketSeri[]>([]);
 
+  const handleFocus = (event: { target: { select: () => any; }; }) => event.target.select();
 
   const handleCikisHucreChange = useCallback(
     (e: any) => {
@@ -321,13 +324,15 @@ const App: React.FC = () => {
               detail: "Netsis aktarımı tamamlanmış belgede değişiklik yapılamaz. Listeye yönlendiriliyorsunuz...",
               life: 3000,
             });
+
+            setBelgeReadOnly(true);
     
-            // 2 saniye sonra başka bir sayfaya yönlendirme
-            setTimeout(() => {
-              navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
-            }, 2000);
+            // // 2 saniye sonra başka bir sayfaya yönlendirme
+            // setTimeout(() => {
+            //   navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
+            // }, 2000);
     
-            return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
+            // return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
           }
           const belgeSeri = belge.no.substring(0, 3);
           const belgeNumara = belge.no.substring(3);
@@ -413,6 +418,7 @@ const App: React.FC = () => {
   };
 
   const miktarRef = useRef<any>(null);
+  const stokKoduInputRef = useRef<any>(null);
 
   const handleKeyPress = useCallback(async () => {
     setFormDataDetay((prevFormData) => ({
@@ -730,6 +736,10 @@ const App: React.FC = () => {
         setCikisHucreOptions([]);
       }
     }
+
+    if (stokKoduInputRef.current) {
+      stokKoduInputRef.current.focus();
+    }
     // if (formDataDetay.miktar != formDataDetay.seri?.reduce((acc,curr)=> acc+curr.miktar,0))
     //   setHataMesaji(formDataDetay.miktar.toString() + " " + formDataDetay.seri?.reduce((acc,curr)=> acc+curr.miktar,0) +" hatalı");
     // else
@@ -1041,6 +1051,8 @@ const App: React.FC = () => {
               icon="pi pi-check"
               loading={loading}
               onClick={handleSave}
+              disabled={(gridData.filter(item => item.miktar > 0).length<=0) }
+              visible={!belgeReadOnly}
             />
           </div>
         </div>
@@ -1366,6 +1378,7 @@ const App: React.FC = () => {
               <label htmlFor="stokKodu">Stok Kodu</label>
               <div className="p-inputgroup">
                 <InputText  autoComplete="off"
+                ref={stokKoduInputRef}
                   id="stokKodu"
                   name="stokKodu"
                   value={tempStokKodu}
@@ -1436,6 +1449,7 @@ const App: React.FC = () => {
                 maxFractionDigits={5}
                 disabled
                 inputStyle={{ textAlign: "right" }}
+                onFocus={handleFocus}
               />
             </FloatLabel>
           </div>
@@ -1484,7 +1498,7 @@ const App: React.FC = () => {
          {hataMesaji}
         </div>)} */}
         <div className="p-col-12  mt-3">
-          <Button label="Ekle" icon="pi pi-plus" onClick={handleAddToGrid} />
+          <Button label="Ekle" icon="pi pi-plus" onClick={handleAddToGrid} disabled={belgeReadOnly} />
         </div>
         <div className="p-col-12">
           <DataTable

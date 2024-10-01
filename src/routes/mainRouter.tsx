@@ -41,6 +41,9 @@ import AmbarCikisFisiListe from "../pages/fatura/ambarCikisFisiListe";
 import DepolarArasiTransferListe from "../pages/fatura/depolarArasiTransferListe";
 import AmbarCikisFisi from "../pages/fatura/ambarCikisFisi";
 import DepolarArasiTransferFisi from "../pages/fatura/depolarArasiTransferFisi"
+import TalepTeklifListe from "../pages/fatura/talepTeklifListe";
+import api from "../utils/api";
+import SatinalmaTalepFisi from "../pages/fatura/satinalmaTalepFisi";
 
 
 export default createHashRouter([
@@ -218,6 +221,23 @@ export default createHashRouter([
           {
             path: "depolararasitransferfisi",
             element: <DepolarArasiTransferFisi />,
+          },
+        ],
+      },
+      {
+        path: "/talepsiparis",
+        children: [
+          {
+            path: "satinalmatalepliste",
+            element: <TalepTeklifListe baseApi={api.talepTeklif} navigatePath="/talepsiparis/satinalmatalepfisi" />,
+          },
+          {
+            path: "satinalmatalepfisi",
+            element:<SatinalmaTalepFisi/>,
+          },
+          {
+            path: "satistalepliste",
+            element: <TalepTeklifListe baseApi={api.talepTeklif} navigatePath="/talepsiparis/satistalepfisi" />,
           },
         ],
       },

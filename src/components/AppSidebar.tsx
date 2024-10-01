@@ -49,13 +49,18 @@ export default () => {
   ]);
 
   const [faturaPages] =useState([
-    {title: "Satış Faturası", href: "/fatura/satisfaturaliste"},
-    {title: "Alış Faturası", href: "/fatura/alisfaturaliste"},
-    {title: "Satış İrsaliyesi", href: "/fatura/satisirsaliyeliste"},
-    {title: "Alış İrsaliyesi", href: "/fatura/alisirsaliyeliste"},
+   // {title: "Satış Faturası", href: "/fatura/satisfaturaliste"},
+   // {title: "Alış Faturası", href: "/fatura/alisfaturaliste"},
+   // {title: "Satış İrsaliyesi", href: "/fatura/satisirsaliyeliste"},
+   // {title: "Alış İrsaliyesi", href: "/fatura/alisirsaliyeliste"},
     {title: "Ambar Çıkış Fişi", href: "/fatura/ambarcikisfisiliste"},
-    {title: "Ambar Giriş Fişi", href: "/fatura/ambargirisfisiliste"},
+   // {title: "Ambar Giriş Fişi", href: "/fatura/ambargirisfisiliste"},
     {title: "Depolar Arası Transfer", href: "/fatura/depolararasitransferliste"},
+  ]);
+
+  const [talepSiparis] =useState([
+    {title: "Satın Alma Talep", href: "/talepsiparis/satinalmatalepliste"},
+    //{title: "Satış Talep", href: "/talepsiparis/satistalepliste"},
   ]);
 
   const [eBelgePages] =useState([
@@ -65,23 +70,23 @@ export default () => {
 
   const [aktarimPages] =useState([
     {title: "Stok Aktarım", href: "/"},
-    {title: "Stok Kod1 Aktarım", href: "/"},
-    {title: "Stok Kod2 Aktarım", href: "/"},
-    {title: "Stok Kod3 Aktarım", href: "/"},
-    {title: "Stok Kod4 Aktarım", href: "/"},
-    {title: "Stok Kod5 Aktarım", href: "/"},
-    {title: "Cari Aktarım", href: "/"},
-    {title: "Cari Kod1 Aktarım", href: "/"},
-    {title: "Cari Kod2 Aktarım", href: "/"},
-    {title: "Cari Kod3 Aktarım", href: "/"},
-    {title: "Cari Kod4 Aktarım", href: "/"},
-    {title: "Cari Kod5 Aktarım", href: "/"},
-    {title: "Proje Kodu Aktarım", href: "/"},
-    {title: "Ünite Kodu Aktarım", href: "/"},
-    {title: "Depo Aktarım", href: "/"},
-    {title: "Hücre Aktarım", href: "/"},
-    {title: "Döviz Tipi Aktarım", href: "/"},
-    {title: "Plasiyer Kodu Aktarım", href: "/"},
+    // {title: "Stok Kod1 Aktarım", href: "/"},
+    // {title: "Stok Kod2 Aktarım", href: "/"},
+    // {title: "Stok Kod3 Aktarım", href: "/"},
+    // {title: "Stok Kod4 Aktarım", href: "/"},
+    // {title: "Stok Kod5 Aktarım", href: "/"},
+    // {title: "Cari Aktarım", href: "/"},
+    // {title: "Cari Kod1 Aktarım", href: "/"},
+    // {title: "Cari Kod2 Aktarım", href: "/"},
+    // {title: "Cari Kod3 Aktarım", href: "/"},
+    // {title: "Cari Kod4 Aktarım", href: "/"},
+    // {title: "Cari Kod5 Aktarım", href: "/"},
+    // {title: "Proje Kodu Aktarım", href: "/"},
+    // {title: "Ünite Kodu Aktarım", href: "/"},
+    // {title: "Depo Aktarım", href: "/"},
+    // {title: "Hücre Aktarım", href: "/"},
+    // {title: "Döviz Tipi Aktarım", href: "/"},
+    // {title: "Plasiyer Kodu Aktarım", href: "/"},
   ]);
 
   const [raporPages] =useState([
@@ -132,6 +137,7 @@ export default () => {
             <SideBarItem icon='ti-dropbox' name='Stok' items={stokPages} count={1}/>
             <SideBarItem icon='ti-id-badge' name='Cari' items={cariPages} count={1}/>
             <SideBarItem icon='ti-write' name='Fatura' items={faturaPages} count={1}/>
+            <SideBarItem icon='ti-write' name='Talep Sipariş' items={talepSiparis} count={1}/>
             <SideBarItem icon='ti-cloud-up' name='E-Belge' items={eBelgePages} count={1}/>
             <SideBarItem icon='ti-clipboard' name='Planlama' items={planlamaPages} count={1}/>
             <SideBarItem icon='ti-exchange-vertical' name='Aktarım' items={aktarimPages} count={1}/>

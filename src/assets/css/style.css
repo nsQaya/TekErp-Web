@@ -3460,6 +3460,7 @@ textarea.form-control-lg {
     color: #fff; }
 
 .card {
+  
   position: relative;
   display: flex;
   flex-direction: column;
@@ -21808,6 +21809,13 @@ File: scss
       width: 100%;
       height: 100%;
     }
+
+    .cardDrop {
+      background: var(--surface-card);
+      padding: 2rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+  }
 
 
    /* .p-datatable-tbody > tr > td {

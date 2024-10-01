@@ -127,6 +127,8 @@ const App = () => {
     cikisKoduDialog: false,
   });
 
+  const[belgeReadOnly,setBelgeReadOnly]=useState<boolean>(false);
+
   const [gridData, setGridData] = useState<GridData[]>([]);
   const toast = useRef<Toast>(null);
   const [visible, setVisible] = useState(false);
@@ -315,16 +317,18 @@ const App = () => {
             toast.current?.show({
               severity: "error",
               summary: "Hata",
-              detail: "Netsis aktarımı tamamlanmış belgede değişiklik yapılamaz. Listeye yönlendiriliyorsunuz...",
+              detail: "Netsis aktarımı tamamlanmış belgede değişiklik yapılamaz...",
               life: 3000,
             });
+            setBelgeReadOnly(true);
     
-            // 2 saniye sonra başka bir sayfaya yönlendirme
-            setTimeout(() => {
-              navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
-            }, 2000);
+            // // 2 saniye sonra başka bir sayfaya yönlendirme
+            // setTimeout(() => {
+            //   navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
+            // }, 2000);
     
-            return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
+            // return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
+
           }
           
           const belgeSeri = belge.no.substring(0, 3);
@@ -433,6 +437,7 @@ const App = () => {
   };
 
   const miktarRef = useRef<any>(null);
+  const stokKoduInputRef = useRef<any>(null);
 
   //stok getirme, gridden stok düzeltme, stok kodu okutunca bilgilerini getirme işlemleri
   const handleKeyPress = useCallback(async () => {
@@ -721,6 +726,11 @@ const App = () => {
     setFormDataDetay((formData) => ({ ...formData,stokKartiId:0, stokAdi: "", miktar: 0,istenilenMiktar:0,bakiye:0 }));
     setSelectedId(0);
     setHucreOptions([]);
+
+    if (stokKoduInputRef.current) {
+      stokKoduInputRef.current.focus();
+    }
+
   }, [formDataDetay, gridData, hucreOptions, selectedStokKodu, selectedHucre]);
 
   //Silme onaylaması yapıldıktan sonra
@@ -816,191 +826,6 @@ const App = () => {
     }
     return true;
   };
-
-  //bütün belgeyi backende gönderiyor.
-  // const handleSave = useCallback(async () => {
-  //   if (!validateForm()) {
-  //     return;
-  //   }
-  //   setLoading(true);
-  //   try {
-  //     if (updateBelgeId !== 0) {
-  //       const updateStokHareketResponse =
-  //         await api.stokHareket.getListByBelgeId(updateBelgeId);
-
-  //       if (updateStokHareketResponse.data.value) {
-  //         await Promise.all(
-  //           updateStokHareketResponse.data.value.items.map(async (element) => {
-  //             const silHareket = await api.stokHareket.delete(element.id!);
-  //             if (!silHareket.data.status) {
-  //               throw new Error(
-  //                 (silHareket.data.errors &&
-  //                   silHareket.data.errors[0].Errors &&
-  //                   silHareket.data.errors[0].Errors[0]) ||
-  //                   "Stok Hareket Silme İşleminde Hata"
-  //               );
-  //             }
-  //           })
-  //         );
-  //       }
-  //     }
-
-  //     let belgeResponse;
-
-  //     if (updateBelgeId !== 0) {
-  //       belgeResponse = await api.belge.update({
-  //         id: updateBelgeId,
-  //         belgeTip: EBelgeTip.AmbarCikisFisi,
-  //         no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
-  //         tarih: formDataBaslik.tarih,
-  //         aciklama1: formDataBaslik.aciklama1,
-  //         aciklama2: formDataBaslik.aciklama2,
-  //         aciklama3: formDataBaslik.aciklama3,
-  //         tamamlandi: false,
-  //       });
-  //     } else {
-  //       belgeResponse = await api.belge.create({
-  //         belgeTip: EBelgeTip.AmbarCikisFisi,
-  //         no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
-  //         tarih: formDataBaslik.tarih,
-  //         aciklama1: formDataBaslik.aciklama1,
-  //         aciklama2: formDataBaslik.aciklama2,
-  //         aciklama3: formDataBaslik.aciklama3,
-  //         tamamlandi: false,
-  //       });
-  //     }
-
-  //     const belgeId = belgeResponse.data.value.id;
-
-  //     if (!belgeResponse.data.status) {
-  //       setLoading(false);
-  //       throw new Error(
-  //         (belgeResponse.data.errors &&
-  //           belgeResponse.data.errors[0].Errors &&
-  //           belgeResponse.data.errors[0].Errors[0]) ||
-  //           "Belge oluştururken-güncellenirken hata oldu"
-  //       );
-  //     }
-
-  //     let ambarFisiResponse;
-
-  //     if (updateBelgeId !== 0) {
-  //       const updateAmbarFisiResponse = await api.ambarFisi.getByBelgeId(
-  //         updateBelgeId
-  //       );
-
-  //       if (!updateAmbarFisiResponse.data.status) {
-  //         throw new Error(
-  //           (updateAmbarFisiResponse.data.errors &&
-  //             updateAmbarFisiResponse.data.errors[0].Errors &&
-  //             updateAmbarFisiResponse.data.errors[0].Errors[0]) ||
-  //             "Ambar fişi bulunamadı"
-  //         );
-  //       }
-
-  //       ambarFisiResponse = await api.ambarFisi.update({
-  //         id: updateAmbarFisiResponse.data.value.id!,
-  //         belgeId: belgeId!,
-  //         ambarHareketTur: formDataBaslik.hareketTuru,
-  //         cikisYeri: formDataBaslik.cikisYeri,
-  //         cikisYeriId: formDataBaslik.cikisYeriKoduId,
-  //       });
-  //     } else {
-  //       ambarFisiResponse = await api.ambarFisi.create({
-  //         belgeId: belgeId!,
-  //         ambarHareketTur: formDataBaslik.hareketTuru,
-  //         cikisYeri: formDataBaslik.cikisYeri,
-  //         cikisYeriId: formDataBaslik.cikisYeriKoduId,
-  //       });
-  //     }
-
-  //     if (!ambarFisiResponse.data.status) {
-  //       setLoading(false);
-  //       throw new Error(
-  //         (ambarFisiResponse.data.errors &&
-  //           ambarFisiResponse.data.errors[0].Errors &&
-  //           ambarFisiResponse.data.errors[0].Errors[0]) ||
-  //           "AmbarFişi oluştururken hata oldu"
-  //       );
-  //     }
-
-  //     const stokHareketData: IStokHareket[] = gridData
-  //       .filter((item) => item.miktar > 0)
-  //       .map((item, index) => ({
-  //         id:0,
-  //         belgeId: belgeId!,
-  //         stokKartiId: item.stokKartiId,
-  //         masrafStokKartiId: formDataBaslik.cikisYeriKoduId,
-  //         miktar: item.miktar,
-  //         istenilenMiktar: 0,
-  //         fiyatTL: item.fiyat,
-  //         cikisHucreId: item.cikisHucreId,
-  //         aciklama1: formDataBaslik.aciklama1,
-  //         aciklama2: formDataBaslik.aciklama2,
-  //         aciklama3: formDataBaslik.aciklama3,
-  //         projeId: formDataDetay.projeKoduId,
-  //         uniteId: formDataDetay.uniteKoduId,
-  //         sira: index + 1,
-  //         girisCikis: "C",
-  //         olcuBirimId: item.olcuBirimId,
-  //         stokKartiKodu: "",
-  //       }));
-
-  //     for (const stokHareket of stokHareketData) {
-  //       const stokHareketResponse = await api.stokHareket.create(stokHareket);
-  //       if (!stokHareketResponse.data.status) {
-  //         setLoading(false);
-  //         throw new Error(
-  //           (stokHareketResponse.data.errors &&
-  //             stokHareketResponse.data.errors[0].Errors &&
-  //             stokHareketResponse.data.errors[0].Errors[0]) ||
-  //             "StokHareket oluştururken hata oldu"
-  //         );
-  //       }
-  //     }
-
-  //     const belgeUpdateResponse = await api.belge.update({
-  //       id: belgeId,
-  //       tamamlandi: true,
-  //       belgeTip: EBelgeTip.AmbarCikisFisi,
-  //       no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
-  //       tarih: formDataBaslik.tarih,
-  //       aciklama1: formDataBaslik.aciklama1,
-  //       aciklama2: formDataBaslik.aciklama2,
-  //       aciklama3: formDataBaslik.aciklama3,
-  //       aktarimDurumu:EAktarimDurumu.AktarimSirada
-  //     });
-
-  //     if (!belgeUpdateResponse.data.status) {
-  //       setLoading(false);
-  //       throw new Error(
-  //         (belgeUpdateResponse.data.errors &&
-  //           belgeUpdateResponse.data.errors[0].Errors &&
-  //           belgeUpdateResponse.data.errors[0].Errors[0]) ||
-  //           "Belge güncellenirken oluştururken hata oldu"
-  //       );
-  //     }
-
-  //     toast.current?.show({
-  //       severity: "success",
-  //       summary: "Başarılı",
-  //       detail: "Veriler başarıyla kaydedildi",
-  //       life: 3000,
-  //     });
-  //     resetForm();
-  //   } catch (error: any) {
-  //     toast.current?.show({
-  //       severity: "error",
-  //       summary: "Hata",
-  //       detail: error.message || "Veriler kaydedilemedi",
-  //       life: 3000,
-  //     });
-  //     console.error("Error saving data:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [formDataBaslik, gridData, formDataDetay, updateBelgeId]);
-
   const handleSave = useCallback(async () => {
     if (!validateForm()) {
       return;
@@ -1258,6 +1083,7 @@ const App = () => {
               loading={loading}
               onClick={handleSave}
               disabled={(gridData.filter(item => item.miktar > 0).length<=0) }
+              visible={!belgeReadOnly}
             />
           </div>
         </div>
@@ -1481,6 +1307,7 @@ const App = () => {
               <label htmlFor="stokKodu">Stok Kodu</label>
               <div className="p-inputgroup">
                 <InputText
+                ref={stokKoduInputRef}
                 autoComplete="off"
                   id="stokKodu"
                   name="stokKodu"
@@ -1599,7 +1426,7 @@ const App = () => {
           </div>
         </div>
         <div className="p-col-12  mt-3">
-          <Button label="Ekle" icon="pi pi-plus" onClick={handleAddToGrid} />
+          <Button label="Ekle" icon="pi pi-plus" onClick={handleAddToGrid} disabled={belgeReadOnly}/>
         </div>
         <div className="p-col-12">
           <DataTable

@@ -14,7 +14,7 @@ export interface IStokHareket {
     istenilenMiktar:number;
     fiyatTL:number;
     fiyatDoviz?:number;
-    fiyatDovizTipId?:number;
+    fiyatDovizTipiId?:number;
     olcuBirimId:number;
     olcuBirim?:IStokOlcuBirim;
     cikisHucreId?:number;
@@ -33,5 +33,6 @@ export interface IStokHareket {
     masrafStokKartiId:number;
     sira:number;
     seriKodu?:string;
+    teslimTarihi:Date,
     seriler?:IStokHareketSeri[];
 }

@@ -42,7 +42,7 @@ const  TalepTeklifListe =  ({ baseApi, navigatePath }: ITalepTeklifListeProps) =
           }
         }
 
-        await api.belge.delete(itemToDelete.belgeId as number);//transaction yapısı bacend e yüklendi.
+        await api.talepTeklif.delete(itemToDelete.belgeId as number);//transaction yapısı bacend e yüklendi.
         myTable.current?.refresh();
         toast.current?.show({
           severity: "success",
@@ -85,12 +85,12 @@ const  TalepTeklifListe =  ({ baseApi, navigatePath }: ITalepTeklifListeProps) =
       sortable: true,
       filter: true,
     },
-    {
-      field: "belge.tip",
-      header: "Belge Tip",
-      //sortable: true,
-      //filter: true,
-    },
+    // {
+    //   field: "belge.belgetip",
+    //   header: "Belge Tip",
+    //   //sortable: true,
+    //   //filter: true,
+    // },
     {
       header: "Tarih",
       field: "belge.tarih",
@@ -176,6 +176,7 @@ const  TalepTeklifListe =  ({ baseApi, navigatePath }: ITalepTeklifListeProps) =
                         onClick={(e) => [
                           e.preventDefault(),
                           navigate(`${navigatePath}`),
+                          
                         ]}
                       >
                         Yeni

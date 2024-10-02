@@ -1,11 +1,36 @@
 import Nav from 'react-bootstrap/Nav';
 import SideBarItem from './Sidebar/Item'
 import { useState } from 'react';
-import { useUserStore } from '../store/userStore';
 
 export default () => {
 
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = () => {
+    if (!isFullscreen) {
+      enterFullscreen();
+    } else {
+      exitFullscreen();
+    }
+    setIsFullscreen(!isFullscreen);
+  };
+  const enterFullscreen = () => {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    }
+  };
+  
+  const exitFullscreen = () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  };
+  // const resetUserStore = useUserStore(state => state.reset);
+  // const handleLogout = () => {
+  //   resetUserStore();
+  //    window.location.href = '/';
+  // };
 
   const [tanimPages] =useState([
     {title: "Ülke", href: "/tanimlamalar/ulkes"},
@@ -45,7 +70,7 @@ export default () => {
     {title: "Kod 3", href: "/cari/code3"},
     {title: "Kod 4", href: "/cari/code4"},
     {title: "Kod 5", href: "/cari/code5"},
-    {title: "Hareketler", href: "/"},
+    // {title: "Hareketler", href: "/"},
   ]);
 
   const [faturaPages] =useState([
@@ -63,10 +88,10 @@ export default () => {
     //{title: "Satış Talep", href: "/talepsiparis/satistalepliste"},
   ]);
 
-  const [eBelgePages] =useState([
-    {title: "E-Fatura", href: "/"},
-    {title: "E-İrsaliye", href: "/"},
-  ]);
+  // const [eBelgePages] =useState([
+  //   {title: "E-Fatura", href: "/"},
+  //   {title: "E-İrsaliye", href: "/"},
+  // ]);
 
   const [aktarimPages] =useState([
     {title: "Stok Aktarım", href: "/"},
@@ -98,32 +123,12 @@ export default () => {
     {title: "İhtiyaç Planlama", href: "/planlama/ihtiyacPlanlama"},
     {title: "Sac Planlama", href: "/planlama/sacPlanlama"}
   ]);
+  const [profilPages] =useState([
+    {title: "Oturumu Kapat",href:"/kullanicilar/logout"},
+    //{ title: "Tablet Tam Ekran", onClick: toggleFullscreen }
+  ]);
   
-  const toggleFullscreen = () => {
-    if (!isFullscreen) {
-      enterFullscreen();
-    } else {
-      exitFullscreen();
-    }
-    setIsFullscreen(!isFullscreen);
-  };
-  const enterFullscreen = () => {
-    const elem = document.documentElement;
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    }
-  };
-  
-  const exitFullscreen = () => {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    }
-  };
-  const resetUserStore = useUserStore(state => state.reset);
-  const handleLogout = () => {
-    resetUserStore();
-     window.location.href = '/';
-  };
+
 
   return (
     <aside className="left-sidebar">
@@ -133,24 +138,25 @@ export default () => {
             <li className="nav-small-cap">--- PERSONAL</li>
             <SideBarItem icon='icon-home' name='Anasayfa' href='/' />
             <SideBarItem icon='ti-settings' name='Tanımlamalar' items={tanimPages} count={1}/>
-            <SideBarItem icon='ti-user' name='Kullanıcı' items={kullaniciPages} count={1}/>
+            <SideBarItem icon='ti-agenda' name='Kullanıcı' items={kullaniciPages} count={1}/>
             <SideBarItem icon='ti-dropbox' name='Stok' items={stokPages} count={1}/>
             <SideBarItem icon='ti-id-badge' name='Cari' items={cariPages} count={1}/>
             <SideBarItem icon='ti-write' name='Fatura' items={faturaPages} count={1}/>
-            <SideBarItem icon='ti-write' name='Talep Sipariş' items={talepSiparis} count={1}/>
-            <SideBarItem icon='ti-cloud-up' name='E-Belge' items={eBelgePages} count={1}/>
+            <SideBarItem icon='ti-pencil-alt' name='Talep Sipariş' items={talepSiparis} count={1}/>
+            {/* <SideBarItem icon='ti-cloud-up' name='E-Belge' items={eBelgePages} count={1}/> */}
             <SideBarItem icon='ti-clipboard' name='Planlama' items={planlamaPages} count={1}/>
             <SideBarItem icon='ti-exchange-vertical' name='Aktarım' items={aktarimPages} count={1}/>
             <SideBarItem icon='ti-printer' name='Rapor' items={raporPages} count={1} />
+            <SideBarItem icon='ti-user' name='Profil' items={profilPages} count={1} />
             <li>
             <button onClick={toggleFullscreen} style={{ backgroundColor: '#007bff', color: 'white', border: 'none', padding: '10px', borderRadius: '4px', cursor: 'pointer' }}>
-   Full </button>
+   Tablet Tam Ekran</button>
             </li>
           
-            <li>
+            {/* <li>
             <button onClick={handleLogout} style={{ backgroundColor: '#007bff', color: 'white', border: 'none', padding: '10px', borderRadius: '4px', cursor: 'pointer' }}>
             Çıkış </button>
-            </li>
+            </li> */}
           </ul>
         </Nav>
       </div>

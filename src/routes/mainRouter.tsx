@@ -44,6 +44,7 @@ import DepolarArasiTransferFisi from "../pages/fatura/depolarArasiTransferFisi"
 import TalepTeklifListe from "../pages/fatura/talepTeklifListe";
 import api from "../utils/api";
 import SatinalmaTalepFisi from "../pages/fatura/satinalmaTalepFisi";
+import Logout from "../pages/kullanici/logout";
 
 
 export default createHashRouter([
@@ -110,6 +111,10 @@ export default createHashRouter([
           {
             path: "kullaniciyetki",
             element: <KullaniciYetkiItem />,
+          },
+          {
+            path: "logout",
+            element: <Logout />,
           }
         ],
       },

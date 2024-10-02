@@ -33,7 +33,11 @@ export default ($axios: AxiosInstance) => ({
     getByBelgeId(id: number){
         return $axios.get<IBaseResponseValue<ITalepTeklif>>(`/${controller}/GetByBelgeId?BelgeId=${id}`);
     },
-    save(params: Partial<ITalepTeklifSaveData>){
-        return $axios.post<IBaseResponseValue<ITalepTeklifSaveData>>(`/${controller}/save`, params);
+    save(saveData: Partial<ITalepTeklifSaveData>){
+        return $axios.put<IBaseResponseValue<ITalepTeklifSaveData>>(`/${controller}/save`, 
+           { 
+            SaveTalepTeklifDto: saveData
+           
+        });
     },
 });

@@ -223,13 +223,13 @@ const satinalmaTalepFisi = () => {
                 stokKartiId: talepStokHareketData!.stokKartiId,
                 stokKarti: talepStokHareketData?.stokKarti,
                 //stokAdi: formDataDetay.stokAdi,
-                miktar: talepStokHareketData!.miktar,
+                miktar: bilgiMiktar,//talepStokHareketData!.miktar,
                 fiyatTL: talepStokHareketData!.fiyatTL,
                 fiyatDoviz: talepStokHareketData!.fiyatDoviz,
                 fiyatDovizTipiId: talepStokHareketData!.fiyatDovizTipiId,
                 fiyatDovizTipi: talepStokHareketData!.fiyatDovizTipi,
-                olcuBirimId: talepStokHareketData!.olcuBirimId,
-                olcuBirim: talepStokHareketData!.olcuBirim,
+                olcuBirimId:talepStokHareketData.stokKarti?.stokOlcuBirim1Id!, // talepStokHareketData!.olcuBirimId,
+                olcuBirim:talepStokHareketData.stokKarti?.stokOlcuBirim1!, //talepStokHareketData!.olcuBirim,
                 girisCikis: talepStokHareketData!.girisCikis,
                 aciklama1: talepStokHareketData!.aciklama1,
                 aciklama2: talepStokHareketData!.aciklama2,
@@ -250,13 +250,13 @@ const satinalmaTalepFisi = () => {
         stokKartiId: talepStokHareketData!.stokKartiId,
         stokKarti: talepStokHareketData?.stokKarti,
         //stokAdi: formDataDetay.stokAdi,
-        miktar: talepStokHareketData!.miktar,
+        miktar: bilgiMiktar,//talepStokHareketData!.miktar,
         fiyatTL: talepStokHareketData!.fiyatTL,
         fiyatDoviz: talepStokHareketData!.fiyatDoviz,
         fiyatDovizTipiId: talepStokHareketData!.fiyatDovizTipiId,
         fiyatDovizTipi: talepStokHareketData!.fiyatDovizTipi,
-        olcuBirimId: talepStokHareketData!.olcuBirimId,
-        olcuBirim: talepStokHareketData!.olcuBirim,
+        olcuBirimId: talepStokHareketData.stokKarti?.stokOlcuBirim1Id!, //talepStokHareketData!.olcuBirimId,
+        olcuBirim:talepStokHareketData.stokKarti?.stokOlcuBirim1, //talepStokHareketData!.olcuBirim,
         girisCikis: talepStokHareketData!.girisCikis,
         aciklama1: talepStokHareketData!.aciklama1,
         aciklama2: talepStokHareketData!.aciklama2,
@@ -295,6 +295,7 @@ const satinalmaTalepFisi = () => {
     // }
 
     if (talepStokHareketData.teslimTarihi) {
+        debugger;
       const teslimTarihi = new Date(talepStokHareketData.teslimTarihi);
 
       if (isNaN(teslimTarihi.getTime())) {
@@ -464,9 +465,6 @@ const satinalmaTalepFisi = () => {
     const response = await api.stok.getByKod(item.stokKarti?.kodu!);
     if (response?.data?.status && response?.data?.value) {
         const stokKarti = response.data.value;
-
-        debugger;
-  
         // Ölçü birimi seçeneklerini oluşturma
         stokOlcuBirimDoldur(stokKarti);
     }
@@ -486,12 +484,13 @@ const satinalmaTalepFisi = () => {
       debugger;
 
       // Ölçü birimi seçeneklerini oluşturma
-      const options = [
-        stokKarti.stokOlcuBirim1,
-        stokKarti.stokOlcuBirim2,
-        stokKarti.stokOlcuBirim3,
-      ];
-      setOlcuBirimOptions(options);
+    //   const options = [
+    //     stokKarti.stokOlcuBirim1,
+    //     stokKarti.stokOlcuBirim2,
+    //     stokKarti.stokOlcuBirim3,
+    //   ];
+    //   setOlcuBirimOptions(options);
+    stokOlcuBirimDoldur(stokKarti);
 
       //setSelectedOlcuBirim(options[0]); // İlk değeri seçili yapabilirsiniz
 
@@ -599,7 +598,7 @@ const satinalmaTalepFisi = () => {
             aciklama1: item.aciklama1,
             aciklama2: item.aciklama2,
             aciklama3: item.aciklama3,
-            sira: index,
+            sira: index +1,
             seriKodu: item.seriKodu,
             teslimTarihi: item.teslimTarihi,
             projeId: item.projeId,
@@ -618,7 +617,7 @@ const satinalmaTalepFisi = () => {
             "Veriler kaydedilirken bir hata oluştu."
         );
       }
-      navigate(`/fatura/ambarcikisfisiliste`);
+      navigate(`/talepsiparis/satinalmatalepliste`);
 
       // Başarılı durum mesajı
       toast.current?.show({
@@ -745,7 +744,7 @@ const satinalmaTalepFisi = () => {
   //güncelleme işlemleri sonu
 
   const formatDate = (value: string | Date) => {
-    return new Date(value).toLocaleDateString("en-US", {
+    return new Date(value).toLocaleDateString("tr-TR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -754,14 +753,34 @@ const satinalmaTalepFisi = () => {
   const dateBodyTemplate = (rowData: ITalepTeklifStokHareket) => {
     return formatDate(rowData.teslimTarihi);
   };
+  const parseDate = (dateString: string) => {
+    debugger;
+    const [day, month, year] = dateString.split("/").map(Number);
+    const date = new Date(year, month - 1, day); // Aylar 0-11 arasında olduğu için month - 1
+    date.setHours(date.getHours() + 3); // +3 saat ekle
+     // Saat, dakika, saniye ve milisaniyeyi sıfırla
+    //date.setHours(0, 0, 0, 0);
+    return date;
+  };
 
     // Dinamik hesaplama fonksiyonu
     const calculateBilgiMiktar = useCallback(() => {
         if (talepStokHareketData.olcuBirimId === olcuBirimOptions[0]?.id) {
+
           setBilgiMiktar(talepStokHareketData.miktar); 
         } else if (talepStokHareketData.olcuBirimId === olcuBirimOptions[1]?.id) {
+            // const bilgMiktar=talepStokHareketData.miktar / (talepStokHareketData.stokKarti?.olcuBr2Pay! / talepStokHareketData.stokKarti?.olcuBr2Payda!)
+            // setTalepStokHareketData((state) => ({
+            //     ...state,
+            //     miktar: Number(bilgMiktar),
+            //   }))
           setBilgiMiktar(talepStokHareketData.miktar / (talepStokHareketData.stokKarti?.olcuBr2Pay! / talepStokHareketData.stokKarti?.olcuBr2Payda!)); // 2. birim
         } else if (talepStokHareketData.olcuBirimId === olcuBirimOptions[2]?.id) {
+            // const bilgMiktar=talepStokHareketData.miktar / (talepStokHareketData.stokKarti?.olcuBr3Pay! / talepStokHareketData.stokKarti?.olcuBr3Payda!)
+            // setTalepStokHareketData((state) => ({
+            //     ...state,
+            //     miktar: Number(bilgMiktar),
+            //   }))
             setBilgiMiktar(talepStokHareketData.miktar / (talepStokHareketData.stokKarti?.olcuBr3Pay! / talepStokHareketData.stokKarti?.olcuBr3Payda!)); // 2. birim
         }
       }, [talepStokHareketData.miktar, talepStokHareketData.olcuBirimId, olcuBirimOptions]);
@@ -774,7 +793,7 @@ const satinalmaTalepFisi = () => {
 
   return (
     <div className="container-fluid">
-        {/* {JSON.stringify(talepStokHareketData.stokKarti)} */}
+        {/* {JSON.stringify(talepStokHareketData.teslimTarihi)} */}
       <Toast ref={toast} />
       <ConfirmDialog
         visible={itemDeleteVisible}
@@ -984,9 +1003,9 @@ const satinalmaTalepFisi = () => {
                       }));
                     }
                   }}
-                  style={{ width: "100%" }}
-                  optionLabel="adi" // Dropdown'da gösterilecek alan
-                  optionValue="id" // Seçilen değerin ID'sini döndürmek için
+                style={{ width: "100%" }}
+                optionLabel="adi" // Dropdown'da gösterilecek alan
+                optionValue="id" // Seçilen değerin ID'sini döndürmek için
               />
               <label htmlFor="belgeSeri">Ölçü Birim</label>
             </FloatLabel>
@@ -1041,14 +1060,17 @@ const satinalmaTalepFisi = () => {
                 value={formatDate(talepStokHareketData?.teslimTarihi)}
                 autoComplete="off"
                 mask="99/99/9999"
-                placeholder="99/99/9999"
-                slotChar="mm/dd/yyyy"
-                onChange={(e) =>
-                  setTalepStokHareketData((prevData) => ({
+                placeholder="dd/mm/yyyy"
+                slotChar="dd/mm/yyyy"
+                onChange={(e) =>{
+                const parsedDate = parseDate(e.value!); // Girilen tarihi parse et
+                if (!isNaN(parsedDate.getTime()))
+                 { setTalepStokHareketData((prevData) => ({
                     ...prevData,
-                    teslimTarihi: new Date(e.value!),
-                  }))
-                }
+                    teslimTarihi: parsedDate//new Date(e.value!),
+                  }))}
+                 
+                }}
               />
             </FloatLabel>
           </div>
@@ -1221,19 +1243,19 @@ const satinalmaTalepFisi = () => {
             virtualScrollerOptions={{ itemSize: 46 }}
           >
             <Column field="id" header="#" />
-            <Column field="stokKartiId" header="Stok Kartı Id" />
+            <Column field="stokKartiId" header="Stok Kartı Id" hidden/>
             <Column field="stokKarti.kodu" header="Stok Kodu" />
             <Column field="stokKarti.adi" header="Stok Adı" />
             <Column field="miktar" header="Miktar" />
-            <Column field="olcuBirim.adi" header="Br" />
+            <Column field="olcuBirim.simge" header="Br" />
 
-            <Column field="fiyatTL" header="Fiyat" />
-            <Column field="fiyatDoviz" header="Döviz Fiyat" />
-            <Column field="fiyatDovizTipi.simge" header="Döviz Tipi" />
+            <Column field="fiyatTL" header="Fiyat"hidden />
+            <Column field="fiyatDoviz" header="Döviz Fiyat" hidden/>
+            <Column field="fiyatDovizTipi.simge" header="Döviz Tipi" hidden/>
             <Column field="aciklama1" header="Açıklama 1" />
             <Column field="aciklama2" header="Açıklama 2" />
             <Column field="aciklama3" header="Açıklama 3" />
-            <Column field="sira" header="Sıra" />
+            <Column field="sira" header="Sıra" hidden />
             <Column field="seriKodu" header="Seri Kodu" />
             <Column
               field="teslimTarihi"
@@ -1241,9 +1263,9 @@ const satinalmaTalepFisi = () => {
               dataType="date"
               body={dateBodyTemplate}
             />
-            <Column field="projeId" header="ProjeId" />
+            <Column field="projeId" header="ProjeId" hidden/>
             <Column field="proje.kodu" header="Proje Kodu" />
-            <Column field="uniteId" header="Ünite Id" />
+            <Column field="uniteId" header="Ünite Id" hidden />
             <Column field="unite.kodu" header="Ünite Kodu" />
 
             <Column

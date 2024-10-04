@@ -519,7 +519,7 @@ const satinalmaTalepFisi = () => {
       stokKarti.stokOlcuBirim1,
       stokKarti.stokOlcuBirim2,
       stokKarti.stokOlcuBirim3,
-    ].filter((item): item is IStokOlcuBirim => item !== undefined);
+    ].filter((item): item is IStokOlcuBirim => item !== undefined && item !== null);
   
     // Ölçü birimi seçeneklerini state'e set etme
     setOlcuBirimOptions(options);

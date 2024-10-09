@@ -9,6 +9,9 @@ import { ConfirmDialog } from "primereact/confirmdialog";
 import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
 import { ITalepTeklif } from "../../utils/types/fatura/ITalepTeklif";
 import api from "../../utils/api";
+import { dateFilterTemplate } from "../../utils/helpers/CalendarHelper";
+import { aktarimDurumuDDFilterTemplate } from "../../utils/helpers/dtMultiSelectHelper";
+
 
 interface ITalepTeklifListeProps {
   baseApi: any; // baseApi'yi dinamik hale getiriyoruz
@@ -97,6 +100,7 @@ const  TalepTeklifListe =  ({ baseApi, navigatePath }: ITalepTeklifListeProps) =
       dataType: "date",
       sortable: true,
       filter: true,
+      filterElement:dateFilterTemplate,
       body: (row: ITalepTeklif) =>
         row.belge!.tarih
           ? new Date(row.belge!.tarih).toLocaleDateString("tr-TR", {
@@ -109,8 +113,10 @@ const  TalepTeklifListe =  ({ baseApi, navigatePath }: ITalepTeklifListeProps) =
     {
       header: "Aktarım Durumu",
       field: "belge.aktarimDurumu",
+      dataType:"numeric",
       sortable: false,
       filter: true,
+      filterElement:aktarimDurumuDDFilterTemplate,
       body: (row)=> {
         return getEnumNameAktarimDurumu(row.belge.aktarimDurumu);
       }

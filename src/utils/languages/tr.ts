@@ -14,3 +14,4 @@ export default {
     dateAfter:"Sonra",
     dateFormat:"yyyy/MM/dd"
 } as LocaleOptions
+

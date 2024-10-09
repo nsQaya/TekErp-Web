@@ -10,6 +10,8 @@ import { ConfirmDialog } from "primereact/confirmdialog";
 import { IDepolarArasiTransfer } from "../../utils/types/fatura/IDepolarArasiTransfer";
 import { EAmbarHareketTur } from "../../utils/types/enums/EAmbarHareketTur";
 import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
+import { aktarimDurumuDDFilterTemplate, ambarHareketTurDDFilterTemplate } from "../../utils/helpers/dtMultiSelectHelper";
+import { dateFilterTemplate } from "../../utils/helpers/CalendarHelper";
 
 export default () => {
   const myTable = createRef<ITableRef<IDepolarArasiTransfer>>();
@@ -89,7 +91,7 @@ export default () => {
     }
   }, [confirmVisible, itemToDelete]);
 
-  const getEnumName = (value: number) => {
+  const getEnumNameHareketTur = (value: number) => {
     return EAmbarHareketTur[value];
   };
   const getEnumNameAktarimDurumu = (value: number) => {
@@ -108,6 +110,7 @@ export default () => {
       dataType: "date",
       sortable: true,
       filter: true,
+      filterElement:dateFilterTemplate,
       body: (row: IDepolarArasiTransfer) =>
         row.belge!.tarih
           ? new Date(row.belge!.tarih).toLocaleDateString("tr-TR", {
@@ -116,21 +119,26 @@ export default () => {
               year: "numeric",
             })
           : "",
-    },
+          
+    }, 
     {
       header: "Hareket Türü",
       field: "ambarHareketTur",
       sortable: false,
-      filter: true,
+      dataType:"numeric",
+      filter:true,
+      filterElement:ambarHareketTurDDFilterTemplate,
       body: (row)=> {
-        return getEnumName(row.ambarHareketTur);
+        return getEnumNameHareketTur(row.ambarHareketTur);
       }
     },
     {
       header: "Aktarım Durumu",
       field: "belge.aktarimDurumu",
+      dataType:"numeric",
       sortable: false,
       filter: true,
+      filterElement:aktarimDurumuDDFilterTemplate,
       body: (row)=> {
         return getEnumNameAktarimDurumu(row.belge.aktarimDurumu);
       }

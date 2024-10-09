@@ -1,6 +1,5 @@
 export enum EAktarimDurumu
 {
-    AktarimBekliyor=0, 
 
     AktarimSirada = 1,
     SilmeSirada=2,
@@ -9,5 +8,7 @@ export enum EAktarimDurumu
     SilmeHata = 4,
 
     AktarimHata =5,
+
+    AktarimBekliyor=6, 
 
 }

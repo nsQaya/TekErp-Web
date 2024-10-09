@@ -81,9 +81,26 @@ function ITable(
       .filter((column) => column.filter && column.field)
       .reduce((acc: any, column) => {
         if (column.field) {
+          let matchMode;
+
+          switch (column.dataType) {
+            case 'date':
+              matchMode = FilterMatchMode.DATE_IS; // Tarih için
+              break;
+            case 'numeric':
+              matchMode = FilterMatchMode.EQUALS; // Sayısal alanlar için
+              break;
+            default:
+              matchMode = FilterMatchMode.CONTAINS; // Diğer tüm alanlar için
+              break;
+          }
+
+
+
           acc[column.field] = {
             value: null,
-            matchMode: FilterMatchMode.CONTAINS,
+            matchMode: matchMode, 
+            //matchMode: FilterMatchMode.CONTAINS,
           };
         }
         return acc;

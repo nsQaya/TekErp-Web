@@ -4,13 +4,15 @@ import api from "../../utils/api";
 import AppTable, { ITableRef } from "../../components/AppTable";
 import { IAmbarFisi } from "../../utils/types/fatura/IAmbarFisi";
 import { useNavigate } from "react-router-dom";
-import { ColumnProps } from "primereact/column";
+import {  ColumnProps } from "primereact/column";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { EAmbarHareketTur } from "../../utils/types/enums/EAmbarHareketTur";
 import { EAmbarFisiCikisYeri } from "../../utils/types/enums/EAmbarFisiCikisYeri";
 import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
+import { aktarimDurumuDDFilterTemplate, ambarFisiCikisYeriDDFilterTemplate, ambarHareketTurDDFilterTemplate } from "../../utils/helpers/dtMultiSelectHelper";
+import { dateFilterTemplate } from "../../utils/helpers/CalendarHelper";
 
 
 export default () => {
@@ -84,9 +86,10 @@ export default () => {
     {
       header: "Tarih",
       field: "belge.tarih",
-      dataType:"date",
+      dataType: "date",
       sortable: true,
       filter: true,
+      filterElement:dateFilterTemplate,
       body: (row: IAmbarFisi) =>
         row.belge!.tarih
           ? new Date(row.belge!.tarih).toLocaleDateString("tr-TR", {
@@ -95,12 +98,15 @@ export default () => {
               year: "numeric",
             })
           : "",
-    },
+          
+    },    
     {
       header: "Hareket Türü",
       field: "ambarHareketTur",
       sortable: false,
-      filter: true,
+      dataType:"numeric",
+      filter:true,
+      filterElement:ambarHareketTurDDFilterTemplate,
       body: (row)=> {
         return getEnumNameHareketTur(row.ambarHareketTur);
       }
@@ -109,6 +115,9 @@ export default () => {
       header: "Çıkış Yeri",
       field: "cikisYeri",
       sortable: false,
+      dataType:"numeric",
+      filter:true,
+      filterElement:ambarFisiCikisYeriDDFilterTemplate,
       body: (row)=> {
         return getEnumNameCikisYeri(row.ambarHareketTur);
       }
@@ -117,8 +126,10 @@ export default () => {
     {
       header: "Aktarım Durumu",
       field: "belge.aktarimDurumu",
+      dataType:"numeric",
       sortable: false,
       filter: true,
+      filterElement:aktarimDurumuDDFilterTemplate,
       body: (row)=> {
         return getEnumNameAktarimDurumu(row.belge.aktarimDurumu);
       }

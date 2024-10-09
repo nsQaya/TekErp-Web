@@ -49,7 +49,8 @@ function transformFilter(gridFilters: FilterMeta, sortColumn: string, sortDirect
                   transformedFilters.push({
                       field: key,
                       operator: mapMatchModeToOperator(constraint.matchMode || 'eq'),
-                      value: constraint.value.toString(),
+                      value: handleDateFilter(constraint.value).toString(),
+                      //value: constraint.value.toString(),
                       logic: "and",
                   });
               }
@@ -59,7 +60,8 @@ function transformFilter(gridFilters: FilterMeta, sortColumn: string, sortDirect
               transformedFilters.push({
                   field: key,
                   operator: mapMatchModeToOperator(filter.matchMode || 'eq'),
-                  value: filter.value.toString(),
+                  value: handleDateFilter(filter.value).toString(),
+                  //value: filter.value.toString(),
                   logic: "and",
               });
           }
@@ -101,10 +103,36 @@ function mapMatchModeToOperator(matchMode: string): string {
           return "endswith";
       case "gt":
           return "gt";
-      // Daha fazla eşleşme modu eklemek isterseniz buraya ekleyebilirsiniz
+      case "dateIs":
+          return "eq"; 
+      case "dateIsNot":
+           return "neq";
+      case "dateBefore":
+           return "lte";
+      case "dateAfter":
+           return "gte"; 
+
       default:
           return "eq";
   }
+}
+// Tarih filtresi için özel işleme
+function handleDateFilter(value: any) {
+  if (value instanceof Date) {
+    // Tarih ise 3 saat ekleyelim
+    const date = new Date(value);
+    date.setHours(date.getHours() + 3); // 3 saat ekle
+    return date.toISOString().split('T')[0]; // Yalnızca yyyy-MM-dd kısmını al
+
+    // // YYYY-MM-DD formatında geri döndür
+    // const year = date.getFullYear();
+    // const month = String(date.getMonth() + 1).padStart(2, "0");
+    // const day = String(date.getDate()).padStart(2, "0");
+
+    // return `${year}-${month}-${day}`;
+  }
+
+  return value;
 }
 
 export { transformFilter };

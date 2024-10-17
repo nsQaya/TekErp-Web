@@ -95,6 +95,17 @@ export default () => {
         });
         setNetsisStokHareket(hesaplanmisVeri);
         setFilteredNetsisStokHareket(hesaplanmisVeri);
+      }else
+      {
+        // Stok bulunamazsa gridi temizle ve uyarı ver
+      setNetsisStokHareket([]);
+      setFilteredNetsisStokHareket([]);
+      toast.current?.show({
+        severity: "warn",
+        summary: "Uyarı",
+        detail: "Stok hareketleri bulunamadı.",
+        life: 3000,
+      });
       }
       setLoading(false);
     }

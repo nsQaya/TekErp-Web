@@ -119,6 +119,11 @@ export default () => {
     {title: "Sac Planlama", href: "/planlama/sacPlanlama"}
   ]);
 
+  const [uretimPages] =useState([
+    {title: "Üretim Sonu Kaydı", href: "/uretim/uretimSonuKaydi"},
+    
+  ]);
+
   const [planlamaPages] =useState([
     {title: "İhtiyaç Planlama", href: "/planlama/ihtiyacPlanlama"},
     {title: "Sac Planlama", href: "/planlama/sacPlanlama"}
@@ -136,7 +141,7 @@ export default () => {
         <Nav as="nav" bsPrefix='sidebar-nav'>
           <ul id="sidebarnav">
             <li className="nav-small-cap">--- PERSONAL</li>
-            <SideBarItem icon='icon-home' name='Anasayfa' href='/' />
+            <SideBarItem icon='icon-home' name='' href='/' />
             <SideBarItem icon='ti-settings' name='Tanımlamalar' items={tanimPages} count={1}/>
             <SideBarItem icon='ti-agenda' name='Kullanıcı' items={kullaniciPages} count={1}/>
             <SideBarItem icon='ti-dropbox' name='Stok' items={stokPages} count={1}/>
@@ -144,6 +149,7 @@ export default () => {
             <SideBarItem icon='ti-write' name='Fatura' items={faturaPages} count={1}/>
             <SideBarItem icon='ti-pencil-alt' name='Talep Sipariş' items={talepSiparis} count={1}/>
             {/* <SideBarItem icon='ti-cloud-up' name='E-Belge' items={eBelgePages} count={1}/> */}
+            <SideBarItem icon='ti-hummer' name='Üretim' items={uretimPages} count={1}/>
             <SideBarItem icon='ti-clipboard' name='Planlama' items={planlamaPages} count={1}/>
             <SideBarItem icon='ti-exchange-vertical' name='Aktarım' items={aktarimPages} count={1}/>
             <SideBarItem icon='ti-printer' name='Rapor' items={raporPages} count={1} />

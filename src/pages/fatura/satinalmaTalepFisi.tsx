@@ -1019,7 +1019,7 @@ const satinalmaTalepFisi = () => {
                 value={talepStokHareketData.miktar}
                 min={0}
                 minFractionDigits={0}
-                maxFractionDigits={2}
+                maxFractionDigits={4}
                 onChange={(e) =>
                   setTalepStokHareketData((state) => ({
                     ...state,
@@ -1044,6 +1044,7 @@ const satinalmaTalepFisi = () => {
                 id="bilgiMiktar"
                 name="bilgiMiktar"
                 value={bilgiMiktar}
+                maxFractionDigits={4}
                 disabled
                 inputStyle={{ textAlign: "right" }}
               />

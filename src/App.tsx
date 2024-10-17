@@ -97,56 +97,8 @@ function App() {
 
   addLocale('tr', tr);
   locale('tr');
-  // Türkçe yerelleştirme ekle
-addLocale("tr", {
-  firstDayOfWeek: 1,
-  dayNames: [
-    "Pazar",
-    "Pazartesi",
-    "Salı",
-    "Çarşamba",
-    "Perşembe",
-    "Cuma",
-    "Cumartesi",
-  ],
-  dayNamesShort: ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"],
-  dayNamesMin: ["Pz", "Pt", "Sa", "Ça", "Pe", "Cu", "Ct"],
-  monthNames: [
-    "Ocak",
-    "Şubat",
-    "Mart",
-    "Nisan",
-    "Mayıs",
-    "Haziran",
-    "Temmuz",
-    "Ağustos",
-    "Eylül",
-    "Ekim",
-    "Kasım",
-    "Aralık",
-  ],
-  monthNamesShort: [
-    "Oca",
-    "Şub",
-    "Mar",
-    "Nis",
-    "May",
-    "Haz",
-    "Tem",
-    "Ağu",
-    "Eyl",
-    "Eki",
-    "Kas",
-    "Ara",
-  ],
-  today: "Bugün",
-  clear: "Temizle",
-  dateFormat: "dd/mm/yy",
-  weekHeader: "Hf",
-});
+  
 
-// Calendar bileşenlerini Türkçe yapmak için varsayılan locale ayarını ayarla
-locale("tr");
   return (
     <RouterProvider router={userStore.isLogged() ? mainRouter : authRouter} />
   );

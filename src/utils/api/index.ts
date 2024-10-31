@@ -79,6 +79,11 @@ import talepTeklif from "../api/fatura/talepTeklif";
 import { ITalepTeklifSaveData } from "../types/fatura/ITalepTeklifSaveData";
 import talepTeklifStokHareket from "../api/fatura/talepTeklifStokHareket";
 import { ITalepTeklifStokHareket } from "../types/fatura/ITalepTeklifStokHareket";
+import { INetsisUretimSonuKaydi } from "../types/uretim/INetsisUretimSonuKaydi";
+
+import netsisUretimSonuKaydi from "../api/uretim/netsisUretimSonuKaydi";
+import netsisDepoIzin from "./uretim/netsisDepoIzin";
+import { INetsisDepoIzin } from "../types/uretim/INetsisDepoIzin";
 
 
 var instance: AxiosInstance = axios.create({
@@ -114,24 +119,40 @@ const onResponse = (response: AxiosResponse): any => {
   return response;
 };
 
-const onResponseError = (error: AxiosError)=> {
-
+const onResponseError = (error: AxiosError) => {
   let errorMessage = "Bilinmeyen hata";
+  let errors: Record<string, string[]> | undefined;
 
   if (error.response?.data && typeof error.response.data === "object") {
     const errorData = error.response.data as IBaseResponse;
+
+    // `detail` alanını kontrol et
     if (errorData.detail) {
       errorMessage = errorData.detail;
     }
+
+    // `errors` alanını kontrol et ve varsa ata
+    if (errorData.errors) {
+      errors = errorData.errors;
+    } else if ((error.response.data as any).errors) {
+      // `Record<string, string[]>` olarak `errors` alanını al
+      errors = (error.response.data as any).errors;
+    }
+
+    // Eğer errors varsa, errorMessage'ı errors'dan türet
+    if (errors) {
+      errorMessage = Object.entries(errors)
+        .map(([key, messages]) => `${key}: ${messages.join(", ")}`)
+        .join("\n");
+    }
   }
-  console.log(error);
 
   const response = {
-    data:{
+    data: {
       status: false,
       value: null,
       detail: errorMessage,
-      errors: (error.response?.data as any).Errors || undefined
+      errors: errors
     }
   };
 
@@ -201,7 +222,10 @@ const repositories = {
 
   talepTeklif:talepTeklif(instance) as unknown as ICrudBaseAPI<ITalepTeklif>,
   talepTeklifSave:talepTeklif(instance) as unknown as ICrudBaseAPI<ITalepTeklifSaveData>,
-  talepTeklifStokHareket:talepTeklifStokHareket(instance) as unknown as ICrudBaseAPI<ITalepTeklifStokHareket>
+  talepTeklifStokHareket:talepTeklifStokHareket(instance) as unknown as ICrudBaseAPI<ITalepTeklifStokHareket>,
+
+  netsisUretimSonuKaydi:netsisUretimSonuKaydi(instance) as unknown as ICrudBaseAPI<INetsisUretimSonuKaydi>,
+  netsisDepoIzin:netsisDepoIzin(instance) as unknown as ICrudBaseAPI<INetsisDepoIzin>,
 
 };
 

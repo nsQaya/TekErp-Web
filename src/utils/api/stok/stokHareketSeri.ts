@@ -35,5 +35,8 @@ export default ($axios: AxiosInstance) => ({
     },
     getListBakiyeByStokKodu(stokKodu: string){
         return $axios.get<IBaseResponseValue<IPagedResponse<IStokSeriBakiye>>>(`/${controller}/GetListStokSeriBakiyeByStok?StokKodu=${stokKodu}`);
+    },
+    getListOtomatikSeriByStokKodu(stokKodu: string,miktar :number){
+        return $axios.get<IBaseResponseValue<IPagedResponse<IStokSeriBakiye>>>(`/${controller}/GetListOtomatikSeriByStokKodu?StokKodu=${stokKodu}&Miktar=${miktar}`);
     }
 });

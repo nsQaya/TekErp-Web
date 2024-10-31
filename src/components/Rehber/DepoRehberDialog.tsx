@@ -4,7 +4,7 @@ import GenericDialog from "../GenericDialog"
 import { IDepo } from "../../utils/types/tanimlamalar/IDepo";
 
 
-const HucreRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IDepo) => void; onHide: () => void }> = (props) => {
+const DepoRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IDepo) => void; onHide: () => void }> = (props) => {
     const columns: ColumnProps[] = [
         {
           header: "Kodu",
@@ -34,4 +34,4 @@ const HucreRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IDepo) 
           />
     )
 };
-export default HucreRehberDialog;
+export default DepoRehberDialog;

@@ -31,5 +31,8 @@ export default ($axios: AxiosInstance) => ({
     },
     get(id: number){
         return $axios.get<IBaseResponseValue<IProje>>(`/${controller}/${id}`);
+    },
+    getByKod(kod: string){
+        return $axios.get<IBaseResponseValue<IProje>>(`/${controller}/GetByKod?Kod=${kod}`);
     }
 });

@@ -882,8 +882,13 @@ const App = () => {
   
       if (!response.data.status) {
         throw new Error(
-          (response.data.errors && response.data.errors[0].Errors && response.data.errors[0].Errors[0]) ||
-          "Veriler kaydedilirken bir hata oluştu."
+          (
+            Object.entries(response.data.errors || {})
+            .map(([key, messages]) => `${key}: ${messages.join(", ")}`)
+            .join("\n")
+           ) ||
+           response.data.detail ||
+            "Veriler kaydedilirken bir hata oluştu."
         );
       }
       navigate(`/fatura/ambarcikisfisiliste`)
@@ -1092,7 +1097,7 @@ const App = () => {
           <AccordionTab header="Üst Bilgiler">
             <div className="row">
               <div className="col-md-3 col-sm-6 mt-4">
-                <div className="p-inputgroup flex">
+                <div className="p-inputgroup flex-1">
                   <FloatLabel>
                     <Dropdown
                       className="w-full md:w-5rem"

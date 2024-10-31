@@ -4,19 +4,22 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import AppTable, { ITableRef } from "../../components/AppTable";
-
+import { INetsisDepoIzin } from "../../utils/types/uretim/INetsisDepoIzin";
 import api from "../../utils/api";
-import DynamicModal, { FormItemTypes,  IFormItem } from "../../modals/DynamicModal";
 import AppBreadcrumb from "../../components/AppBreadcrumb";
-import { ICari } from "../../utils/types/cari/ICari";
+import DynamicModal, { FormItemTypes, IFormItem } from "../../modals/DynamicModal";
+import UniteRehberDialog from "../../components/Rehber/UniteRehberDialog";
+import ProjeRehberDialog from "../../components/Rehber/ProjeRehberDialog";
+import IsEmriRehberDialog from "../../components/Rehber/IsEmriRehberDialog";
+import { kilitliMiDDFilterTemplate } from "../../utils/helpers/dtMultiSelectHelper";
 
 export default () => {
-  const myTable = createRef<ITableRef<ICari>>();
+  const myTable = createRef<ITableRef<INetsisDepoIzin>>();
   const [isModalShowing, setModalShowing] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<ICari | undefined>();
+  const [selectedItem, setSelectedItem] = useState<INetsisDepoIzin | undefined>();
   const toast = useRef<Toast>(null);
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<ICari | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<INetsisDepoIzin | null>(null);
 
   const onSuccess = () => {
     if (selectedItem) {
@@ -31,7 +34,7 @@ export default () => {
   const confirmDelete = useCallback(async () => {
     if (itemToDelete) {
       try {
-        await api.cari.delete(itemToDelete.id as number);
+        await api.netsisDepoIzin.delete(itemToDelete.id as number);
         myTable.current?.refresh();
         toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla silindi !" });
       } catch (error) {
@@ -44,7 +47,7 @@ export default () => {
     }
   }, [itemToDelete]);
 
-  const deleteItem = (item: ICari) => {
+  const deleteItem = (item: INetsisDepoIzin) => {
     setItemToDelete(item);
     setConfirmVisible(true);
   };
@@ -57,30 +60,45 @@ export default () => {
 
   const columns: ColumnProps[] = [
     {
-      header: "Kodu",
-      field: "kodu",
+      header: "İş Emri Numarası",
+      field: "isEmriNo",
       sortable: true,
       filter: true
     },
     {
-      header: "Adı",
-      field: "adi",
+      header: "Proje Kodu",
+      field: "projeKodu",
       sortable: true,
       filter: true
+    },
+    {
+      header: "Ünite Kodu",
+      field: "plasiyerKodu",
+      sortable: true,
+      filter: true
+    },
+    {
+      header: "KilitliMi",
+      field: "kilitliMi",
+      sortable: true,
+      dataType:"numeric",
+      filter: true,
+      filterElement:kilitliMiDDFilterTemplate,
+      body: (rowData : INetsisDepoIzin) => (rowData.kilitliMi === 1 ? "Evet" : "Hayır")
+
     },
     {
       header: "İşlemler",
       body: (row) => {
         return (
           <>
-          {/* {JSON.stringify(row.ilId)} */}
-            <button className="btn btn-info ms-1" onClick={(e) => {
+            {/* <button className="btn btn-info ms-1" onClick={(e) => {
               e.preventDefault();
               setSelectedItem(row);
               setModalShowing(true);
             }}>
               <i className="ti-pencil"></i>
-            </button>
+            </button> */}
             <button className="btn btn-danger ms-1" onClick={(e) => {
               e.preventDefault();
               deleteItem(row);
@@ -100,169 +118,72 @@ export default () => {
       hidden: true
     },
     {
-      title: "Kodu",
-      name: "kodu",
+      title: "İş Emri Numarası",
+      name: "isEmriNo",
       type: FormItemTypes.input,
-      columnSize:4
+      hidden:true
     },
     {
-      title: "Tip",
-      name: "tip",
+      title: "isEmri",
+      name: "isEmri",
+      type: FormItemTypes.rehber,
+      rehberComponent:IsEmriRehberDialog,
+      returnField:"isEmriNo",
+      returnItemName:"isEmriNo",
+      labelField:"isEmriNo"
+    },
+    {
+      title: "Proje Kodu",
+      name: "projeKodu",
       type: FormItemTypes.input,
-      columnSize:2
+      hidden:true
     },
     {
-      title: "Posta Kodu",
-      name: "postaKodu",
+      title: "Proje",
+      name: "proje",
+      type: FormItemTypes.rehber,
+      rehberComponent:ProjeRehberDialog,
+      returnField:"kodu",
+      returnItemName:"projeKodu",
+      labelField:"aciklama"
+    },
+    {
+      title: "Ünite Kodu",
+      name: "plasiyerKodu",
       type: FormItemTypes.input,
-      columnSize:2
+      hidden:true
     },
     {
-      title: "Telefon",
-      name: "telefon",
-      type: FormItemTypes.input,
-      columnSize:4
+      title: "Ünite",
+      name: "plasiyer",
+      type: FormItemTypes.rehber,
+      rehberComponent:UniteRehberDialog,
+      returnField:"kodu",
+      returnItemName:"plasiyerKodu",
+      labelField:"aciklama"
     },
     {
-      title: "Adı",
-      name: "adi",
-      type: FormItemTypes.input,
-      columnSize:12
-    },
-    {
-      title: "Adres",
-      name: "adres",
-      type: FormItemTypes.input
-    },
-    {
-      type: FormItemTypes.genericDropdown,
-      title: "Ülke Kodu",
-      name: "ulkeId",
-      baseApi: api.ulke,
-      returnField: "id",
-      labelField: "adi",
-      columnSize:4
-    },
-    {
-      type: FormItemTypes.genericDropdown,
-      title: "İl",
-      name: "ilId",
-      baseApi: api.il,
-      returnField: "id",
-      labelField: "adi",
-      additionalFilters: [
-        {
-          item: "ulkeId",
-          matchMode: "equals"
-        }
-      ],
-      columnSize:4,
-    },
-    {
-      type: FormItemTypes.genericDropdown,
-      title: "İlçe",
-      name: "ilceId",
-      baseApi: api.ilce,
-      returnField: "id",
-      labelField: "adi",
-      additionalFilters: [
-        {
-          item: "ilId",
-          matchMode: "equals"
-        }
-      ],
-      columnSize:4
-    },
-    {
-      type: FormItemTypes.genericDropdown,
-      title: "Grup Kodu",
-      name: "cariGrupKoduId",
-      baseApi: api.cariGrupKodu,
-      returnField: "id",
-      labelField: "adi",
-      columnSize:4,
-    },
-    {
-      type: FormItemTypes.genericDropdown,
-      title: "Kod 1",
-      name: "cariKod1Id",
-      baseApi: api.cariKod1,
-      returnField: "id",
-      labelField: "adi",
-      columnSize:4,
-    },
-    {
-      type: FormItemTypes.genericDropdown,
-      title: "Kod 2",
-      name: "cariKod2Id",
-      baseApi: api.cariKod2,
-      returnField: "id",
-      labelField: "adi",
-      columnSize:4,
-    },
-    {
-      type: FormItemTypes.genericDropdown,
-      title: "Kod 3",
-      name: "cariKod3Id",
-      baseApi: api.cariKod3,
-      returnField: "id",
-      labelField: "adi",
-      columnSize:4,
-    },
-    {
-      type: FormItemTypes.genericDropdown,
-      title: "Kod 4",
-      name: "cariKod4Id",
-      baseApi: api.cariKod4,
-      returnField: "id",
-      labelField: "adi",
-      columnSize:4,
-    },
-    {
-      type: FormItemTypes.genericDropdown,
-      title: "Kod 5",
-      name: "cariKod5Id",
-      baseApi: api.cariKod5,
-      returnField: "id",
-      labelField: "adi",
-      columnSize:4,
-    },
-    {
-      title: "Vergi Dairesi",
-      name: "vergiDairesi",
-      type: FormItemTypes.input,
-      columnSize:4
-    },
-    {
-      title: "Vergi Numarası",
-      name: "vergiNumarasi",
-      type: FormItemTypes.input,
-      columnSize:4
-    },
-    {
-      title: "TC Kimlik No",
-      name: "tcKimlikNo",
-      type: FormItemTypes.input,
-      columnSize:4
-    },
-
-    {
-      title: "Açıklama 1",
-      name: "aciklama1",
-      type: FormItemTypes.input
-    },
-    {
-      title: "Açıklama 2",
-      name: "aciklama2",
-      type: FormItemTypes.input
-    },
-    {
-      title: "Açıklama 3",
-      name: "aciklama3",
-      type: FormItemTypes.input
-    },
+      title: "Kilitli Mi",
+      name: "kilitliMi",
+      type: FormItemTypes.boolean,
+      value: 0
+    }
   ] as IFormItem[];
 
+  const validateIsEmriOrProje = (formItems: IFormItem[] | undefined) => {
+    if (!formItems) {
+      return "Form verileri yüklenemedi."; // Eğer formItems undefined ise hata mesajı döner
+    }
+    const isEmriSelected = formItems.find(item => item.name === "isEmriNo")?.value;
+    const projeSelected = formItems.find(item => item.name === "projeKodu")?.value;
+    const plasiyerSelected = formItems.find(item => item.name === "plasiyerKodu")?.value;
+  
+    if (!isEmriSelected && (!projeSelected || !plasiyerSelected) ) {
+      return "'İş Emri' veya 'Proje' ve 'Ünite' seçiniz.";
+    }
+  
+    return null; 
+  };
 
   return (
     <div className="container-fluid">
@@ -280,13 +201,13 @@ export default () => {
       />
       <DynamicModal
         isShownig={isModalShowing}
-        title=""
-        api={api.cari}
+        title="Netsis Depo İzin"
+        api={api.netsisDepoIzin}
         items={modalItems}
         onDone={onSuccess}
         selectedItem={selectedItem}
         onHide={() => setModalShowing(false)}
-        classEki="4"
+        validator={validateIsEmriOrProje} 
       />
       <AppBreadcrumb title="" />
       <div className="row">
@@ -295,9 +216,9 @@ export default () => {
             <div className="card-body">
               <div className="table-responsive m-t-40">
                 <AppTable
-                  baseApi={api.cari}
+                  baseApi={api.netsisDepoIzin}
                   columns={columns}
-                  key={"Caris"}
+                  key={"NetsisDepoIzin"}
                   ref={myTable}
                   rowSelectable={false}
                   appendHeader={() => {
@@ -320,5 +241,3 @@ export default () => {
     </div>
   );
 };
-
-

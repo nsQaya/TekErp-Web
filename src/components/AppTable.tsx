@@ -144,7 +144,7 @@ function ITable(
     if (event.filters) {
       setFilters(event.filters);
     }
-    //console.log(event);
+    
   }, []);
 
   const refresh = useCallback(async () => {

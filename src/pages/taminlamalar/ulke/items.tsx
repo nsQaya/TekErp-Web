@@ -127,6 +127,7 @@ export default () => {
       title: "Kodu",
       name: "kodu",
       type: FormItemTypes.input,
+      
     },
     {
       title: "Adı",
@@ -134,6 +135,23 @@ export default () => {
       type: FormItemTypes.input,
     },
   ] as IFormItem[];
+
+  const validateItems = (formItems: IFormItem[] | undefined) => {
+    if (!formItems) {
+      return "Form verileri yüklenemedi."; // Eğer formItems undefined ise hata mesajı döner
+    }
+    const koduSelected = formItems.find(item => item.name === "kodu")?.value;
+    const adiSelected = formItems.find(item => item.name === "adi")?.value;
+  
+    if (!koduSelected ) {
+      return "Ülke kodunu girin.";
+    }
+    if (!adiSelected ) {
+      return "Ülke adını  girin.";
+    }
+  
+    return null; 
+  };
 
   return (
     <div className="container-fluid"style={{ marginTop: 1, paddingTop: 1 }}>
@@ -157,6 +175,7 @@ export default () => {
         onDone={onSuccess}
         selectedItem={selectedItem}
         onHide={() => setModalShowing(false)}
+        validator={validateItems}
       />
       <AppBreadcrumb title="" />
       <div className="row" style={{ marginTop: 1, paddingTop: 1 }}>

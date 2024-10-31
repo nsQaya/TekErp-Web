@@ -949,8 +949,13 @@ const App: React.FC = () => {
   
       if (!response.data.status) {
         throw new Error(
-          (response.data.errors && response.data.errors[0].Errors && response.data.errors[0].Errors[0]) ||
-          "Veriler kaydedilirken bir hata oluştu."
+          (
+            (response.data.errors &&
+            response.data.errors[0].Errors &&
+            response.data.errors[0].Errors[0])
+           ) ||
+           response.data.detail ||
+            "Veriler kaydedilirken bir hata oluştu."
         );
       }
       navigate(`/fatura/depolararasitransferliste`)

@@ -120,7 +120,9 @@ export default () => {
   ]);
 
   const [uretimPages] =useState([
-    {title: "Üretim Sonu Kaydı", href: "/uretim/uretimSonuKaydi"},
+    {title: "Üretim Sonu Kaydı Listesi", href: "/uretim/netsisUretimSonuKaydiListe"},
+    {title: "Üretim Sonu Kaydı", href: "/uretim/netsisUretimSonuKaydi"},
+    {title: "Depo İzin", href: "/uretim/netsisDepoIzin"},
     
   ]);
 

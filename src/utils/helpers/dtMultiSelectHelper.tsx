@@ -5,6 +5,25 @@ import { EAmbarFisiCikisYeri } from "../types/enums/EAmbarFisiCikisYeri";
 import { EAmbarHareketTur } from "../types/enums/EAmbarHareketTur";
 import { EBelgeTip } from "../types/enums/EBelgeTip";
 
+
+const kilitliMiOptions = [
+  { label: "Evet", value: "1" },
+  { label: "Hayır", value: "0" }
+];
+
+export const kilitliMiDDFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
+  return (
+    <Dropdown
+      value={options.value}
+      options={kilitliMiOptions}
+      onChange={(e: DropdownChangeEvent) => {
+        options.filterApplyCallback(e.value);
+      }}
+      placeholder="Seçiniz"
+    />
+  );
+};
+
 // Dropdown filtresi
 const aktarimDurumuOptions = Object.keys(EAktarimDurumu)
   //.filter((key) => !isNaN(Number(EAktarimDurumu[key as keyof typeof EAktarimDurumu])))
@@ -74,6 +93,7 @@ export const ambarHareketTurDDFilterTemplate = (options: ColumnFilterElementTemp
       />
     );
   };
+
   const belgeTipOptions = Object.keys(EBelgeTip)
   //.filter((key) => !isNaN(Number(EAktarimDurumu[key as keyof typeof EAktarimDurumu])))
   .filter((key) => isNaN(Number(key)))

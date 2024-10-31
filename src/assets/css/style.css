@@ -21817,6 +21817,9 @@ File: scss
       margin-bottom: 1rem;
   }
 
+  .modal-dropdown-panel {
+    z-index: 1050 !important; /* modalın z-index değerinden yüksek olmalı */
+  }
 
    /* .p-datatable-tbody > tr > td {
    /* padding: 0px 0px; /* Satır içi padding (boşlukları) azaltın */

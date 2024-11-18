@@ -48,6 +48,7 @@ import Logout from "../pages/kullanici/logout";
 import NetsisUretimSonuKaydiListe from "../pages/uretim/netsisUretimSonuKaydiListe";
 import NetsisUretimSonuKaydi from "../pages/uretim/netsisUretimSonuKaydi";
 import NetsisDepoIzin from "../pages/uretim/netsisDepoIzin";
+import SatinalmaSiparisFisi from "../pages/fatura/satinalmaSiparisFisi";
 
 
 export default createHashRouter([
@@ -247,6 +248,14 @@ export default createHashRouter([
             path: "satistalepliste",
             element: <TalepTeklifListe baseApi={api.talepTeklif} navigatePath="/talepsiparis/satistalepfisi" />,
           },
+          {
+            path: "satinalmasiparisfisi",
+            element:<SatinalmaSiparisFisi/>,
+          },
+          {
+            path: "satistalepliste",
+            element: <TalepTeklifListe baseApi={api.talepTeklif} navigatePath="/talepsiparis/satistalepfisi" />,
+          },
         ],
       },
       {
@@ -254,7 +263,7 @@ export default createHashRouter([
         children: [
           {
             path: "netsisUretimSonuKaydiListe",
-            element: <NetsisUretimSonuKaydiListe baseApi={api.netsisUretimSonuKaydi} navigatePath="/uretim/netsisUretimSonuKaydiListe" />,
+            element: <NetsisUretimSonuKaydiListe baseApi={api.netsisUretimSonuKaydi} navigatePath="/uretim/netsisUretimSonuKaydi" />,
           },
           {
             path: "netsisUretimSonuKaydi",

@@ -33,11 +33,13 @@ const aktarimDurumuOptions = Object.keys(EAktarimDurumu)
     value: EAktarimDurumu[key as keyof typeof EAktarimDurumu],
   }));
 
-export const aktarimDurumuDDFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
+export const aktarimDurumuDDFilterTemplate = (options: ColumnFilterElementTemplateOptions,
+  defaultValue?: keyof typeof EAktarimDurumu
+) => {
 
     return (
       <Dropdown 
-      value={options.value}
+      value={options.value || EAktarimDurumu[defaultValue as keyof typeof EAktarimDurumu]}
       options={aktarimDurumuOptions}
       onChange={(e: DropdownChangeEvent) => {
             options.filterApplyCallback(e.value);

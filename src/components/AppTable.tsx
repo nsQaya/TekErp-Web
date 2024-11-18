@@ -43,6 +43,7 @@ declare module "jspdf" {
 interface ITableProps {
   columns: ColumnProps[];
   baseApi: ICrudBaseAPI<any>;
+  defaultFilters?: Record<string, { value: any; matchMode: string }>; 
   rowStyles?(
     data: DataTableRowData<DataTableValueArray>,
     options: DataTableRowClassNameOptions<DataTableValueArray>
@@ -77,7 +78,7 @@ function ITable(
   const [sortColumn, setSortColumn] = useState<string>("Id");
   const [sortDirection, setSortDirection] = useState<SortOrder>(0);
   const [filters, setFilters] = useState(() => {
-    return props.columns
+    const initialFilters = props.columns
       .filter((column) => column.filter && column.field)
       .reduce((acc: any, column) => {
         if (column.field) {
@@ -95,8 +96,6 @@ function ITable(
               break;
           }
 
-
-
           acc[column.field] = {
             value: null,
             matchMode: matchMode, 
@@ -105,6 +104,14 @@ function ITable(
         }
         return acc;
       }, {} as any);
+
+      // Eğer `defaultFilters` varsa, başlangıç değerlerine uygula
+  if (props.defaultFilters) {
+    Object.assign(initialFilters, props.defaultFilters);
+  }
+
+  return initialFilters;
+      
   });
 
   const exportColumns = props.columns.map((col) => ({

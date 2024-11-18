@@ -80,10 +80,19 @@ import { ITalepTeklifSaveData } from "../types/fatura/ITalepTeklifSaveData";
 import talepTeklifStokHareket from "../api/fatura/talepTeklifStokHareket";
 import { ITalepTeklifStokHareket } from "../types/fatura/ITalepTeklifStokHareket";
 import { INetsisUretimSonuKaydi } from "../types/uretim/INetsisUretimSonuKaydi";
+import siparis from "../api/fatura/siparis";
+import siparisStokHareket from "../api/fatura/siparis";
 
 import netsisUretimSonuKaydi from "../api/uretim/netsisUretimSonuKaydi";
+import netsisUretimSonuKaydiIsEmriRecete from "../api/uretim/netsisUretimSonuKaydiIsEmriRecete";
 import netsisDepoIzin from "./uretim/netsisDepoIzin";
 import { INetsisDepoIzin } from "../types/uretim/INetsisDepoIzin";
+import { INetsisUretimSonuKaydiIsEmriRecete } from "../types/uretim/INetsisUretimSonuKaydiIsEmriRecete";
+import { INetsisCariOdemeKodu } from "../types/cari/INetsisCariOdemeKodu";
+import netsisCariOdemeKodu from "./cari/netsisCariOdemeKodu"
+import { ISiparisSaveData } from "../types/fatura/ISiparisSaveData";
+import { ISiparis } from "../types/fatura/ISiparis";
+import { ISiparisStokHareket } from "../types/fatura/ISiparisStokHareket";
 
 
 var instance: AxiosInstance = axios.create({
@@ -182,6 +191,7 @@ const repositories = {
   netsisStokHareketSeri:netsisStokHareketSeri(instance) as unknown as INetsisBaseAPI<INetsisStokHareket>,
 
   cari: cari(instance) as unknown as ICrudBaseAPI<ICari>,
+  netsisCariOdemeKodu: netsisCariOdemeKodu(instance) as unknown as ICrudBaseAPI<INetsisCariOdemeKodu>,
   // stokWithDetail: stokWithDetail(instance) as unknown as ICrudBaseAPI<IStokKartiWithDetail>,
   cariGrupKodu: cariGrupKod(instance) as unknown as ICrudBaseAPI<ICariKod>,
   cariKod1: cariKod(instance, 1) as unknown as ICrudBaseAPI<IStokKod>,
@@ -224,7 +234,12 @@ const repositories = {
   talepTeklifSave:talepTeklif(instance) as unknown as ICrudBaseAPI<ITalepTeklifSaveData>,
   talepTeklifStokHareket:talepTeklifStokHareket(instance) as unknown as ICrudBaseAPI<ITalepTeklifStokHareket>,
 
+  siparis:siparis(instance) as unknown as ICrudBaseAPI<ISiparis>,
+  siparisSave:siparis(instance) as unknown as ICrudBaseAPI<ISiparisSaveData>,
+  siparisStokHareket:siparisStokHareket(instance) as unknown as ICrudBaseAPI<ISiparisStokHareket>,
+
   netsisUretimSonuKaydi:netsisUretimSonuKaydi(instance) as unknown as ICrudBaseAPI<INetsisUretimSonuKaydi>,
+  netsisUretimSonuKaydiIsEmriRecete:netsisUretimSonuKaydiIsEmriRecete(instance) as unknown as INetsisBaseAPI<INetsisUretimSonuKaydiIsEmriRecete>,
   netsisDepoIzin:netsisDepoIzin(instance) as unknown as ICrudBaseAPI<INetsisDepoIzin>,
 
 };

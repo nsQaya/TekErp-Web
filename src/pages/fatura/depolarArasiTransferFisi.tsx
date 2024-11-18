@@ -950,9 +950,9 @@ const App: React.FC = () => {
       if (!response.data.status) {
         throw new Error(
           (
-            (response.data.errors &&
-            response.data.errors[0].Errors &&
-            response.data.errors[0].Errors[0])
+            Object.entries(response.data.errors || {})
+            .map(([key, messages]) => `${key}: ${messages.join(", ")}`)
+            .join("\n")
            ) ||
            response.data.detail ||
             "Veriler kaydedilirken bir hata oluştu."

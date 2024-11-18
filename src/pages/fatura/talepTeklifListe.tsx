@@ -11,6 +11,7 @@ import { ITalepTeklif } from "../../utils/types/fatura/ITalepTeklif";
 import api from "../../utils/api";
 import { dateFilterTemplate } from "../../utils/helpers/CalendarHelper";
 import { aktarimDurumuDDFilterTemplate } from "../../utils/helpers/dtMultiSelectHelper";
+import { FilterMatchMode } from "primereact/api";
 
 
 interface ITalepTeklifListeProps {
@@ -116,7 +117,7 @@ const  TalepTeklifListe =  ({ baseApi, navigatePath }: ITalepTeklifListeProps) =
       dataType:"numeric",
       sortable: false,
       filter: true,
-      filterElement:aktarimDurumuDDFilterTemplate,
+      filterElement: (options) => aktarimDurumuDDFilterTemplate(options, "AktarimHata"), // "AktarimHata" varsayılan olarak seçili olacak
       body: (row)=> {
         return getEnumNameAktarimDurumu(row.belge.aktarimDurumu);
       }
@@ -148,6 +149,13 @@ const  TalepTeklifListe =  ({ baseApi, navigatePath }: ITalepTeklifListeProps) =
     },
   ];
 
+  const defaultFilters = {
+    "belge.aktarimDurumu": {
+      value: EAktarimDurumu.AktarimHata, // Varsayılan değer
+      matchMode: FilterMatchMode.EQUALS,
+    },
+  };
+
   return (
     <div className="container-fluid">
       <Toast ref={toast} />
@@ -174,6 +182,7 @@ const  TalepTeklifListe =  ({ baseApi, navigatePath }: ITalepTeklifListeProps) =
                   key={"TalepTeklif"}
                   ref={myTable}
                   rowSelectable={false}
+                  defaultFilters={defaultFilters} // Varsayılan filtreler burada geçildi
                   appendHeader={() => {
                     return (
                       <Button

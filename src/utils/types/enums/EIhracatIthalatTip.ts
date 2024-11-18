@@ -1,0 +1,22 @@
+export enum EIhracatIthalatTip
+{
+    FOB=1,
+    CIF=2,
+    CF=3,
+    FOT=4,
+    IhracKayitli=5,
+    DAF=6,
+    EXW=7,
+    IhrKurFarki=8,
+    CIP=9,
+    CPT=10,
+    DAT=11,
+    DAP=12,
+    DDP=13,
+    DES=14,
+    DEQ=15,
+    DDU=16,
+    FCA=17,
+    FAS=18,
+    CFR=19 
+}

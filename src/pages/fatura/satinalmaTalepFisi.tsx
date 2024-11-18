@@ -118,7 +118,7 @@ const satinalmaTalepFisi = () => {
       olcuBirimId: 0,
       olcuBirim: undefined,
       girisCikis: "G",
-      aciklama1: "",
+      //aciklama1: "",
       aciklama2: "",
       aciklama3: "",
       sira: 0,
@@ -237,6 +237,10 @@ const satinalmaTalepFisi = () => {
                 sira: talepStokHareketData!.sira,
                 seriKodu: talepStokHareketData!.seriKodu,
                 teslimTarihi: talepStokHareketData!.teslimTarihi,
+                projeId: talepStokHareketData.projeId,
+                proje: talepStokHareketData.proje,
+                uniteId: talepStokHareketData.uniteId,
+                unite: talepStokHareketData.unite,
               }
             : item
         )
@@ -832,7 +836,7 @@ const satinalmaTalepFisi = () => {
                 <InputText
                   id="no"
                   name="no"
-                  value={belgeData?.no}
+                  value={belgeData?.no ? belgeData.no : ""}
                   onChange={(e) =>
                     setBelgeData((prevData) => ({
                       ...prevData,
@@ -855,7 +859,7 @@ const satinalmaTalepFisi = () => {
                   autoComplete="off"
                   id="cariKodu"
                   name="cariKodu"
-                  value={tempCariKodu}
+                  value={tempCariKodu??""}
                   readOnly
                   onChange={(e) => {
                     setTempCariKodu(e.target.value);
@@ -895,7 +899,7 @@ const satinalmaTalepFisi = () => {
             <InputText
               id="cariAdi"
               name="cariAdi"
-              value={talepData?.cari?.adi}
+              value={talepData?.cari?.adi ?? ""}
               disabled
               autoComplete="off"
             />
@@ -921,7 +925,7 @@ const satinalmaTalepFisi = () => {
                   autoComplete="off"
                   id="stokKodu"
                   name="stokKodu"
-                  value={tempStokKodu}
+                  value={tempStokKodu ??""}
                   onChange={(e) => setTempStokKodu(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key==="Tab") {
@@ -949,7 +953,7 @@ const satinalmaTalepFisi = () => {
               <InputText
                 id="stokKartiId"
                 name="stokKartiId"
-                value={talepStokHareketData?.stokKartiId?.toString()}
+                value={talepStokHareketData?.stokKartiId?.toString() ?? ""}
                 type="hidden"
                 autoComplete="off"
               />
@@ -961,7 +965,7 @@ const satinalmaTalepFisi = () => {
             <InputText
               id="stokAdi"
               name="stokAdi"
-              value={talepStokHareketData?.stokKarti?.adi}
+              value={talepStokHareketData?.stokKarti?.adi ? talepStokHareketData.stokKarti.adi:""}
               disabled
               autoComplete="off"
             />
@@ -973,7 +977,7 @@ const satinalmaTalepFisi = () => {
               <InputText
                 id="seriKodu"
                 name="seriKodu"
-                value={talepStokHareketData?.seriKodu}
+                value={talepStokHareketData?.seriKodu ?? ""}
                 autoComplete="off"
                 onChange={(e) =>
                   setTalepStokHareketData((prevData) => ({
@@ -1019,7 +1023,7 @@ const satinalmaTalepFisi = () => {
               <InputNumber
                 id="miktar"
                 name="miktar"
-                value={talepStokHareketData.miktar}
+                value={talepStokHareketData.miktar ?? 0}
                 min={0}
                 minFractionDigits={0}
                 maxFractionDigits={4}
@@ -1046,7 +1050,7 @@ const satinalmaTalepFisi = () => {
               <InputNumber
                 id="bilgiMiktar"
                 name="bilgiMiktar"
-                value={bilgiMiktar}
+                value={bilgiMiktar ?? 0}
                 maxFractionDigits={4}
                 disabled
                 inputStyle={{ textAlign: "right" }}
@@ -1085,7 +1089,7 @@ const satinalmaTalepFisi = () => {
               <InputText
                 id="aciklama1"
                 name="aciklama1"
-                value={talepStokHareketData?.aciklama1}
+                value={talepStokHareketData?.aciklama1 ?? ""}
                 autoComplete="off"
                 onChange={(e) =>
                   setTalepStokHareketData((prevData) => ({
@@ -1102,7 +1106,7 @@ const satinalmaTalepFisi = () => {
               <InputText
                 id="aciklama2"
                 name="aciklama2"
-                value={talepStokHareketData?.aciklama2}
+                value={talepStokHareketData?.aciklama2 ?? ""}
                 autoComplete="off"
                 onChange={(e) =>
                   setTalepStokHareketData((prevData) => ({
@@ -1119,7 +1123,7 @@ const satinalmaTalepFisi = () => {
               <InputText
                 id="aciklama3"
                 name="aciklama3"
-                value={talepStokHareketData?.aciklama3}
+                value={talepStokHareketData?.aciklama3 ?? ""}
                 autoComplete="off"
                 onChange={(e) =>
                   setTalepStokHareketData((prevData) => ({
@@ -1137,7 +1141,7 @@ const satinalmaTalepFisi = () => {
                 <InputText
                   id="projeKodu"
                   name="projeKodu"
-                  value={talepStokHareketData.proje?.kodu}
+                  value={talepStokHareketData.proje?.kodu ?? ""}
                   readOnly
                   disabled
                   autoComplete="off"
@@ -1167,7 +1171,7 @@ const satinalmaTalepFisi = () => {
               <InputText
                 id="projeKoduId"
                 name="projeKoduId"
-                value={talepStokHareketData.projeId.toString()}
+                value={talepStokHareketData?.projeId?.toString() ?? ""}
                 type="hidden"
                 autoComplete="off"
               />
@@ -1180,7 +1184,7 @@ const satinalmaTalepFisi = () => {
                 <InputText
                   id="uniteKodu"
                   name="uniteKodu"
-                  value={talepStokHareketData.unite?.kodu}
+                  value={talepStokHareketData.unite?.kodu ?? ""}
                   readOnly
                   disabled
                   autoComplete="off"
@@ -1208,7 +1212,7 @@ const satinalmaTalepFisi = () => {
               <InputText
                 id="uniteId"
                 name="uniteId"
-                value={talepStokHareketData.uniteId.toString()}
+                value={talepStokHareketData?.uniteId?.toString() ?? ""}
                 type="hidden"
                 autoComplete="off"
               />

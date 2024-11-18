@@ -85,6 +85,8 @@ export default () => {
 
   const [talepSiparis] =useState([
     {title: "Satın Alma Talep", href: "/talepsiparis/satinalmatalepliste"},
+    {title: "Satın Alma Talep", href: "/talepsiparis/satinalmasiparisliste"},
+    {title: "Satın Alma Sipariş", href: "/talepsiparis/satinalmasiparisfisi"},
     //{title: "Satış Talep", href: "/talepsiparis/satistalepliste"},
   ]);
 

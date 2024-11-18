@@ -262,7 +262,8 @@ export default (props: IStokModalProps) => {
 
     if (!data.status) {
       
-      return alert((data.errors && data.errors[0].Errors && data.errors[0].Errors[0]) || "Bir hata oldu");
+      return alert((data.errors && data.errors ) || data.detail || "Bir hata oldu");
+
     }
 
     if (props.onDone) {

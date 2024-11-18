@@ -12,21 +12,21 @@ import { InputNumber } from "primereact/inputnumber";
 import ProjeRehberDialog from "../../components/Rehber/ProjeRehberDialog";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { transformFilter } from "../../utils/transformFilter";
 import StokHareketGirisSeriModal from "../stok/stokHareketGirisSeriModal";
 import { IStokHareketSeri } from "../../utils/types/stok/IStokHareketSeri";
 import { IStokSeriBakiye } from "../../utils/types/stok/IStokSeriBakiye";
 import { useNavigate } from "react-router-dom";
+import { INetsisUretimSonuKaydiIsEmriRecete } from "../../utils/types/uretim/INetsisUretimSonuKaydiIsEmriRecete";
 
-// Grid verileri için bir tip tanımı
-type GridData = {
-  id:number,
-  mamulKodu:string,
-  hammaddeKodu:string,
-  hammaddeAdi:string,
-  miktar:number,
-  depoBakiye:number,
-};
+// // Grid verileri için bir tip tanımı
+// type GridData = {
+//   id:number,
+//   mamulKodu:string,
+//   hammaddeKodu:string,
+//   hammaddeAdi:string,
+//   miktar:number,
+//   //depoBakiye:number, sonradan bundan vazgeçti
+// };
 
 const netsisUretimSonuKaydi = () => {
 
@@ -69,7 +69,6 @@ const netsisUretimSonuKaydi = () => {
       projeId: 0,
       proje: undefined,
       uretimYapanUserId: "",
-      uretimYapanUser: undefined,
       aciklama: "",
       girisDepo: undefined,
       cikisDepo: undefined,
@@ -222,7 +221,7 @@ const netsisUretimSonuKaydi = () => {
   
 
   const handleIsEmriNoGetir = useCallback(async () => {
-    if (tempIsEmriNo) {
+    if (tempIsEmriNo && tempIsEmriNo.length==15) {
       const response = await api.isEmri.getByKod(tempIsEmriNo);
 
       if (response?.data?.status && response?.data?.value) {
@@ -232,9 +231,12 @@ const netsisUretimSonuKaydi = () => {
           ...prevState,
           isEmriNo: isEmriResponse.isEmriNo,
           miktar: isEmriResponse.miktar,
+          girisDepo:isEmriResponse.girisDepo,
+          cikisDepo:isEmriResponse.cikisDepo
         }));
 
         handleProjeGetir(response.data.value.projeKodu);
+        setTempStokKodu(response.data.value.stokKodu);
         handleStokGetir(response.data.value.stokKodu);
       }
     } else {
@@ -242,12 +244,21 @@ const netsisUretimSonuKaydi = () => {
         ...prevState,
         isEmriNo: "",
         miktar: 0,
+        girisDepo:undefined,
+        cikisDepo:undefined,
+        stokKarti:undefined,
+        stokKartiId:0,
+        proje:undefined,
+        projeId:0
+
       }));
+      setTempStokKodu("");
     }
   }, [tempIsEmriNo]);
 
   // tempCariKodu değiştiğinde handleCariGetir fonksiyonunu çağır
   useEffect(() => {
+    //if (tempIsEmriNo.length===15)
     handleIsEmriNoGetir();
   }, [tempIsEmriNo, handleIsEmriNoGetir]);
 
@@ -260,7 +271,7 @@ const netsisUretimSonuKaydi = () => {
     }));
   };
 
-  const [gridData, setGridData] = useState<GridData[]>([]);
+  const [gridData, setGridData] = useState<INetsisUretimSonuKaydiIsEmriRecete[]>([]);
 
   const validateSave = () => {
     if (!netsisUretimSonuKaydiData?.stokKartiId) {
@@ -317,7 +328,6 @@ const netsisUretimSonuKaydi = () => {
       });
       return false;
     }
-    
     return true;
   };
 
@@ -327,34 +337,22 @@ const netsisUretimSonuKaydi = () => {
     }
 
     setLoadingGetir(true);
-    const sortColumn = "cikisHucre.kodu";
-    const sortDirection = 1;
-
-    const filters = {
-      ProjeKodu: { value: netsisUretimSonuKaydiData.proje?.kodu, matchMode: "equals" },
-      PlasiyerKodu: { value: netsisUretimSonuKaydiData.aciklama, matchMode: "equals" },
-      istenilenMiktar: { value: "0", matchMode: "gt" },
-    };
-    const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
 
     try {
-      const response = await api.ihtiyacPlanlamaRapor.getListForAmbarCikisFisi(
-        dynamicQuery
+      const response = await api.netsisUretimSonuKaydiIsEmriRecete.getAll(
+        netsisUretimSonuKaydiData.isEmriNo!
       );
 
       if (response.data.value && response.data.value.count > 0) {
-        document.getElementById("getirButton")!.hidden = true;
 
         const data = response.data.value;
     
-        const newGridData: GridData[] = data.items.map((item, index) => ({
-          id: index ,
-          mamulKodu:item.stokKodu,
-          hammaddeKodu:item.stokKodu,
-          depoBakiye:0,
-          hammaddeAdi:"hammadde adi",
-          miktar:0
-          
+        const newGridData: INetsisUretimSonuKaydiIsEmriRecete[] = data.items.map((item, index) => ({
+          id: index +1 ,
+          mamuL_KODU:item.mamuL_KODU,
+          haM_KODU:item.haM_KODU,
+          bileseN_ISIM:item.bileseN_ISIM,
+          miktar:item.miktar
         }));
 
         setGridData(newGridData);
@@ -367,20 +365,11 @@ const netsisUretimSonuKaydi = () => {
   };
 
   const validateGetir = () => {
-    if (netsisUretimSonuKaydiData.cikisDepo) {
+    if (!netsisUretimSonuKaydiData.isEmriNo) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
-        detail: "Çıkış depo hatalı...",
-        life: 3000,
-      });
-      return false;
-    }
-    if (netsisUretimSonuKaydiData.stokKarti) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Hata",
-        detail: "Stok hatalı ...",
+        detail: "İş Emri hatalı...",
         life: 3000,
       });
       return false;
@@ -480,7 +469,7 @@ const netsisUretimSonuKaydi = () => {
                   //readOnly
                   onChange={(e) => {
                     setTempIsEmriNo(e.target.value);
-                    handleIsEmriNoGetir();
+                    //handleIsEmriNoGetir();
                   }}
                 />
                 {tempIsEmriNo && (
@@ -853,7 +842,7 @@ const netsisUretimSonuKaydi = () => {
             />
           </div>
 
-          <div className="col-lg-4 col-md-12 col-sm-12 mt-4">
+          {/* <div className="col-lg-4 col-md-12 col-sm-12 mt-4">
             <FloatLabel>
               <label htmlFor="aciklama">Açıklama</label>
               <div className="p-inputgroup">
@@ -872,7 +861,7 @@ const netsisUretimSonuKaydi = () => {
                 />
               </div>
             </FloatLabel>
-          </div>
+          </div> */}
         </div>
         <div className="p-col-12  mt-3">
           <Button
@@ -904,14 +893,13 @@ const netsisUretimSonuKaydi = () => {
             //   }
             // }}
             virtualScrollerOptions={{ itemSize: 46 }}
-
           >
             <Column field="id" header="#" />
-            <Column field="mamulKodu" header="Mamul Kodu"/>
-            <Column field="hammaddeKodu" header="Hammadde Kodu" />
-            <Column field="hammaddeAdi" header="Hammadde Adı" />
+            <Column field="mamuL_KODU" header="Mamul Kodu"/>
+            <Column field="haM_KODU" header="Hammadde Kodu" />
+            <Column field="bileseN_ISIM" header="Hammadde Adı" />
             <Column field="miktar" header="Miktar" />
-            <Column field="depoBakiye" header="Depo Bakiye" />
+            {/* <Column field="depoBakiye" header="Depo Bakiye" /> */}
             
           </DataTable>
         </div>

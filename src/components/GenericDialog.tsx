@@ -16,6 +16,7 @@ interface GenericDialogProps<T> {
   returnField: keyof T;
   onSelect: (selectedItem: T) => void;
   defaultSortField: keyof T;
+  externalFilters?: Record<string, any>;
 }
 
 const GenericDialog = <T extends {}>(props: GenericDialogProps<T>) => {
@@ -27,6 +28,15 @@ const GenericDialog = <T extends {}>(props: GenericDialogProps<T>) => {
   const [sortField, setSortField] = useState<string | undefined>(undefined); 
   const [sortOrder, setSortOrder] = useState<SortOrder | undefined>(undefined); 
 
+    // Dış ve iç filtreleri birleştirme fonksiyonu
+    const mergeFilters = (
+      internalFilters: Record<string, any>,
+      externalFilters?: Record<string, any>
+    ) => {
+      if (!externalFilters) return internalFilters;
+      return { ...externalFilters, ...internalFilters };
+    };
+
   const initializeFilters = useCallback(() => {
     const newFilters = props.columns
       .filter((column) => column.filter && column.field)
@@ -36,8 +46,8 @@ const GenericDialog = <T extends {}>(props: GenericDialogProps<T>) => {
         }
         return acc;
       }, {});
-    setFilters(newFilters);
-  }, []);
+      setFilters(mergeFilters(newFilters, props.externalFilters));
+  }, [props.externalFilters]);
 
   useEffect(() => {
     initializeFilters();
@@ -46,7 +56,12 @@ const GenericDialog = <T extends {}>(props: GenericDialogProps<T>) => {
   const fetchData = useCallback(
     debounce(async () => {
       setLoading(true);      
-      const dynamicQuery = transformFilter(filters || {}, sortField || props.defaultSortField as string, sortOrder ?? 1 as SortOrder);
+      const combinedFilters = mergeFilters(filters, props.externalFilters);
+      const dynamicQuery = transformFilter(
+        combinedFilters,
+        sortField || (props.defaultSortField as string),
+        sortOrder ?? 1
+      );
       const response = await props.baseApi.getAllForGrid(0, 10, dynamicQuery);
       setData(response.data.value.items);
       setLoading(false);
@@ -75,9 +90,10 @@ const GenericDialog = <T extends {}>(props: GenericDialogProps<T>) => {
   };
 
   const handleTableEvent = (event: DataTableStateEvent) => {
-    if (event.filters) {
-      setFilters(event.filters);
-    }
+
+    const newFilters = event.filters ? mergeFilters(event.filters, props.externalFilters) : filters;
+    setFilters(newFilters);
+
     if (event.sortField) {
       setSortField(event.sortField); // Gelen sıralama alanını saklıyoruz
     }
@@ -100,7 +116,8 @@ const GenericDialog = <T extends {}>(props: GenericDialogProps<T>) => {
   };
 
   const resetState = () => {
-    initializeFilters();
+    const combinedFilters = mergeFilters({}, props.externalFilters);
+    setFilters(combinedFilters);
     setSelectedItem(null);
     setData([]);
   };

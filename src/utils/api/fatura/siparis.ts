@@ -5,7 +5,7 @@ import { ISiparis } from "../../types/fatura/ISiparis";
 import { ISiparisSaveData } from "../../types/fatura/ISiparisSaveData";
 
 
-const controller="Sipariss";
+const controller="Siparises";
 
 export default ($axios: AxiosInstance) => ({
     getAllForGrid(page: number, take: number,dynamicQuery:DynamicQuery  ){

@@ -49,6 +49,7 @@ import NetsisUretimSonuKaydiListe from "../pages/uretim/netsisUretimSonuKaydiLis
 import NetsisUretimSonuKaydi from "../pages/uretim/netsisUretimSonuKaydi";
 import NetsisDepoIzin from "../pages/uretim/netsisDepoIzin";
 import SatinalmaSiparisFisi from "../pages/fatura/satinalmaSiparisFisi";
+import SatinalmaSiparisListe from "../pages/fatura/satinalmaSiparisListe";
 
 
 export default createHashRouter([
@@ -253,8 +254,8 @@ export default createHashRouter([
             element:<SatinalmaSiparisFisi/>,
           },
           {
-            path: "satistalepliste",
-            element: <TalepTeklifListe baseApi={api.talepTeklif} navigatePath="/talepsiparis/satistalepfisi" />,
+            path: "satinalmasiparisliste",
+            element: <SatinalmaSiparisListe baseApi={api.siparis} navigatePath="/talepsiparis/satinalmasiparisfisi" />,
           },
         ],
       },

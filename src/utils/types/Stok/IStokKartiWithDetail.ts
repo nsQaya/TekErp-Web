@@ -1,6 +1,9 @@
-import { IStokBarkod } from "./IStokBarkod";
+
+
 import { IHucre } from "../tanimlamalar/IHucre";
 import { ISapKod } from "./ISapKod";
+import { IStokBarkod } from "./IStokBarkod";
+
 
 
 export interface IStokKartiWithDetail {
@@ -14,15 +17,15 @@ export interface IStokKartiWithDetail {
   stokKod3Id: any;
   stokKod4Id: any;
   stokKod5Id: any;
-  stokOlcuBirim1Id: number;
+  stokOlcuBirim1Id: any;
   stokOlcuBirim2Id: any;
   olcuBr2Pay: number;
   olcuBr2Payda: number;
   stokOlcuBirim3Id: any;
   olcuBr3Pay: number;
   olcuBr3Payda: number;
-  alisDovizTipiId: number;
-  satisDovizTipiId: number;
+  alisDovizTipiId: any;
+  satisDovizTipiId: any;
   alisFiyati: number;
   satisFiyati: number;
   alisKDVOrani: number;
@@ -38,5 +41,6 @@ export interface IStokKartiWithDetail {
   aktarimDurumu: number;
   stokBarkods: IStokBarkod[];
   sapKods: ISapKod[];
-  hucres: IHucre[];
+   hucres: IHucre[];
+  
 }

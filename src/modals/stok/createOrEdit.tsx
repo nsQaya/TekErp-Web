@@ -7,6 +7,8 @@ import api from "../../utils/api";
 import CreatableSelect from "react-select/creatable";
 import { IStok } from "../../utils/types/stok/IStok";
 import { IStokKartiWithDetail } from "../../utils/types/stok/IStokKartiWithDetail";
+import { IHucre } from "../../utils/types/tanimlamalar/IHucre";
+
 
 interface IStokModalProps {
   show: boolean;
@@ -27,16 +29,16 @@ export default (props: IStokModalProps) => {
   const [kodu, setKodu] = useState("");
   const [ingilizceIsim, setIngilizceIsim] = useState("");
   const [stokGrupKoduId, setStokGrupKoduId] = useState(null);
-  const [stokKod1Id, setStokKod1Id] = useState(null);
-  const [stokKod2Id, setStokKod2Id] = useState(null);
-  const [stokKod3Id, setStokKod3Id] = useState(null);
-  const [stokKod4Id, setStokKod4Id] = useState(null);
-  const [stokKod5Id, setStokKod5Id] = useState(null);
-  const [stokOlcuBirim1Id, setStokOlcuBirim1Id] =useState(1);
-  const [stokOlcuBirim2Id, setStokOlcuBirim2Id] = useState(null);
+  const [stokKod1Id, setStokKod1Id] = useState<string | null>(null);
+  const [stokKod2Id, setStokKod2Id] = useState<string | null>(null);
+  const [stokKod3Id, setStokKod3Id] = useState<string | null>(null);
+  const [stokKod4Id, setStokKod4Id] = useState<string | null>(null);
+  const [stokKod5Id, setStokKod5Id] = useState<string | null>(null);
+  const [stokOlcuBirim1Id, setStokOlcuBirim1Id] = useState<string | null>(null);
+  const [stokOlcuBirim2Id, setStokOlcuBirim2Id] = useState<string | null>(null);
   const [olcuBr2Pay, setOlcuBr2Pay] = useState(1);
   const [olcuBr2Payda, setOlcuBr2Payda] = useState(1);
-  const [stokOlcuBirim3Id, setStokOlcuBirim3Id] = useState(null);
+  const [stokOlcuBirim3Id, setStokOlcuBirim3Id] = useState<string | null>(null);
   const [olcuBr3Pay, setOlcuBr3Pay] = useState(1);
   const [olcuBr3Payda, setOlcuBr3Payda] = useState(1);
   const [alisDovizTipiId, setAlisDovizTipiId] = useState(1);
@@ -53,10 +55,13 @@ export default (props: IStokModalProps) => {
   const [asgariStokMiktari, setAsgariStokMiktari] = useState(0);
   const [azamiStokMiktari, setAzamiStokMiktari] = useState(0);
   const [minimumSiparisMiktari, setMinimumSiparisMiktari] = useState(0);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [hucres, setHucres] = useState<IHucre[]>([]);
+
 
   const [stokBarkods, setStokBarkods] = useState<{ label: string; value: string }[]>([]);
   const [sapKods, setSAPKods] = useState<{ label: string; value: string }[]>([]);
-  const [hucres, setHucres] = useState<{ label: string; value: string }[]>([]);
+
 
   const fetchItem = async (id: number) => {
     const { data } = await api.stokWithDetail.get(id);
@@ -98,8 +103,9 @@ export default (props: IStokModalProps) => {
     setAsgariStokMiktari(item.asgariStokMiktari);
     setAzamiStokMiktari(item.azamiStokMiktari);
     setMinimumSiparisMiktari(item.minimumSiparisMiktari);
+    setHucres(item.hucres.map((x) => ({ kodu: x.kodu, id: Number(x.kodu) })));
 
-    setHucres(item.hucres.map((x) => ({ label: x.kodu, value: x.kodu })));
+
     setSAPKods(item.sapKods.map((x) => ({ label: x.kod, value: x.kod })));
     setStokBarkods(item.stokBarkods.map((x) => ({ label: x.barkod, value: x.barkod })));
   };
@@ -123,7 +129,7 @@ export default (props: IStokModalProps) => {
       setStokKod3Id(null);
       setStokKod4Id(null);
       setStokKod5Id(null);
-      setStokOlcuBirim1Id(1);
+      setStokOlcuBirim1Id("");
       setStokOlcuBirim2Id(null);
       setOlcuBr2Pay(1);
       setOlcuBr2Payda(1);
@@ -144,8 +150,9 @@ export default (props: IStokModalProps) => {
       setAsgariStokMiktari(0);
       setAzamiStokMiktari(0);
       setMinimumSiparisMiktari(0);
-
       setHucres([]);
+      
+
       setSAPKods([]);
       setStokBarkods([]);
     }
@@ -159,6 +166,7 @@ export default (props: IStokModalProps) => {
   const [stokKod5s, setStokKod5s] = useState<FormSelectItem[]>([]);
   const [stokOlcuBirims, setStokOlcuBirims] = useState<FormSelectItem[]>([]);
   const [dovizTipis, setDovizTipis] = useState<FormSelectItem[]>([]);
+  const [hucreOpts, setHucreOpts] = useState<FormSelectItem[]>([]);
 
   const fetchInitals = useCallback(async () => {
     const [
@@ -169,7 +177,9 @@ export default (props: IStokModalProps) => {
       stokKod4Items,
       stokKod5Items,
       stokOlcuBirimItems,
-      dovizTipiItems
+      dovizTipiItems,
+      hucreItems,
+
     ] = await Promise.all([
       api.stokGrupKodu.getAll(0, 1000),
       api.stokKod1.getAll(0, 1000),
@@ -178,11 +188,16 @@ export default (props: IStokModalProps) => {
       api.stokKod4.getAll(0, 1000),
       api.stokKod5.getAll(0, 1000),
       api.stokOlcuBirim.getAll(0, 1000),
-      api.dovizTipi.getAll(0, 1000)
+      api.dovizTipi.getAll(0, 1000),
+      api.hucre.getAll(0, 1000)
     ]);
 
     setStokGrupKodus(
       stokGrupKoduItems.data.value.items.map((x) => ({ label: x.adi, value: String(x.id) }))
+    );
+    
+    setHucreOpts(
+      hucreItems.data.value.items.map((x) => ({ label: x.kodu , value: x.id.toString() }))
     );
 
     setStokKod1s(
@@ -212,10 +227,27 @@ export default (props: IStokModalProps) => {
     fetchInitals();
   }, [fetchInitals]);
 
+
   const onSubmit = useCallback(async () => {
-    if (adi == "") {
-      return alert("ADI ZORUNLU");
+    setIsSubmitted(true); // Form gönderildiğini belirle
+
+    if (kodu.trim() === "") {
+      return alert("STOK KODU ZORUNLU");
     }
+
+    if (adi.trim() === "") {
+      return alert("STOK ADI ZORUNLU");
+    }
+    if (ingilizceIsim.trim() === "") {
+      return alert("İngilizce İsim Zorunlu");
+    }
+    if (!stokGrupKoduId) {
+      return alert("GRUP KODU ZORUNLU"); // Grup Kodu zorunlu kontrolü
+    }
+    if (!hucres || hucres.length === 0) {
+      return alert("Hücre Zorunlu"); // Hücre seçilmemişse hata ver
+    }
+
 
     const request = {
       adi: adi,
@@ -249,10 +281,10 @@ export default (props: IStokModalProps) => {
       stokOlcuBirim1Id: stokOlcuBirim1Id,
       stokOlcuBirim2Id: stokOlcuBirim2Id,
       stokOlcuBirim3Id: stokOlcuBirim3Id,
-      hucres: hucres.map((x) => ({ kodu: x.value })),
+      hucres: hucres,
       sapKods: sapKods.map((x) => ({ kod: x.value })),
       stokBarkods: stokBarkods.map((x) => ({ barkod: x.value, stokOlcuBirimId: stokOlcuBirim1Id })),
-    } as IStokKartiWithDetail;
+    } as unknown as IStokKartiWithDetail;
 
     if (ID) {
       request.id = ID;
@@ -264,6 +296,7 @@ export default (props: IStokModalProps) => {
       console.log(data);
       return alert((data.errors && data.errors[0].Errors && data.errors[0].Errors[0]) || "Bir hata oldu");
     }
+
 
     if (props.onDone) {
       props.onDone();
@@ -300,10 +333,10 @@ export default (props: IStokModalProps) => {
     stokOlcuBirim1Id,
     stokOlcuBirim2Id,
     stokOlcuBirim3Id,
-    hucres,
     sapKods,
     stokBarkods,
     props,
+    hucres,
   ]);
 
   return (
@@ -331,31 +364,42 @@ export default (props: IStokModalProps) => {
                 <label className="form-label">Stok Kodu </label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${isSubmitted && !kodu.trim() ? 'is-invalid' : ''}`} // Kırmızı kenarlık
                   placeholder=""
                   value={kodu}
                   onChange={(text) => setKodu(text.target.value)}
                 />
+                {isSubmitted && !kodu.trim() && (
+                  <div className="invalid-feedback">Stok kodu zorunlu.</div> // Hata mesajı
+                )}
               </div>
+
               <div className="form-group">
                 <label className="form-label">Stok Adı</label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${isSubmitted && !adi.trim() ? 'is-invalid' : ''}`} // Kırmızı kenarlık
                   placeholder=""
                   value={adi}
                   onChange={(text) => setAdi(text.target.value)}
                 />
+                {isSubmitted && !adi.trim() && (
+                  <div className="invalid-feedback">Stok adı zorunlu.</div> // Hata mesajı
+                )}
               </div>
+
               <div className="form-group">
                 <label className="form-label">İngilizce Adı</label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${isSubmitted && !ingilizceIsim.trim() ? 'is-invalid' : ''}`}
                   placeholder=""
                   value={ingilizceIsim}
                   onChange={(text) => setIngilizceIsim(text.target.value)}
                 />
+                {isSubmitted && !ingilizceIsim.trim() && (
+                  <div className="invalid-feedback">İngilizce Adı Zorunlu</div> // Hata mesajı
+                )}
               </div>
               <div className="form-group">
                 <label className="form-label">Alış KDV Oranı</label>
@@ -368,6 +412,7 @@ export default (props: IStokModalProps) => {
                     const newValue = event.target.valueAsNumber;
                     setAlisKDVOrani(newValue < 0 ? 0 : newValue);
                   }}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="form-group">
@@ -381,17 +426,19 @@ export default (props: IStokModalProps) => {
                     const newValue = event.target.valueAsNumber;
                     setSatisKDVOrani(newValue < 0 ? 0 : newValue);
                   }}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
             </div>
             <div className="col-lg-6 m-b-50">
               <div className="col-lg-12 m-b-20">
-                <label className="form-label"></label>
+                <label className="form-label"> </label>
                 <Select
-                  value={stokOlcuBirims.find((x) => x.value == String(stokOlcuBirim1Id))}
+                  value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim1Id)}
                   placeholder="Ölçü Birim 1"
-                  onChange={(selected: any) => setStokOlcuBirim1Id(selected.value)}
-                  options={stokOlcuBirims as Options<any>}
+                  onChange={(selected) => setStokOlcuBirim1Id(selected ? selected.value : null)}
+                  isClearable
+                  options={stokOlcuBirims}
                 />
               </div>
 
@@ -400,8 +447,9 @@ export default (props: IStokModalProps) => {
                 <Select
                   value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim2Id)}
                   placeholder="Ölçü Birim 2"
-                  onChange={(selected: any) => setStokOlcuBirim2Id(selected.value)}
-                  options={stokOlcuBirims as Options<any>}
+                  onChange={(selected) => setStokOlcuBirim2Id(selected ? selected.value : null)}
+                  isClearable
+                  options={stokOlcuBirims}
                 />
               </div>
               <div className="col-lg-12 m-b-20">
@@ -409,8 +457,9 @@ export default (props: IStokModalProps) => {
                 <Select
                   value={stokOlcuBirims.find((x) => x.value == stokOlcuBirim3Id)}
                   placeholder="Ölçü Birim 3"
-                  onChange={(selected: any) => setStokOlcuBirim3Id(selected.value)}
-                  options={stokOlcuBirims as Options<any>}
+                  onChange={(selected) => setStokOlcuBirim3Id(selected ? selected.value : null)}
+                  isClearable
+                  options={stokOlcuBirims}
                 />
               </div>
 
@@ -428,6 +477,7 @@ export default (props: IStokModalProps) => {
                       placeholder="Pay 2"
                       value={olcuBr2Pay}
                       onChange={(text) => setOlcuBr2Pay(text.target.valueAsNumber)}
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     />
                   </div>
                   <div className="col-lg-6">
@@ -438,6 +488,8 @@ export default (props: IStokModalProps) => {
                       placeholder="Payda 2"
                       value={olcuBr2Payda}
                       onChange={(text) => setOlcuBr2Payda(text.target.valueAsNumber)}
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
+
                     />
                   </div>
                 </div>
@@ -455,6 +507,7 @@ export default (props: IStokModalProps) => {
                       placeholder="Pay 3"
                       value={olcuBr3Pay}
                       onChange={(text) => setOlcuBr3Pay(text.target.valueAsNumber)}
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     />
                   </div>
                   <div className="col-lg-6">
@@ -465,62 +518,73 @@ export default (props: IStokModalProps) => {
                       placeholder="Payda 3"
                       value={olcuBr3Payda}
                       onChange={(text) => setOlcuBr3Payda(text.target.valueAsNumber)}
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     />
                   </div>
                 </div>
               </div>
             </div>
             <div className="col-lg-6 m-b-20">
+              <label >Grup Kodu </label>
               <Select
-                value={stokGrupKodus.find((x) => x.value == stokGrupKoduId)}
-                placeholder="Stok Grup Kodu"
+                value={stokGrupKodus.find((x) => x.value == stokGrupKoduId) || null}
+                placeholder=""
                 onChange={(selected: any) => setStokGrupKoduId(selected.value)}
                 options={stokGrupKodus as Options<any>}
               />
             </div>
             <div className="col-lg-6 m-b-20">
+              <label>Kod 1</label>
               <Select
-                value={stokKod1s.find((x) => x.value == stokKod1Id)}
-                placeholder="Kod1"
-                onChange={(selected: any) => setStokKod1Id(selected.value)}
-                options={stokKod1s as Options<any>}
+                value={stokKod1s.find((x) => x.value === stokKod1Id) || null}
+                onChange={(selected) => setStokKod1Id(selected ? selected.value : null)}
+                options={stokKod1s}
+                placeholder=""
+                isClearable
               />
             </div>
 
             <div className="col-lg-6 m-b-20">
+              <label>Kod 2</label>
               <Select
-                value={stokKod2s.find((x) => x.value == stokKod2Id)}
-                placeholder="Kod2"
-                onChange={(selected: any) => setStokKod2Id(selected.value)}
-                options={stokKod2s as Options<any>}
+                value={stokKod2s.find((x) => x.value === stokKod2Id) || null}
+                onChange={(selected) => setStokKod2Id(selected ? selected.value : null)}
+                options={stokKod2s}
+                placeholder=""
+                isClearable
               />
             </div>
 
             <div className="col-lg-6 m-b-20">
+              <label>Kod 3</label>
               <Select
-
-                value={stokKod3s.find((x) => x.value == stokKod3Id)}
-                placeholder="Kod3"
-                onChange={(selected: any) => setStokKod3Id(selected.value)}
-                options={stokKod3s as Options<any>}
+                value={stokKod3s.find((x) => x.value === stokKod3Id) || null}
+                onChange={(selected) => setStokKod3Id(selected ? selected.value : null)}
+                options={stokKod3s}
+                placeholder=""
+                isClearable
               />
             </div>
 
             <div className="col-lg-6 m-b-20">
+              <label>Kod 4</label>
               <Select
-                value={stokKod4s.find((x) => x.value == stokKod4Id)}
-                placeholder="Kod4"
-                onChange={(selected: any) => setStokKod4Id(selected.value)}
-                options={stokKod4s as Options<any>}
+                value={stokKod4s.find((x) => x.value === stokKod4Id) || null}
+                onChange={(selected) => setStokKod4Id(selected ? selected.value : null)}
+                options={stokKod4s}
+                placeholder=""
+                isClearable
               />
             </div>
 
             <div className="col-lg-6 m-b-20">
+              <label>Kod 5</label>
               <Select
-                value={stokKod5s.find((x) => x.value == stokKod5Id)}
-                placeholder="Kod5"
-                onChange={(selected: any) => setStokKod5Id(selected.value)}
-                options={stokKod5s as Options<any>}
+                value={stokKod5s.find((x) => x.value === stokKod5Id) || null}
+                onChange={(selected) => setStokKod5Id(selected ? selected.value : null)}
+                options={stokKod5s}
+                placeholder=""
+                isClearable
               />
             </div>
             <div className="row">
@@ -535,6 +599,7 @@ export default (props: IStokModalProps) => {
                     const newValue = event.target.valueAsNumber;
                     setAlisFiyati(newValue < 0 ? 0 : newValue);
                   }}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="col-lg-6 m-b-20">
@@ -562,6 +627,7 @@ export default (props: IStokModalProps) => {
                     const newValue = event.target.valueAsNumber;
                     setSatisFiyati(newValue < 0 ? 0 : newValue);
                   }}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="col-lg-6 m-b-50">
@@ -576,7 +642,6 @@ export default (props: IStokModalProps) => {
                 />
               </div>
             </div>
-
             <div className="row">
               <div className="col-lg-6 m-b-20">
                 <label className="form-label">En</label>
@@ -589,6 +654,7 @@ export default (props: IStokModalProps) => {
                     const newValue = event.target.valueAsNumber;
                     setEn(newValue < 0 ? 0 : newValue);
                   }}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="col-lg-6 m-b-20">
@@ -602,6 +668,7 @@ export default (props: IStokModalProps) => {
                     const newValue = event.target.valueAsNumber;
                     setBoy(newValue < 0 ? 0 : newValue);
                   }}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
             </div>
@@ -617,6 +684,7 @@ export default (props: IStokModalProps) => {
                     const newValue = event.target.valueAsNumber;
                     setGenislik(newValue < 0 ? 0 : newValue);
                   }}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="col-lg-6 m-b-20">
@@ -630,12 +698,13 @@ export default (props: IStokModalProps) => {
                     const newValue = event.target.valueAsNumber;
                     setAgirlik(newValue < 0 ? 0 : newValue);
                   }}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
             </div>
             <div className="row">
               <div className="col-lg-6 m-b-20">
-                <label className="form-label">Asgari Sipariş Miktarı</label>
+                <label className="form-label">Asgari Stok Miktarı</label>
                 <input
                   type="number"
                   className="form-control"
@@ -645,10 +714,11 @@ export default (props: IStokModalProps) => {
                     const newValue = event.target.valueAsNumber;
                     setAsgariStokMiktari(newValue < 0 ? 0 : newValue);
                   }}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="col-lg-6 m-b-20">
-                <label className="form-label">Azami Sipariş Miktarı</label>
+                <label className="form-label">Azami Stok Miktarı</label>
                 <input
                   type="number"
                   className="form-control"
@@ -658,6 +728,7 @@ export default (props: IStokModalProps) => {
                     const newValue = event.target.valueAsNumber;
                     setAzamiStokMiktari(newValue < 0 ? 0 : newValue);
                   }}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
             </div>
@@ -673,6 +744,7 @@ export default (props: IStokModalProps) => {
                     const newValue = event.target.valueAsNumber;
                     setMinimumSiparisMiktari(newValue < 0 ? 0 : newValue);
                   }}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="col-lg-6 m-b-20">
@@ -710,11 +782,15 @@ export default (props: IStokModalProps) => {
                 />
               </div>
               <div className="col-lg-4 m-b-20">
-                <CreatableSelect
-                  placeholder="Hucreler"
+                <Select
                   isMulti
-                  value={hucres}
-                  onChange={(items: any) => setHucres(items)}
+                  value={hucreOpts.filter((x) => hucres.some(h => h.kodu === x.label))}  // Seçili hücreleri filtreliyoruz
+                  placeholder="Hücre"
+                  onChange={(selected: any) => {
+                    const selectedValues = selected ? selected.map((item: any) => ({ kodu: item.label, id: item.value })) : [];
+                    setHucres(selectedValues); // Hücreleri seçtiğinizde state güncelleniyor
+                  }}
+                  options={hucreOpts}  // Tüm seçenekler burada
                 />
               </div>
             </div>

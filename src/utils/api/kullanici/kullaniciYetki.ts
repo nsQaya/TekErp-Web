@@ -31,5 +31,8 @@ export default ($axios: AxiosInstance) => ({
     },
     getListByUserId(id: string){
         return $axios.get<IBaseResponseValue<IKullaniciYetki>>(`/${controller}/GetListByUserId?UserId=${id}`);
-    }
+    },
+    deleteByString(id: string){
+        return $axios.delete<IBaseResponseValue<IKullaniciYetki>>(`/${controller}/${id}`);
+    },
 });

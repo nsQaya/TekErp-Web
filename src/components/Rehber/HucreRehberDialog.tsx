@@ -8,7 +8,7 @@ const HucreRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IHucre)
         {
           header: "Kodu",
           field: "kodu",
-          // sortable: true,
+          sortable: true,
           filter: true,
         }
 
@@ -22,6 +22,7 @@ const HucreRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IHucre)
             columns={columns}
             returnField="kodu"
             onSelect={props.onSelect}
+            defaultSortField="kodu"
           />
     )
 };

@@ -14,7 +14,9 @@ const Dashboard = () => {
     
 
     return (
-       <> {JSON.stringify(layout)}
+       <> 
+
+
         <GridLayout className="layout" layout={layout} cols={12} rowHeight={150} width={1200} 
         //onLayoutChange={onLayoutChange}
         >

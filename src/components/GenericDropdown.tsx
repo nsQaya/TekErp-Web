@@ -29,7 +29,7 @@ const GenericDropdown: React.FC<GenericDropdownProps> = (props) => {
 
   useEffect(()=>{
     if(props.additionalFilters) setFilters(props.additionalFilters);
-    console.log(props.additionalFilters)
+    
   },[props.additionalFilters])
 
 

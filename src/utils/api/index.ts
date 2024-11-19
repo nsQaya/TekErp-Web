@@ -71,6 +71,28 @@ import { INetsisStokHareket } from "../types/stok/INetsisStokHareket";
 import netsisStokHareket from "../api/stok/netsisStokHareket";
 
 import netsisStokHareketSeri from "../api/stok/netsisStokHareketSeri";
+import { INetsisSirket } from "../types/tanimlamalar/INetsisSirket";
+import netsisSirket from "../api/tanimlamalar/netsisSirket";
+
+import { ITalepTeklif } from "../types/fatura/ITalepTeklif";
+import talepTeklif from "../api/fatura/talepTeklif";
+import { ITalepTeklifSaveData } from "../types/fatura/ITalepTeklifSaveData";
+import talepTeklifStokHareket from "../api/fatura/talepTeklifStokHareket";
+import { ITalepTeklifStokHareket } from "../types/fatura/ITalepTeklifStokHareket";
+import { INetsisUretimSonuKaydi } from "../types/uretim/INetsisUretimSonuKaydi";
+import siparis from "../api/fatura/siparis";
+import siparisStokHareket from "../api/fatura/siparis";
+
+import netsisUretimSonuKaydi from "../api/uretim/netsisUretimSonuKaydi";
+import netsisUretimSonuKaydiIsEmriRecete from "../api/uretim/netsisUretimSonuKaydiIsEmriRecete";
+import netsisDepoIzin from "./uretim/netsisDepoIzin";
+import { INetsisDepoIzin } from "../types/uretim/INetsisDepoIzin";
+import { INetsisUretimSonuKaydiIsEmriRecete } from "../types/uretim/INetsisUretimSonuKaydiIsEmriRecete";
+import { INetsisCariOdemeKodu } from "../types/cari/INetsisCariOdemeKodu";
+import netsisCariOdemeKodu from "./cari/netsisCariOdemeKodu"
+import { ISiparisSaveData } from "../types/fatura/ISiparisSaveData";
+import { ISiparis } from "../types/fatura/ISiparis";
+import { ISiparisStokHareket } from "../types/fatura/ISiparisStokHareket";
 
 
 var instance: AxiosInstance = axios.create({
@@ -106,24 +128,40 @@ const onResponse = (response: AxiosResponse): any => {
   return response;
 };
 
-const onResponseError = (error: AxiosError)=> {
-
+const onResponseError = (error: AxiosError) => {
   let errorMessage = "Bilinmeyen hata";
+  let errors: Record<string, string[]> | undefined;
 
   if (error.response?.data && typeof error.response.data === "object") {
     const errorData = error.response.data as IBaseResponse;
+
+    // `detail` alanını kontrol et
     if (errorData.detail) {
       errorMessage = errorData.detail;
     }
+
+    // `errors` alanını kontrol et ve varsa ata
+    if (errorData.errors) {
+      errors = errorData.errors;
+    } else if ((error.response.data as any).errors) {
+      // `Record<string, string[]>` olarak `errors` alanını al
+      errors = (error.response.data as any).errors;
+    }
+
+    // Eğer errors varsa, errorMessage'ı errors'dan türet
+    if (errors) {
+      errorMessage = Object.entries(errors)
+        .map(([key, messages]) => `${key}: ${messages.join(", ")}`)
+        .join("\n");
+    }
   }
-  console.log(error);
 
   const response = {
-    data:{
+    data: {
       status: false,
       value: null,
       detail: errorMessage,
-      errors: (error.response?.data as any).Errors || undefined
+      errors: errors
     }
   };
 
@@ -153,6 +191,7 @@ const repositories = {
   netsisStokHareketSeri:netsisStokHareketSeri(instance) as unknown as INetsisBaseAPI<INetsisStokHareket>,
 
   cari: cari(instance) as unknown as ICrudBaseAPI<ICari>,
+  netsisCariOdemeKodu: netsisCariOdemeKodu(instance) as unknown as ICrudBaseAPI<INetsisCariOdemeKodu>,
   // stokWithDetail: stokWithDetail(instance) as unknown as ICrudBaseAPI<IStokKartiWithDetail>,
   cariGrupKodu: cariGrupKod(instance) as unknown as ICrudBaseAPI<ICariKod>,
   cariKod1: cariKod(instance, 1) as unknown as ICrudBaseAPI<IStokKod>,
@@ -170,6 +209,7 @@ const repositories = {
   proje: proje(instance) as unknown as ICrudBaseAPI<IProje>,
   unite: unite(instance) as unknown as ICrudBaseAPI<IUnite>,
   belgeSeri: belgeSeri(instance) as unknown as ICrudBaseAPI<IBelgeSeri>,
+  netsisSirket: netsisSirket(instance) as unknown as ICrudBaseAPI<INetsisSirket>,
 
   kullanici: kullanici(instance) as unknown as ICrudBaseAPI<IKullanici>,
   kullaniciYetki: kullaniciYetki(instance) as unknown as ICrudBaseAPI<IKullaniciYetki>,
@@ -181,11 +221,26 @@ const repositories = {
   isEmri: isEmri(instance) as unknown as ICrudBaseAPI<IIsEmri>,
 
   belge:belge(instance) as unknown as ICrudBaseAPI<IBelge>,
+
   ambarFisi:ambarCikisFisi(instance) as unknown as ICrudBaseAPI<IAmbarFisi>,
   ambarFisiSave:ambarCikisFisi(instance) as unknown as ICrudBaseAPI<ITransferDataAmbarFisi>,
+
   depolarArasiTransfer:depolarArasiTransfer(instance) as unknown as ICrudBaseAPI<IDepolarArasiTransfer>,
   depolarArasiTransferSave:depolarArasiTransfer(instance) as unknown as ICrudBaseAPI<ITransferDataDepolarArasiTransfer>,
-  belgeNo:belge(instance) as unknown as ICrudBaseAPI<IBelgeNo>
+
+  belgeNo:belge(instance) as unknown as ICrudBaseAPI<IBelgeNo>,
+
+  talepTeklif:talepTeklif(instance) as unknown as ICrudBaseAPI<ITalepTeklif>,
+  talepTeklifSave:talepTeklif(instance) as unknown as ICrudBaseAPI<ITalepTeklifSaveData>,
+  talepTeklifStokHareket:talepTeklifStokHareket(instance) as unknown as ICrudBaseAPI<ITalepTeklifStokHareket>,
+
+  siparis:siparis(instance) as unknown as ICrudBaseAPI<ISiparis>,
+  siparisSave:siparis(instance) as unknown as ICrudBaseAPI<ISiparisSaveData>,
+  siparisStokHareket:siparisStokHareket(instance) as unknown as ICrudBaseAPI<ISiparisStokHareket>,
+
+  netsisUretimSonuKaydi:netsisUretimSonuKaydi(instance) as unknown as ICrudBaseAPI<INetsisUretimSonuKaydi>,
+  netsisUretimSonuKaydiIsEmriRecete:netsisUretimSonuKaydiIsEmriRecete(instance) as unknown as INetsisBaseAPI<INetsisUretimSonuKaydiIsEmriRecete>,
+  netsisDepoIzin:netsisDepoIzin(instance) as unknown as ICrudBaseAPI<INetsisDepoIzin>,
 
 };
 

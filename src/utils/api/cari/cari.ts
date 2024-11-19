@@ -32,7 +32,7 @@ export default ($axios: AxiosInstance) => ({
     },
     getByKod(kod: string){
         return $axios.get<IBaseResponseValue<ICari>>(`/${controller}/GetByKod?CariKod=${kod}`);
-    },
+    }
 });
 
 

@@ -255,6 +255,7 @@ export default () => {
                   ref={myTable}
                   rowSelectable={false}
                   rowStyles={rowStyles}
+                  scrollHeight="600px"     // Tablo gövdesine 600px sabit yükseklik atama
                   // rowStyles={conditionalRowStyles}
                   rowPerPageOptions={[100, 250, 500, 1000, 10000]}
                   appendHeader={() => {

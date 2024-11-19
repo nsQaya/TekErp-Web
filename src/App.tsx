@@ -97,6 +97,8 @@ function App() {
 
   addLocale('tr', tr);
   locale('tr');
+  
+
   return (
     <RouterProvider router={userStore.isLogged() ? mainRouter : authRouter} />
   );

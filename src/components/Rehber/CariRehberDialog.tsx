@@ -10,13 +10,13 @@ const CariRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: ICari) =
         {
           header: "Kodu",
           field: "kodu",
-          // sortable: true,
+          sortable: true,
           filter: true,
         },
         {
           header: "Adı",
           field: "adi",
-          // sortable: true,
+          sortable: true,
           filter: true,
         },
         {
@@ -48,6 +48,7 @@ const CariRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: ICari) =
             columns={columns}
             returnField="kodu"
             onSelect={props.onSelect}
+            defaultSortField="kodu"
           />
     )
 };

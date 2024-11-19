@@ -69,7 +69,7 @@ export default (props: IStokModalProps) => {
       return alert(data.detail);
     }
 
-    console.log(data);
+   
     const item = data.value;
 
     setID(item.id as number);
@@ -293,8 +293,9 @@ export default (props: IStokModalProps) => {
     const { data } = !ID ? await api.stokWithDetail.create(request) : await api.stokWithDetail.update(request);
 
     if (!data.status) {
-      console.log(data);
-      return alert((data.errors && data.errors[0].Errors && data.errors[0].Errors[0]) || "Bir hata oldu");
+      
+      return alert((data.errors && data.errors ) || data.detail || "Bir hata oldu");
+
     }
 
 

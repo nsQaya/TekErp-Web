@@ -10,7 +10,7 @@ export interface IError {
 export interface IBaseResponse {
   status: boolean;
   detail: string;
-  errors?: IError[];
+  errors?: Record<string, string[]>;//IError[];
 }
 export interface IBaseResponseValue<T> extends IBaseResponse {
   value: T;
@@ -40,9 +40,8 @@ export interface IEntity {
 
 export interface ICrudBaseAPI<T> {
   // getAll: (page: number, take: number)=> Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>
-  getListBakiyeByStokKodu(
-    stokKodu: string
-  ): Promise<{ data: { value: { items: T[]; count: number } } }>;
+  getListBakiyeByStokKodu(stokKodu: string): Promise<{ data: { value: { items: T[]; count: number } } }>;
+  getListOtomatikSeriByStokKodu(stokKodu: string,miktar:number): Promise<{ data: { value: { items: T[]; count: number } } }>;
   getAllForGrid(
     page: number,
     take: number,
@@ -66,9 +65,7 @@ export interface ICrudBaseAPI<T> {
   ): Promise<{ data: { value: { items: T[]; count: number } } }>;
   get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
   getByKod: (id: string) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
-  getByBelgeId: (
-    id: number
-  ) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
+  getByBelgeId: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
   getBySeri: (
     seri: string,
     belgeTip: EBelgeTip
@@ -100,6 +97,8 @@ export interface IRaporBaseAPI<T> {
 }
 
 export interface INetsisBaseAPI<T> {
+  getAllNetsisStokHareket: (kod: string,depoKodu:string,netsisSirketKodu:string) => Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>;
+  getAll2: (kod: string,depoKodu:string) => Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>;
   getAll: (kod: string) => Promise<AxiosResponse<IBaseResponseValue<IPagedResponse<T>>, any>>;
   get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
 }

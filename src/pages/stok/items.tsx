@@ -60,11 +60,10 @@ export default () => {
           detail: "Başarıyla silindi !",
         });
       } catch (error) {
-        console.error("Silme işleminde hata:", error);
         toast.current?.show({
           severity: "error",
           summary: "Hata",
-          detail: "Silme işleminde hata oluştu !",
+          detail: error + "Silme işleminde hata oluştu !",
         });
       } finally {
         setItemToDelete(null);
@@ -88,7 +87,11 @@ export default () => {
     const { data } = await api.stok.getBarkod(selectedStokIDS);
 
     if (!data.status) {
-      return alert("Barkod oluşturulamadı");
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Barkod oluşturulamadı !",
+      });
     }
     //window.open(stokbarkodURL+data.value.url+".pdf", '_blank');
 

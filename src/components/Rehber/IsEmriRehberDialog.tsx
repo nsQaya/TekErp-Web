@@ -11,7 +11,7 @@ const IsEmriRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IIsEmr
         {
           header: "Is Emri No",
           field: "isEmriNo",
-          // sortable: true,
+          sortable: true,
           filter: true,
         },
         {
@@ -24,25 +24,25 @@ const IsEmriRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IIsEmr
         {
           header: "Stok Kodu",
           field: "stokKodu",
-          // sortable: true,
+          sortable: true,
           filter: true,
         },
         {
           header: "Stok Adı",
           field: "stokAdi",
-          // sortable: true,
+          sortable: true,
           filter: true,
         },
         {
           header: "Miktar",
           field: "miktar",
-          // sortable: true,
+          //sortable: true,
           filter: true,
         },
         {
           header: "Proje Kodu",
           field: "projeKodu",
-          // sortable: true,
+          sortable: true,
           filter: true,
         },
         {
@@ -80,6 +80,7 @@ const IsEmriRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IIsEmr
             columns={columns}
             returnField="isEmriNo"
             onSelect={props.onSelect}
+            defaultSortField="isEmriNo"
           />
     )
 };

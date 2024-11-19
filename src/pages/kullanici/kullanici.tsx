@@ -150,6 +150,16 @@ export default () => {
       type: FormItemTypes.input
     },
     {
+      title: "Netsis Kullanıcı Adı",
+      name: "NetsisUserName",
+      type: FormItemTypes.input
+    },
+    {
+      title: "Netsis Şifre",
+      name: "NetsisPassword",
+      type: FormItemTypes.input
+    },
+    {
       title: "Durum",
       name: "status",
       type: FormItemTypes.boolean //TODO: Buraya bool alan eklenecek. sonrasında api ye de eklenecek orada da görünmüyor. 

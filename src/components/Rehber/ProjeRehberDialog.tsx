@@ -10,13 +10,13 @@ const ProjeRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IProje)
         {
           header: "Kodu",
           field: "kodu",
-          // sortable: true,
+          sortable: true,
           filter: true,
         },
         {
           header: "Açıklama",
           field: "aciklama",
-          // sortable: true,
+          sortable: true,
           filter: true,
         },
       ];
@@ -29,6 +29,7 @@ const ProjeRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IProje)
             columns={columns}
             returnField="kodu"
             onSelect={props.onSelect}
+            defaultSortField="kodu"
           />
     )
 };

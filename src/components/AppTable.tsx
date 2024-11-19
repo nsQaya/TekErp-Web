@@ -43,6 +43,7 @@ declare module "jspdf" {
 interface ITableProps {
   columns: ColumnProps[];
   baseApi: ICrudBaseAPI<any>;
+  defaultFilters?: Record<string, { value: any; matchMode: string }>; 
   rowStyles?(
     data: DataTableRowData<DataTableValueArray>,
     options: DataTableRowClassNameOptions<DataTableValueArray>
@@ -52,6 +53,7 @@ interface ITableProps {
   onChangeSelected?: (data: DataTableValue[]) => void;
   appendHeader?: () => React.ReactNode;
   globalFilter?: string | null;
+  scrollHeight?: string | null;
 }
 
 export interface ITableRef<T> {
@@ -76,17 +78,40 @@ function ITable(
   const [sortColumn, setSortColumn] = useState<string>("Id");
   const [sortDirection, setSortDirection] = useState<SortOrder>(0);
   const [filters, setFilters] = useState(() => {
-    return props.columns
+    const initialFilters = props.columns
       .filter((column) => column.filter && column.field)
       .reduce((acc: any, column) => {
         if (column.field) {
+          let matchMode;
+
+          switch (column.dataType) {
+            case 'date':
+              matchMode = FilterMatchMode.DATE_IS; // Tarih için
+              break;
+            case 'numeric':
+              matchMode = FilterMatchMode.EQUALS; // Sayısal alanlar için
+              break;
+            default:
+              matchMode = FilterMatchMode.CONTAINS; // Diğer tüm alanlar için
+              break;
+          }
+
           acc[column.field] = {
             value: null,
-            matchMode: FilterMatchMode.CONTAINS,
+            matchMode: matchMode, 
+            //matchMode: FilterMatchMode.CONTAINS,
           };
         }
         return acc;
       }, {} as any);
+
+      // Eğer `defaultFilters` varsa, başlangıç değerlerine uygula
+  if (props.defaultFilters) {
+    Object.assign(initialFilters, props.defaultFilters);
+  }
+
+  return initialFilters;
+      
   });
 
   const exportColumns = props.columns.map((col) => ({
@@ -126,7 +151,7 @@ function ITable(
     if (event.filters) {
       setFilters(event.filters);
     }
-    //console.log(event);
+    
   }, []);
 
   const refresh = useCallback(async () => {
@@ -219,7 +244,7 @@ function ITable(
         //scrollHeight="620px"
         tableStyle={{ minWidth: "50rem" }}
         scrollable
-        scrollHeight="flex"
+        scrollHeight= {props.scrollHeight? props.scrollHeight:"flex"}
         ref={table}
         rowClassName={props.rowStyles}
         header={header}

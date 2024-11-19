@@ -1,3 +1,4 @@
+import { IDovizTipi } from "../tanimlamalar/IDovizTipi";
 import { IHucreOzet } from "../tanimlamalar/IHucreOzet";
 import { IStokOlcuBirim } from "../tanimlamalar/IStokOlcuBirim";
 import { IStokKod } from "./IStokKod";
@@ -31,13 +32,16 @@ export interface IStok {
   olcuBr3Payda: number;
   hucreOzets:IHucreOzet[];
   alisDovizTipiId: number;
+  alisDovizTipi?:IDovizTipi;
   satisDovizTipiId: number;
+  satisDovizTipi?:IDovizTipi;
   alisFiyati: number;
   satisFiyati: number;
   alisKDVOrani: number;
   satisKDVOrani: number;
   seriTakibiVarMi: boolean;
   seriMiktarKadarMi:boolean;
+  seriGirisOtomatikMi:boolean;
   en: number;
   boy: number;
   genislik: number;

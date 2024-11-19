@@ -31,5 +31,8 @@ export default ($axios: AxiosInstance) => ({
     },
     get(id: number){
         return $axios.get<IBaseResponseValue<IKullanici>>(`/${controller}/${id}`);
+    },
+    getByKod(id: string){
+        return $axios.get<IBaseResponseValue<IKullanici>>(`/${controller}/${id}`);
     }
 });

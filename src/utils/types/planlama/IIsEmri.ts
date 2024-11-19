@@ -6,4 +6,6 @@ export interface IIsEmri{
     olcuBirim:string;
     projeKodu:string;
     tarih:string;
+    girisDepo:number;
+    cikisDepo:number;
 }

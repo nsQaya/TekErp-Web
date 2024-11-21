@@ -87,7 +87,7 @@ export default () => {
     {title: "Satın Alma Talep", href: "/talepsiparis/satinalmatalepliste"},
     {title: "Satın Alma Sipariş", href: "/talepsiparis/satinalmasiparisliste"},
     {title: "Satın Alma Sipariş", href: "/talepsiparis/satinalmasiparisfisi"},
-    //{title: "Satış Talep", href: "/talepsiparis/satistalepliste"},
+    {title: "Sipariş Açma Kapama", href: "/talepsiparis/siparisacmakapama"},
   ]);
 
   // const [eBelgePages] =useState([

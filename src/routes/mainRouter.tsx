@@ -50,6 +50,7 @@ import NetsisUretimSonuKaydi from "../pages/uretim/netsisUretimSonuKaydi";
 import NetsisDepoIzin from "../pages/uretim/netsisDepoIzin";
 import SatinalmaSiparisFisi from "../pages/fatura/satinalmaSiparisFisi";
 import SatinalmaSiparisListe from "../pages/fatura/satinalmaSiparisListe";
+import SiparisAcmaKapama from "../pages/fatura/siparisAcmaKapama";
 
 
 export default createHashRouter([
@@ -257,6 +258,11 @@ export default createHashRouter([
             path: "satinalmasiparisliste",
             element: <SatinalmaSiparisListe baseApi={api.siparis} navigatePath="/talepsiparis/satinalmasiparisfisi" />,
           },
+          {
+            path: "siparisacmakapama",
+            element: <SiparisAcmaKapama/>,
+          },
+          
         ],
       },
       {

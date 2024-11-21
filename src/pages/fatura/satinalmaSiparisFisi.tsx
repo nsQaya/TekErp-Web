@@ -28,7 +28,6 @@ import { ISiparisStokHareket } from "../../utils/types/fatura/ISiparisStokHareke
 import { IDovizTipi } from "../../utils/types/tanimlamalar/IDovizTipi";
 import { ISiparisSaveData } from "../../utils/types/fatura/ISiparisSaveData";
 import { EIhracatIthalatTip } from "../../utils/types/enums/EIhracatIthalatTip";
-import TalepRehberDialog from "../../components/Rehber/TalepRehberDialog";
 
 const satinalmaSiparisFisi = () => {
   const currentDate = new Date();
@@ -608,6 +607,18 @@ const satinalmaSiparisFisi = () => {
     } else {
     }
   }, []);
+
+  const dovizTipiDoldur=async ()=>{
+    const dovizTipiResponse = await api.dovizTipi.getAll(0,99);
+    if  (dovizTipiResponse?.data?.value?.items)
+    {
+      setDovizTipiOptions(dovizTipiResponse.data.value.items);
+    }
+  };
+
+  useEffect(()=>{
+    dovizTipiDoldur();
+},[]);
 
   const stokOlcuBirimDoldur = (stokKarti: any) => {
     const options = [
@@ -1264,7 +1275,7 @@ const satinalmaSiparisFisi = () => {
               />
             </FloatLabel>
           </div>
-          <div className="col-md-2 col-sm-6 mt-4">
+          {/* <div className="col-md-2 col-sm-6 mt-4">
             <FloatLabel>
               <label htmlFor="stokKodu">Talep No</label>
               <div className="p-inputgroup">
@@ -1290,7 +1301,7 @@ const satinalmaSiparisFisi = () => {
                   }
                   onSelect={(selectedValue) => {
 
-                    // setTempStokKodu(selectedValue.aciklama1);
+                     setTempStokKodu(selectedValue.aciklama1);
                     // handleStokGetir(selectedValue.kodu);
                   }}
                 />
@@ -1303,7 +1314,7 @@ const satinalmaSiparisFisi = () => {
                 autoComplete="off"
               />
             </FloatLabel>
-          </div>
+          </div> */}
         </div>
         <div className="row">
           <div className="col-md-2 col-sm-6 mt-4">

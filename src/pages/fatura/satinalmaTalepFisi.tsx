@@ -562,6 +562,20 @@ const satinalmaTalepFisi = () => {
 
   //apiye kaydetme isteği gönderimi
   const handleSave = useCallback(async () => {
+
+    // Belge durumu güncelleniyor mu kontrol et
+    const isUpdate = updateBelgeId !== 0;
+    // Eğer güncelleme değilse (yeni kayıt), güncel tarihi al
+    const updatedDate = isUpdate ? belgeData.tarih : new Date();
+    if (!isUpdate) {
+        updatedDate.setHours(3, 0, 0, 0); // Günlük başlangıç saati olarak ayarla
+    }
+
+    // Belge tarihini güncelle
+    setBelgeData((prevData) => ({
+        ...prevData,
+        tarih: updatedDate,
+    }));
     if (!validateSave()) {
       return;
     }
@@ -570,10 +584,10 @@ const satinalmaTalepFisi = () => {
       const saveData: ITalepTeklifSaveData = {
         //SaveTalepTeklifDto
         belge: {
-          id: updateBelgeId !== 0 ? updateBelgeId : 0,
+          id: isUpdate ? updateBelgeId : 0,
           belgeTip: EBelgeTip.SatinalmaTalep,
           no: belgeSeri + belgeData.no,
-          tarih: belgeData.tarih,
+          tarih: updatedDate,//belgeData.tarih,
           aciklama1: belgeData.aciklama1,
           aciklama2: belgeData.aciklama2,
           aciklama3: belgeData.aciklama3,
@@ -583,15 +597,15 @@ const satinalmaTalepFisi = () => {
 
         talepTeklif: {
           id: 0, //updateBelgeId !== 0 ? await getAmbarFisiId(updateBelgeId) : 0,
-          belgeId: updateBelgeId !== 0 ? updateBelgeId : 0,
+          belgeId: isUpdate ? updateBelgeId : 0,
           cariId: talepData.cariId,
         },
 
         talepTeklifStokHarekets: gridData
           .filter((item) => item.miktar > 0)
           .map((item, index) => ({
-            id: 0, // item.id,
-            belgeId: updateBelgeId !== 0 ? updateBelgeId : 0,
+            id: item.id,
+            belgeId: isUpdate ? updateBelgeId : 0,
             stokKartiId: item.stokKartiId ?? 0,
             miktar: item.miktar,
             fiyatTL: item.fiyatTL,
@@ -718,7 +732,7 @@ const satinalmaTalepFisi = () => {
           setGridData(
             gridResponse.data.value.items.map(
               (item: ITalepTeklifStokHareket) => ({
-                id: item.sira,
+                id: item.id,
                 stokKartiId: item.stokKartiId,
                 stokKarti: item.stokKarti,
                 miktar: item.miktar,

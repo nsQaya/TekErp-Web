@@ -29,11 +29,11 @@ export default (props: IStokModalProps) => {
   const [kodu, setKodu] = useState("");
   const [ingilizceIsim, setIngilizceIsim] = useState("");
   const [stokGrupKoduId, setStokGrupKoduId] = useState(null);
-  const [stokKod1Id, setStokKod1Id] = useState<string | null>(null);
-  const [stokKod2Id, setStokKod2Id] = useState<string | null>(null);
-  const [stokKod3Id, setStokKod3Id] = useState<string | null>(null);
-  const [stokKod4Id, setStokKod4Id] = useState<string | null>(null);
-  const [stokKod5Id, setStokKod5Id] = useState<string | null>(null);
+  const [stokKod1Id, setStokKod1Id] = useState(null);
+  const [stokKod2Id, setStokKod2Id] = useState(null);
+  const [stokKod3Id, setStokKod3Id] = useState(null);
+  const [stokKod4Id, setStokKod4Id] = useState(null);
+  const [stokKod5Id, setStokKod5Id] = useState(null);
   const [stokOlcuBirim1Id, setStokOlcuBirim1Id] = useState<string | null>(null);
   const [stokOlcuBirim2Id, setStokOlcuBirim2Id] = useState<string | null>(null);
   const [olcuBr2Pay, setOlcuBr2Pay] = useState(1);
@@ -69,7 +69,7 @@ export default (props: IStokModalProps) => {
       return alert(data.detail);
     }
 
-   
+
     const item = data.value;
 
     setID(item.id as number);
@@ -151,7 +151,7 @@ export default (props: IStokModalProps) => {
       setAzamiStokMiktari(0);
       setMinimumSiparisMiktari(0);
       setHucres([]);
-      
+
 
       setSAPKods([]);
       setStokBarkods([]);
@@ -195,9 +195,9 @@ export default (props: IStokModalProps) => {
     setStokGrupKodus(
       stokGrupKoduItems.data.value.items.map((x) => ({ label: x.adi, value: String(x.id) }))
     );
-    
+
     setHucreOpts(
-      hucreItems.data.value.items.map((x) => ({ label: x.kodu , value: x.id.toString() }))
+      hucreItems.data.value.items.map((x) => ({ label: x.kodu, value: x.id.toString() }))
     );
 
     setStokKod1s(
@@ -281,7 +281,7 @@ export default (props: IStokModalProps) => {
       stokOlcuBirim1Id: stokOlcuBirim1Id,
       stokOlcuBirim2Id: stokOlcuBirim2Id,
       stokOlcuBirim3Id: stokOlcuBirim3Id,
-      hucres: hucres,
+      hucres: hucres.map((x) => ({ kodu: x.kodu })),
       sapKods: sapKods.map((x) => ({ kod: x.value })),
       stokBarkods: stokBarkods.map((x) => ({ barkod: x.value, stokOlcuBirimId: stokOlcuBirim1Id })),
     } as unknown as IStokKartiWithDetail;
@@ -293,8 +293,8 @@ export default (props: IStokModalProps) => {
     const { data } = !ID ? await api.stokWithDetail.create(request) : await api.stokWithDetail.update(request);
 
     if (!data.status) {
-      
-      return alert((data.errors && data.errors ) || data.detail || "Bir hata oldu");
+
+      return alert((data.errors && data.errors) || data.detail || "Bir hata oldu");
 
     }
 
@@ -537,9 +537,9 @@ export default (props: IStokModalProps) => {
             <div className="col-lg-6 m-b-20">
               <label>Kod 1</label>
               <Select
-                value={stokKod1s.find((x) => x.value === stokKod1Id) || null}
-                onChange={(selected) => setStokKod1Id(selected ? selected.value : null)}
-                options={stokKod1s}
+                value={stokKod1s.find((x) => x.value == stokKod1Id) || null}
+                onChange={(selected: any) => setStokKod1Id(selected.value)}
+                options={stokKod1s as Options<any>} 
                 placeholder=""
                 isClearable
               />
@@ -548,9 +548,9 @@ export default (props: IStokModalProps) => {
             <div className="col-lg-6 m-b-20">
               <label>Kod 2</label>
               <Select
-                value={stokKod2s.find((x) => x.value === stokKod2Id) || null}
-                onChange={(selected) => setStokKod2Id(selected ? selected.value : null)}
-                options={stokKod2s}
+                value={stokKod2s.find((x) => x.value == stokKod2Id) || null}
+                onChange={(selected: any) => setStokKod2Id(selected.value)}
+                options={stokKod2s as Options<any>} 
                 placeholder=""
                 isClearable
               />
@@ -559,9 +559,9 @@ export default (props: IStokModalProps) => {
             <div className="col-lg-6 m-b-20">
               <label>Kod 3</label>
               <Select
-                value={stokKod3s.find((x) => x.value === stokKod3Id) || null}
-                onChange={(selected) => setStokKod3Id(selected ? selected.value : null)}
-                options={stokKod3s}
+                value={stokKod3s.find((x) => x.value == stokKod3Id) || null}
+                onChange={(selected: any) => setStokKod3Id(selected.value)}
+                options={stokKod3s as Options<any>} 
                 placeholder=""
                 isClearable
               />
@@ -570,9 +570,9 @@ export default (props: IStokModalProps) => {
             <div className="col-lg-6 m-b-20">
               <label>Kod 4</label>
               <Select
-                value={stokKod4s.find((x) => x.value === stokKod4Id) || null}
-                onChange={(selected) => setStokKod4Id(selected ? selected.value : null)}
-                options={stokKod4s}
+                value={stokKod4s.find((x) => x.value == stokKod4Id) || null}
+                onChange={(selected: any) => setStokKod4Id(selected.value)}
+                options={stokKod4s as Options<any>} 
                 placeholder=""
                 isClearable
               />
@@ -581,11 +581,11 @@ export default (props: IStokModalProps) => {
             <div className="col-lg-6 m-b-20">
               <label>Kod 5</label>
               <Select
-                value={stokKod5s.find((x) => x.value === stokKod5Id) || null}
-                onChange={(selected) => setStokKod5Id(selected ? selected.value : null)}
-                options={stokKod5s}
-                placeholder=""
-                isClearable
+                value={stokKod5s.find((x) => x.value == stokKod5Id) || null}  
+                onChange={(selected: any) =>setStokKod5Id(selected ? selected.value : null)}  
+                placeholder="" 
+                isClearable  
+                options={stokKod5s as Options<any>} 
               />
             </div>
             <div className="row">

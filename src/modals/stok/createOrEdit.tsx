@@ -129,7 +129,7 @@ export default (props: IStokModalProps) => {
       setStokKod3Id(null);
       setStokKod4Id(null);
       setStokKod5Id(null);
-      setStokOlcuBirim1Id("");
+      setStokOlcuBirim1Id(null);
       setStokOlcuBirim2Id(null);
       setOlcuBr2Pay(1);
       setOlcuBr2Payda(1);
@@ -189,7 +189,7 @@ export default (props: IStokModalProps) => {
       api.stokKod5.getAll(0, 1000),
       api.stokOlcuBirim.getAll(0, 1000),
       api.dovizTipi.getAll(0, 1000),
-      api.hucre.getAll(0, 1000)
+      api.hucre.getAll(0, 9000)
     ]);
 
     setStokGrupKodus(
@@ -785,7 +785,8 @@ export default (props: IStokModalProps) => {
               <div className="col-lg-4 m-b-20">
                 <Select
                   isMulti
-                  value={hucreOpts.filter((x) => hucres.some(h => h.kodu === x.label))}  // Seçili hücreleri filtreliyoruz
+                 // value={hucreOpts.filter((x) => hucres.some(h => h.kodu === x.label))}  // Seçili hücreleri filtreliyoruz
+                  value={hucreOpts.filter((x) => hucres.some((h) => h.kodu == x.label))}
                   placeholder="Hücre"
                   onChange={(selected: any) => {
                     const selectedValues = selected ? selected.map((item: any) => ({ kodu: item.label, id: item.value })) : [];

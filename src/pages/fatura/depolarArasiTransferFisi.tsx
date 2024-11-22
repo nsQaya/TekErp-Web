@@ -35,8 +35,10 @@ import IsEmriRehberDialog from "../../components/Rehber/IsEmriRehberDialog";
 import { ITransferDataDepolarArasiTransfer } from "../../utils/types/fatura/ITransferDataDepolarArasiTransfer";
 import HucreRehberDialog from "../../components/Rehber/HucreRehberDialog";
 import UniteRehberDialog from "../../components/Rehber/UniteRehberDialog";
-
-
+import {
+  selectAllTextInputNumber,
+  selectAllTextInputText,
+} from "../../utils/helpers/selectAllText";
 
 type FormDataBaslik = {
   isEmriNo: string;
@@ -52,7 +54,6 @@ type FormDataBaslik = {
   aciklama2?: string;
   aciklama3?: string;
   eIrsaliye?: boolean;
-
 };
 
 type FormDataDetay = {
@@ -102,7 +103,7 @@ type GridData = {
 const App: React.FC = () => {
   const currentDate = new Date();
   currentDate.setHours(3, 0, 0, 0);
-  const navigate= useNavigate();
+  const navigate = useNavigate();
 
   const [formDataBaslik, setFormDataBaslik] = useState<FormDataBaslik>({
     isEmriNo: "",
@@ -145,12 +146,12 @@ const App: React.FC = () => {
     stok: false,
     isEmri: false,
     cari: false,
-    girisHucre:false
+    girisHucre: false,
   });
 
   //const [hataMesaji, setHataMesaji] = useState("");
 
-  const[belgeReadOnly,setBelgeReadOnly]=useState<boolean>(false);
+  const [belgeReadOnly, setBelgeReadOnly] = useState<boolean>(false);
 
   const [gridData, setGridData] = useState<GridData[]>([]);
   const toast = useRef<Toast>(null);
@@ -158,11 +159,17 @@ const App: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<GridData | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingGetir, setLoadingGetir] = useState(false);
-  const [seriOptions, setSeriOptions] = useState<{ label: string; value: string }[]>([]);
+  const [seriOptions, setSeriOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
 
-  const [cikisHucreOptions, setCikisHucreOptions] = useState<{ label: string; value: number }[]>([]);
+  const [cikisHucreOptions, setCikisHucreOptions] = useState<
+    { label: string; value: number }[]
+  >([]);
 
-  const [selectedCikisHucre, setSelectedCikisHucre] = useState<number | null>(null);
+  const [selectedCikisHucre, setSelectedCikisHucre] = useState<number | null>(
+    null
+  );
 
   const [selectedStokKodu, setSelectedStokKodu] = useState("");
   const [tempStokKodu, setTempStokKodu] = useState(selectedStokKodu);
@@ -172,7 +179,8 @@ const App: React.FC = () => {
   const [seriBakiyeler, setSeriBakiyeler] = useState<IStokSeriBakiye[]>([]);
   const [seciliSeriler, setSeciliSeriler] = useState<IStokHareketSeri[]>([]);
 
-  const handleFocus = (event: { target: { select: () => any; }; }) => event.target.select();
+  const handleFocus = (event: { target: { select: () => any } }) =>
+    event.target.select();
 
   const handleCikisHucreChange = useCallback(
     (e: any) => {
@@ -189,10 +197,9 @@ const App: React.FC = () => {
     [cikisHucreOptions]
   );
 
-
-  useEffect(() => {
-    setTempStokKodu(selectedStokKodu);
-  }, [selectedStokKodu]);
+  // useEffect(() => {
+  //   setTempStokKodu(selectedStokKodu);
+  // }, [selectedStokKodu]);
 
   useEffect(() => {
     if (cikisHucreOptions.length > 0 && !selectedCikisHucre) {
@@ -307,107 +314,106 @@ const App: React.FC = () => {
     }
   };
 
-  
-    const fetchData = async () => {
-      try {
-        const response = await api.depolarArasiTransfer.getByBelgeId(
-          updateBelgeId
-        );
-        if (response.data.status && response.data.value) {
-          const depolarArasiTransfer = response.data.value;
-          const belge = depolarArasiTransfer.belge!;
-          debugger;
-          if (belge.aktarimDurumu === EAktarimDurumu.AktarimTamamlandi) {
-            toast.current?.show({
-              severity: "error",
-              summary: "Hata",
-              detail: "Netsis aktarımı tamamlanmış belgede değişiklik yapılamaz. Listeye yönlendiriliyorsunuz...",
-              life: 3000,
-            });
-
-            setBelgeReadOnly(true);
-    
-            // // 2 saniye sonra başka bir sayfaya yönlendirme
-            // setTimeout(() => {
-            //   navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
-            // }, 2000);
-    
-            // return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
-          }
-          const belgeSeri = belge.no.substring(0, 3);
-          const belgeNumara = belge.no.substring(3);
-          const cariKodu = await fetchCariKodu(depolarArasiTransfer.cariId);
-
-          const isEmriResponse = await api.isEmri.getByKod(depolarArasiTransfer.kaynakBelgeNo);
-
-          setFormDataBaslik({
-            isEmriNo: depolarArasiTransfer.kaynakBelgeNo,
-            isEmriStokAdi: isEmriResponse.data.value.stokAdi,
-            belgeSeri: belgeSeri,
-            belgeNumara: belgeNumara,
-            tarih: currentDate,
-            hareketTuru: depolarArasiTransfer.ambarHareketTur,
-            cariId: depolarArasiTransfer.cariId,
-            cariKodu: cariKodu,
-            aciklama1: belge.aciklama1,
-            aciklama2: belge.aciklama2,
-            aciklama3: belge.aciklama3,
+  const fetchData = async () => {
+    try {
+      const response = await api.depolarArasiTransfer.getByBelgeId(
+        updateBelgeId
+      );
+      if (response.data.status && response.data.value) {
+        const depolarArasiTransfer = response.data.value;
+        const belge = depolarArasiTransfer.belge!;
+        debugger;
+        if (belge.aktarimDurumu === EAktarimDurumu.AktarimTamamlandi) {
+          toast.current?.show({
+            severity: "error",
+            summary: "Hata",
+            detail:
+              "Netsis aktarımı tamamlanmış belgede değişiklik yapılamaz. Listeye yönlendiriliyorsunuz...",
+            life: 3000,
           });
 
-          const gridResponse = await api.stokHareket.getListByBelgeId(
-            updateBelgeId
-          );
-          if (gridResponse.data.value) {
-            setGridData(
-              gridResponse.data.value.items.map((item: IStokHareket) => ({
-                id: item.sira,
-                projeKoduId: item.projeId,
-                uniteKoduId: item.uniteId,
-                stokKartiId: item.stokKartiId,
-                stokKodu: item.stokKarti!.kodu,
-                stokAdi: item.stokKarti!.adi,
-                miktar: item.miktar,
-                istenilenMiktar: item.istenilenMiktar?item.istenilenMiktar:0,
-                fiyat: item.fiyatTL,
-                cikisHucreId: item.cikisHucreId,
-                cikisHucreKodu: item.cikisHucre?.kodu,
-                girisHucreId:item.girisHucreId,
-                girisHucreKodu:item.girisHucre?.kodu,
-                bakiye: item.bakiye,
-                olcuBirimId: item.olcuBirimId,
-                olcuBr: item.olcuBirim?.simge,
-                seriler:item.seriler
-              }))
-            );
-            setFormDataDetay((prevFormDataDetay) => ({
-              ...prevFormDataDetay,
-              projeKoduId: gridResponse.data.value.items[0].projeId,
-              projeKodu: gridResponse.data.value.items[0].proje?.kodu,
-              uniteKoduId: gridResponse.data.value.items[0].uniteId,
-              uniteKodu: gridResponse.data.value.items[0].unite?.kodu,
-              girisHucreId:gridResponse .data.value.items[0].girisHucreId,
-              girisHucreKodu:gridResponse .data.value.items[0].girisHucre?.kodu,
-              stokKartiId: 0,
-              miktar: 0,
-              istenilenMiktar: 0,
-              olcuBrId: 0,
-              olcuBr: "",
-            }));
-          }
-        }
-        
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+          setBelgeReadOnly(true);
 
+          // // 2 saniye sonra başka bir sayfaya yönlendirme
+          // setTimeout(() => {
+          //   navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
+          // }, 2000);
+
+          // return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
+        }
+        const belgeSeri = belge.no.substring(0, 3);
+        const belgeNumara = belge.no.substring(3);
+        const cariKodu = await fetchCariKodu(depolarArasiTransfer.cariId);
+
+        const isEmriResponse = await api.isEmri.getByKod(
+          depolarArasiTransfer.kaynakBelgeNo
+        );
+
+        setFormDataBaslik({
+          isEmriNo: depolarArasiTransfer.kaynakBelgeNo,
+          isEmriStokAdi: isEmriResponse.data.value.stokAdi,
+          belgeSeri: belgeSeri,
+          belgeNumara: belgeNumara,
+          tarih: currentDate,
+          hareketTuru: depolarArasiTransfer.ambarHareketTur,
+          cariId: depolarArasiTransfer.cariId,
+          cariKodu: cariKodu,
+          aciklama1: belge.aciklama1,
+          aciklama2: belge.aciklama2,
+          aciklama3: belge.aciklama3,
+        });
+
+        const gridResponse = await api.stokHareket.getListByBelgeId(
+          updateBelgeId
+        );
+        if (gridResponse.data.value) {
+          setGridData(
+            gridResponse.data.value.items.map((item: IStokHareket) => ({
+              id: item.sira,
+              projeKoduId: item.projeId,
+              uniteKoduId: item.uniteId,
+              stokKartiId: item.stokKartiId,
+              stokKodu: item.stokKarti!.kodu,
+              stokAdi: item.stokKarti!.adi,
+              miktar: item.miktar,
+              istenilenMiktar: item.istenilenMiktar ? item.istenilenMiktar : 0,
+              fiyat: item.fiyatTL,
+              cikisHucreId: item.cikisHucreId,
+              cikisHucreKodu: item.cikisHucre?.kodu,
+              girisHucreId: item.girisHucreId,
+              girisHucreKodu: item.girisHucre?.kodu,
+              bakiye: item.bakiye,
+              olcuBirimId: item.olcuBirimId,
+              olcuBr: item.olcuBirim?.simge,
+              seriler: item.seriler,
+            }))
+          );
+          setFormDataDetay((prevFormDataDetay) => ({
+            ...prevFormDataDetay,
+            projeKoduId: gridResponse.data.value.items[0].projeId,
+            projeKodu: gridResponse.data.value.items[0].proje?.kodu,
+            uniteKoduId: gridResponse.data.value.items[0].uniteId,
+            uniteKodu: gridResponse.data.value.items[0].unite?.kodu,
+            girisHucreId: gridResponse.data.value.items[0].girisHucreId,
+            girisHucreKodu: gridResponse.data.value.items[0].girisHucre?.kodu,
+            stokKartiId: 0,
+            miktar: 0,
+            istenilenMiktar: 0,
+            olcuBrId: 0,
+            olcuBr: "",
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
     if (updateBelgeId) {
       fetchData();
     }
   }, [updateBelgeId]);
-
 
   const handleInputChangeBaslik = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -417,7 +423,7 @@ const App: React.FC = () => {
     }));
   };
 
-  const miktarRef = useRef<any>(null);
+  const miktarRef = useRef<InputNumber | null>(null);
   const stokKoduInputRef = useRef<any>(null);
 
   const handleKeyPress = useCallback(async () => {
@@ -445,7 +451,9 @@ const App: React.FC = () => {
             ? alreadyHas.istenilenMiktar
             : 0;
           const alreadyHasHucreId = alreadyHas ? alreadyHas.cikisHucreId : 0;
-          const alreadyHasHucreKodu = alreadyHas ? alreadyHas.cikisHucreKodu : "";
+          const alreadyHasHucreKodu = alreadyHas
+            ? alreadyHas.cikisHucreKodu
+            : "";
 
           setFormDataDetay((prevFormData) => ({
             ...prevFormData,
@@ -455,16 +463,16 @@ const App: React.FC = () => {
             olcuBr: response.data.value.stokOlcuBirim1.simge,
             miktar: alreadyHasgMiktar - alreadyHasgBakiyeMiktar!,
             istenilenMiktar: alreadyHasgIstenilenMiktar!,
-            cikisHucreId:  alreadyHasHucreId 
-            ? alreadyHasHucreId 
-            : response.data.value.hucreOzets.length > 0 
+            cikisHucreId: alreadyHasHucreId
+              ? alreadyHasHucreId
+              : response.data.value.hucreOzets.length > 0
               ? response.data.value.hucreOzets[0].hucre.id
               : 0,
             cikishucreKodu: alreadyHasHucreKodu
-            ? alreadyHasHucreKodu
-            : response.data.value.hucreOzets[0].hucre.kodu,
-            seriler:alreadyHas?.seriler,
-            bakiye:response.data.value.bakiye
+              ? alreadyHasHucreKodu
+              : response.data.value.hucreOzets[0].hucre.kodu,
+            seriler: alreadyHas?.seriler,
+            bakiye: response.data.value.bakiye,
           }));
 
           if (
@@ -494,9 +502,14 @@ const App: React.FC = () => {
           if (miktarRef.current) {
             miktarRef.current.focus();
           }
+        } else {
+          selectAllTextInputText(stokKoduInputRef);
         }
+      } else {
+        selectAllTextInputText(stokKoduInputRef);
       }
     } catch (error) {
+      selectAllTextInputText(stokKoduInputRef);
       console.error("Error fetching data:", error);
     }
   }, [gridData, selectedStokKodu, selectedId]);
@@ -565,27 +578,28 @@ const App: React.FC = () => {
           olcuBr: item.olcuBr,
         }));
 
-        const ilkData=data.items[0];
+        const ilkData = data.items[0];
 
-        setFormDataDetay((pre)=> ({
+        setFormDataDetay((pre) => ({
           ...pre,
-        projeKodu:ilkData.projeKodu,
-        projeKoduId:ilkData.projeKoduId,
-        uniteKodu:ilkData.plasiyerKodu,
-        uniteKoduId:ilkData.uniteKoduId
+          projeKodu: ilkData.projeKodu,
+          projeKoduId: ilkData.projeKoduId,
+          uniteKodu: ilkData.plasiyerKodu,
+          uniteKoduId: ilkData.uniteKoduId,
         }));
 
-        const cariResponse= await api.cari.getByKod("X150-99-0001");
-        if (cariResponse.data && cariResponse.data.status && cariResponse.data.value)
-        {
-          setFormDataBaslik((pre)=> ({
+        const cariResponse = await api.cari.getByKod("X150-99-0001");
+        if (
+          cariResponse.data &&
+          cariResponse.data.status &&
+          cariResponse.data.value
+        ) {
+          setFormDataBaslik((pre) => ({
             ...pre,
-          cariKodu:cariResponse.data.value.kodu,
-          cariId:cariResponse.data.value.id!
+            cariKodu: cariResponse.data.value.kodu,
+            cariId: cariResponse.data.value.id!,
           }));
         }
-
-
 
         setGridData(newGridData);
       }
@@ -608,7 +622,11 @@ const App: React.FC = () => {
       });
       return;
     }
-    if (formDataDetay.cikisHucreId === 0 || !formDataDetay.cikisHucreId || formDataDetay.cikisHucreId== undefined) {
+    if (
+      formDataDetay.cikisHucreId === 0 ||
+      !formDataDetay.cikisHucreId ||
+      formDataDetay.cikisHucreId == undefined
+    ) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
@@ -721,6 +739,7 @@ const App: React.FC = () => {
         }
 
         document.getElementById("getirButton")!.hidden = true;
+        setTempStokKodu("");
         setSelectedStokKodu("");
         setFormDataDetay((formData) => ({
           ...formData,
@@ -728,7 +747,7 @@ const App: React.FC = () => {
           stokAdi: "",
           miktar: 0,
           istenilenMiktar: 0,
-          bakiye:0,
+          bakiye: 0,
           seri: [], // Seri bilgilerini temizleme
         }));
         setSelectedId(0);
@@ -744,7 +763,13 @@ const App: React.FC = () => {
     //   setHataMesaji(formDataDetay.miktar.toString() + " " + formDataDetay.seri?.reduce((acc,curr)=> acc+curr.miktar,0) +" hatalı");
     // else
     // setHataMesaji("");
-  }, [formDataDetay, gridData, cikisHucreOptions, selectedStokKodu, selectedCikisHucre]);
+  }, [
+    formDataDetay,
+    gridData,
+    cikisHucreOptions,
+    selectedStokKodu,
+    selectedCikisHucre,
+  ]);
 
   const handleSeriAdd = (seriList: IStokHareketSeri[]) => {
     setFormDataDetay((prevFormData) => ({
@@ -814,7 +839,7 @@ const App: React.FC = () => {
       return false;
     }
 
-    if (gridData.filter(item => item.miktar > 0).length<=0) {
+    if (gridData.filter((item) => item.miktar > 0).length <= 0) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
@@ -867,7 +892,7 @@ const App: React.FC = () => {
       stokAdi: "",
       istenilenMiktar: 0,
       miktar: 0,
-      bakiye:0,
+      bakiye: 0,
       fiyat: 0,
       cikisHucreId: 0,
       cikisHucreKodu: "",
@@ -883,7 +908,7 @@ const App: React.FC = () => {
       stok: false,
       isEmri: false,
       cari: false,
-      girisHucre:false
+      girisHucre: false,
     });
 
     setGridData([]);
@@ -901,65 +926,64 @@ const App: React.FC = () => {
     try {
       const transferData: ITransferDataDepolarArasiTransfer = {
         belgeDto: {
-            id: updateBelgeId !== 0 ? updateBelgeId : 0, 
-            belgeTip: EBelgeTip.DepolarArasiTransfer,
-            no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
-            tarih: formDataBaslik.tarih,
-            aciklama1: formDataBaslik.aciklama1,
-            aciklama2: formDataBaslik.aciklama2,
-            aciklama3: formDataBaslik.aciklama3,
-            tamamlandi: true,
-            aktarimDurumu: EAktarimDurumu.AktarimSirada  
+          id: updateBelgeId !== 0 ? updateBelgeId : 0,
+          belgeTip: EBelgeTip.DepolarArasiTransfer,
+          no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
+          tarih: formDataBaslik.tarih,
+          aciklama1: formDataBaslik.aciklama1,
+          aciklama2: formDataBaslik.aciklama2,
+          aciklama3: formDataBaslik.aciklama3,
+          tamamlandi: true,
+          aktarimDurumu: EAktarimDurumu.AktarimSirada,
         },
         depolarArasiTransferDto: {
-            id: 0,//updateBelgeId !== 0 ? await getAmbarFisiId(updateBelgeId) : 0,  
-            belgeId: updateBelgeId !== 0 ? updateBelgeId : 0,  
-            ambarHareketTur: formDataBaslik.hareketTuru,
-            cariId: formDataBaslik.cariId,
-            kaynakBelgeNo: formDataBaslik.isEmriNo! ,
-
+          id: 0, //updateBelgeId !== 0 ? await getAmbarFisiId(updateBelgeId) : 0,
+          belgeId: updateBelgeId !== 0 ? updateBelgeId : 0,
+          ambarHareketTur: formDataBaslik.hareketTuru,
+          cariId: formDataBaslik.cariId,
+          kaynakBelgeNo: formDataBaslik.isEmriNo!,
         },
-        stokHareketDto: gridData.filter(item => item.miktar > 0).map((item, index) => ({
-          id:0,// item.id,
-          belgeId: updateBelgeId !== 0 ? updateBelgeId : 0, 
-          stokKartiId: item.stokKartiId ?? 0,
-          masrafStokKartiId: item.stokKartiId ?? 0,
-          miktar: item.miktar ?? 0,
-          istenilenMiktar:item.istenilenMiktar,
-          fiyatTL: item.fiyat ?? 0,
-          fiyatDoviz: 0,
-          fiyatDovizTipiId: 1,
-          cikisHucreId: item.cikisHucreId ?? 0,
-          girisHucreId: formDataDetay.girisHucreId ?? 0,
-          aciklama1: formDataBaslik.aciklama1 ?? "",
-          aciklama2: formDataBaslik.aciklama2 ?? "",
-          aciklama3: formDataBaslik.aciklama3 ?? "",
-          projeId: formDataDetay.projeKoduId ?? 0,
-          uniteId: formDataDetay.uniteKoduId ?? 0,
-          sira: index + 1,
-          girisCikis: "C",
-          olcuBirimId: item.olcuBirimId ?? 0,
-          seriKodu: "",
-          stokHareketSeries: item.seriler || []
-      }))
-    };
-  
+        stokHareketDto: gridData
+          .filter((item) => item.miktar > 0)
+          .map((item, index) => ({
+            id: 0, // item.id,
+            belgeId: updateBelgeId !== 0 ? updateBelgeId : 0,
+            stokKartiId: item.stokKartiId ?? 0,
+            masrafStokKartiId: item.stokKartiId ?? 0,
+            miktar: item.miktar ?? 0,
+            istenilenMiktar: item.istenilenMiktar,
+            fiyatTL: item.fiyat ?? 0,
+            fiyatDoviz: 0,
+            fiyatDovizTipiId: 1,
+            cikisHucreId: item.cikisHucreId ?? 0,
+            girisHucreId: formDataDetay.girisHucreId ?? 0,
+            aciklama1: formDataBaslik.aciklama1 ?? "",
+            aciklama2: formDataBaslik.aciklama2 ?? "",
+            aciklama3: formDataBaslik.aciklama3 ?? "",
+            projeId: formDataDetay.projeKoduId ?? 0,
+            uniteId: formDataDetay.uniteKoduId ?? 0,
+            sira: index + 1,
+            girisCikis: "C",
+            olcuBirimId: item.olcuBirimId ?? 0,
+            seriKodu: "",
+            stokHareketSeries: item.seriler || [],
+          })),
+      };
+
       // API'ye tek seferde gönderim
       const response = await api.depolarArasiTransferSave.save(transferData);
-  
+
       if (!response.data.status) {
         throw new Error(
-          (
-            Object.entries(response.data.errors || {})
+          Object.entries(response.data.errors || {})
             .map(([key, messages]) => `${key}: ${messages.join(", ")}`)
-            .join("\n")
-           ) ||
-           response.data.detail ||
+            .join("\n") ||
+            response.data.detail ||
             "Veriler kaydedilirken bir hata oluştu."
         );
       }
-      navigate(`/fatura/depolararasitransferliste`)
-  
+      navigate(`/fatura/depolararasitransferliste`);
+
       // Başarılı durum mesajı
       toast.current?.show({
         severity: "success",
@@ -967,9 +991,8 @@ const App: React.FC = () => {
         detail: "Veriler başarıyla kaydedildi",
         life: 3000,
       });
-  
+
       resetForm();
-  
     } catch (error: any) {
       toast.current?.show({
         severity: "error",
@@ -982,7 +1005,6 @@ const App: React.FC = () => {
       setLoading(false);
     }
   }, [formDataBaslik, gridData, formDataDetay, updateBelgeId]);
-  
 
   return (
     <div className="container-fluid">
@@ -1056,7 +1078,7 @@ const App: React.FC = () => {
               icon="pi pi-check"
               loading={loading}
               onClick={handleSave}
-              disabled={(gridData.filter(item => item.miktar > 0).length<=0) }
+              disabled={gridData.filter((item) => item.miktar > 0).length <= 0}
               visible={!belgeReadOnly}
             />
           </div>
@@ -1086,7 +1108,7 @@ const App: React.FC = () => {
                       name="numara"
                       value={formDataBaslik.belgeNumara}
                       onChange={handleInputChangeBaslik}
-                      style={{ width: "100%", minWidth: "250px" }} 
+                      style={{ width: "100%", minWidth: "250px" }}
                       autoComplete="off"
                     />
                     <label htmlFor="numara">Numara</label>
@@ -1094,7 +1116,6 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              
               <div className="col-md-3 col-sm-6 mt-4">
                 <div className="p-inputgroup flex">
                   <FloatLabel>
@@ -1133,7 +1154,8 @@ const App: React.FC = () => {
                       name="girisHucreKodu"
                       value={formDataDetay.girisHucreKodu?.toString()}
                       readOnly
-                      disabled autoComplete="off"
+                      disabled
+                      autoComplete="off"
                     />
                     <Button
                       label="..."
@@ -1168,7 +1190,8 @@ const App: React.FC = () => {
                     id="girisHucreId"
                     name="girisHucreId"
                     value={formDataDetay.girisHucreId?.toString()}
-                    type="hidden" autoComplete="off"
+                    type="hidden"
+                    autoComplete="off"
                   />
                 </FloatLabel>
               </div>
@@ -1182,7 +1205,8 @@ const App: React.FC = () => {
                       name="cariKodu"
                       value={formDataBaslik.cariKodu?.toString()}
                       readOnly
-                      disabled autoComplete="off"
+                      disabled
+                      autoComplete="off"
                     />
                     <Button
                       label="..."
@@ -1217,7 +1241,8 @@ const App: React.FC = () => {
                     id="cariId"
                     name="cariId"
                     value={formDataBaslik.cariId?.toString()}
-                    type="hidden" autoComplete="off"
+                    type="hidden"
+                    autoComplete="off"
                   />
                 </FloatLabel>
               </div>
@@ -1230,7 +1255,8 @@ const App: React.FC = () => {
                       name="projeKodu"
                       value={formDataDetay.projeKodu}
                       readOnly
-                      disabled autoComplete="off"
+                      disabled
+                      autoComplete="off"
                     />
                     <Button
                       label="..."
@@ -1259,50 +1285,52 @@ const App: React.FC = () => {
                     id="projeKoduId"
                     name="projeKoduId"
                     value={formDataDetay.projeKoduId?.toString()}
-                    type="hidden" autoComplete="off"
+                    type="hidden"
+                    autoComplete="off"
                   />
                 </FloatLabel>
               </div>
               <div className="col-md-3 col-sm-6 mt-4">
-            <FloatLabel>
-              <label htmlFor="uniteKodu">Ünite Kodu</label>
-              <div className="p-inputgroup">
-                <InputText
-                  id="uniteKodu"
-                  name="uniteKodu"
-                  value={formDataDetay.uniteKodu}
-                  readOnly
-                  disabled autoComplete="off"
-                />
-                <Button
-                  label="..."
-                  onClick={() =>
-                    setDialogVisible({ ...dialogVisible, unite: true })
-                  }
-                />
-                <UniteRehberDialog
-                  isVisible={dialogVisible.unite}
-                  onHide={() =>
-                    setDialogVisible({ ...dialogVisible, unite: false })
-                  }
-                  onSelect={(selectedValue) =>
-                    setFormDataDetay((prevFormDataBaslik) => ({
-                      ...prevFormDataBaslik,
-                      uniteKodu: selectedValue.kodu,
-                      uniteKoduId: selectedValue.id!,
-                    }))
-                  }
-                />
+                <FloatLabel>
+                  <label htmlFor="uniteKodu">Ünite Kodu</label>
+                  <div className="p-inputgroup">
+                    <InputText
+                      id="uniteKodu"
+                      name="uniteKodu"
+                      value={formDataDetay.uniteKodu}
+                      readOnly
+                      disabled
+                      autoComplete="off"
+                    />
+                    <Button
+                      label="..."
+                      onClick={() =>
+                        setDialogVisible({ ...dialogVisible, unite: true })
+                      }
+                    />
+                    <UniteRehberDialog
+                      isVisible={dialogVisible.unite}
+                      onHide={() =>
+                        setDialogVisible({ ...dialogVisible, unite: false })
+                      }
+                      onSelect={(selectedValue) =>
+                        setFormDataDetay((prevFormDataBaslik) => ({
+                          ...prevFormDataBaslik,
+                          uniteKodu: selectedValue.kodu,
+                          uniteKoduId: selectedValue.id!,
+                        }))
+                      }
+                    />
+                  </div>
+                  <InputText
+                    id="uniteKoduId"
+                    name="uniteKoduId"
+                    value={formDataDetay.uniteKoduId?.toString()}
+                    type="hidden"
+                    autoComplete="off"
+                  />
+                </FloatLabel>
               </div>
-              <InputText
-                id="uniteKoduId"
-                name="uniteKoduId"
-                value={formDataDetay.uniteKoduId?.toString()}
-                type="hidden" autoComplete="off"
-              />
-            </FloatLabel>
-          </div>
-              
             </div>
 
             <div className="row">
@@ -1314,7 +1342,8 @@ const App: React.FC = () => {
                       name="aciklama1"
                       value={formDataBaslik.aciklama1}
                       onChange={handleInputChangeBaslik}
-                      style={{ width: "100%", minWidth: "250px" }} autoComplete="off"
+                      style={{ width: "100%", minWidth: "250px" }}
+                      autoComplete="off"
                     />
                     <label htmlFor="aciklama1">Açıklama 1</label>
                   </FloatLabel>
@@ -1328,7 +1357,8 @@ const App: React.FC = () => {
                       name="aciklama2"
                       value={formDataBaslik.aciklama2}
                       onChange={handleInputChangeBaslik}
-                      style={{ width: "100%", minWidth: "250px" }} autoComplete="off"
+                      style={{ width: "100%", minWidth: "250px" }}
+                      autoComplete="off"
                     />
                     <label htmlFor="aciklama2">Açıklama 2</label>
                   </FloatLabel>
@@ -1342,7 +1372,8 @@ const App: React.FC = () => {
                       name="aciklama3"
                       value={formDataBaslik.aciklama3}
                       onChange={handleInputChangeBaslik}
-                      style={{ width: "100%", minWidth: "250px" }} autoComplete="off"
+                      style={{ width: "100%", minWidth: "250px" }}
+                      autoComplete="off"
                     />
                     <label htmlFor="aciklama3">Açıklama 3</label>
                   </FloatLabel>
@@ -1382,8 +1413,9 @@ const App: React.FC = () => {
             <FloatLabel>
               <label htmlFor="stokKodu">Stok Kodu</label>
               <div className="p-inputgroup">
-                <InputText  autoComplete="off"
-                ref={stokKoduInputRef}
+                <InputText
+                  autoComplete="off"
+                  ref={stokKoduInputRef}
                   id="stokKodu"
                   name="stokKodu"
                   value={tempStokKodu}
@@ -1392,9 +1424,6 @@ const App: React.FC = () => {
                     if (e.key === "Enter") {
                       setSelectedStokKodu(tempStokKodu);
                       handleKeyPress();
-                      if (miktarRef.current) {
-                        miktarRef.current.focus();
-                      }
                     }
                   }}
                 />
@@ -1427,7 +1456,8 @@ const App: React.FC = () => {
                 id="stokKartiId"
                 name="stokKartiId"
                 value={formDataDetay.stokKartiId?.toString()}
-                type="hidden" autoComplete="off"
+                type="hidden"
+                autoComplete="off"
               />
             </FloatLabel>
           </div>
@@ -1438,7 +1468,8 @@ const App: React.FC = () => {
                 id="stokAdi"
                 name="stokAdi"
                 value={formDataDetay.stokAdi}
-                disabled autoComplete="off"
+                disabled
+                autoComplete="off"
               />
             </FloatLabel>
           </div>
@@ -1479,6 +1510,7 @@ const App: React.FC = () => {
                     handleAddToGrid();
                   }
                 }}
+                onFocus={() => selectAllTextInputNumber(miktarRef)}
                 ref={miktarRef}
                 inputStyle={{ textAlign: "right" }}
               />
@@ -1503,7 +1535,12 @@ const App: React.FC = () => {
          {hataMesaji}
         </div>)} */}
         <div className="p-col-12  mt-3">
-          <Button label="Ekle" icon="pi pi-plus" onClick={handleAddToGrid} disabled={belgeReadOnly} />
+          <Button
+            label="Ekle"
+            icon="pi pi-plus"
+            onClick={handleAddToGrid}
+            disabled={belgeReadOnly}
+          />
         </div>
         <div className="p-col-12">
           <DataTable
@@ -1519,7 +1556,10 @@ const App: React.FC = () => {
             rowClassName={(rowData) => {
               if (rowData.miktar === rowData.istenilenMiktar) {
                 return "green-row";
-              } else if (rowData.miktar > 0 && rowData.miktar < rowData.istenilenMiktar) {
+              } else if (
+                rowData.miktar > 0 &&
+                rowData.miktar < rowData.istenilenMiktar
+              ) {
                 return "yellow-row";
               } else {
                 return "";
@@ -1541,6 +1581,7 @@ const App: React.FC = () => {
                     className="btn btn-info ms-1"
                     onClick={() => {
                       setSelectedStokKodu(rowData.stokKodu);
+                      setTempStokKodu(rowData.stokKodu);
                       setSelectedId(rowData.id);
                     }}
                   >

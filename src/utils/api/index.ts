@@ -86,6 +86,7 @@ import siparisStokHareket from "../api/fatura/siparis";
 import netsisUretimSonuKaydi from "../api/uretim/netsisUretimSonuKaydi";
 import netsisUretimSonuKaydiIsEmriRecete from "../api/uretim/netsisUretimSonuKaydiIsEmriRecete";
 import netsisDepoIzin from "./uretim/netsisDepoIzin";
+import netsisSiparisFaturaOnay from "./fatura/netsisSiparisFaturaOnay";
 import { INetsisDepoIzin } from "../types/uretim/INetsisDepoIzin";
 import { INetsisUretimSonuKaydiIsEmriRecete } from "../types/uretim/INetsisUretimSonuKaydiIsEmriRecete";
 import { INetsisCariOdemeKodu } from "../types/cari/INetsisCariOdemeKodu";
@@ -93,6 +94,7 @@ import netsisCariOdemeKodu from "./cari/netsisCariOdemeKodu"
 import { ISiparisSaveData } from "../types/fatura/ISiparisSaveData";
 import { ISiparis } from "../types/fatura/ISiparis";
 import { ISiparisStokHareket } from "../types/fatura/ISiparisStokHareket";
+import { INetsisSiparisFaturaOnay } from "../types/fatura/INetsisSiparisFaturaOnay";
 
 
 var instance: AxiosInstance = axios.create({
@@ -241,6 +243,8 @@ const repositories = {
   netsisUretimSonuKaydi:netsisUretimSonuKaydi(instance) as unknown as ICrudBaseAPI<INetsisUretimSonuKaydi>,
   netsisUretimSonuKaydiIsEmriRecete:netsisUretimSonuKaydiIsEmriRecete(instance) as unknown as INetsisBaseAPI<INetsisUretimSonuKaydiIsEmriRecete>,
   netsisDepoIzin:netsisDepoIzin(instance) as unknown as ICrudBaseAPI<INetsisDepoIzin>,
+  netsisSiparisFaturaOnay:netsisSiparisFaturaOnay (instance) as unknown as ICrudBaseAPI<INetsisSiparisFaturaOnay>,
+
 
 };
 

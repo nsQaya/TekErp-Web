@@ -8,9 +8,7 @@ import api from "../../utils/api";
 import DynamicModal, { FormItemTypes, IFormItem } from "../../modals/DynamicModal";
 import AppBreadcrumb from "../../components/AppBreadcrumb";
 import { ISiparis } from "../../utils/types/fatura/ISiparis";
-import { IBelge } from "../../utils/types/fatura/IBelge";
 import { dateFilterTemplate } from "../../utils/helpers/CalendarHelper";
-import siparis from "../../utils/api/fatura/siparis";
 
 export default () => {
   const myTable = createRef<ITableRef<ISiparis>>();

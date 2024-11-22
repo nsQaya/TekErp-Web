@@ -775,7 +775,6 @@ const satinalmaTalepFisi = () => {
     return formatDate(rowData.teslimTarihi);
   };
   const parseDate = (dateString: string) => {
-    debugger;
     const [day, month, year] = dateString.split("/").map(Number);
     const date = new Date(year, month - 1, day); // Aylar 0-11 arasında olduğu için month - 1
     date.setHours(date.getHours() + 3); // +3 saat ekle

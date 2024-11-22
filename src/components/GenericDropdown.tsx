@@ -19,6 +19,7 @@ interface GenericDropdownProps {
   placeholder?: string;
   additionalFilters?: Filter[];
   className?: string;
+  isDisable?:boolean;
 }
 
 const GenericDropdown: React.FC<GenericDropdownProps> = (props) => {
@@ -54,6 +55,7 @@ const GenericDropdown: React.FC<GenericDropdownProps> = (props) => {
 
   return (
     <Select
+      isDisabled={props.isDisable}
       value={options.find(option => option.value === props.value)}
       onChange={props.onChange}
       options={options}

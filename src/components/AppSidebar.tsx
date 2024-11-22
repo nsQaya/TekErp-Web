@@ -81,6 +81,7 @@ export default () => {
     {title: "Ambar Çıkış Fişi", href: "/fatura/ambarcikisfisiliste"},
    // {title: "Ambar Giriş Fişi", href: "/fatura/ambargirisfisiliste"},
     {title: "Depolar Arası Transfer", href: "/fatura/depolararasitransferliste"},
+    {title: "Netsis Siparis Fatura Onay", href: "/fatura/netsisSiparisFaturaOnay"},
   ]);
 
   const [talepSiparis] =useState([

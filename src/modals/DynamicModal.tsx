@@ -3,7 +3,6 @@ import { IBaseResponseValue, ICrudBaseAPI } from "../utils/types";
 import Select, { Options } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import { AxiosResponse } from "axios";
-import { Calendar } from "primereact/calendar";
 import GenericDropdown, { Filter } from "../components/GenericDropdown"; // GenericDropdown bileşenini import edin
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -11,6 +10,8 @@ import { InputSwitch } from "primereact/inputswitch";
 import { Dialog } from "primereact/dialog";
 import { FloatLabel } from "primereact/floatlabel";
 import { Toast } from "primereact/toast";
+import { InputMask } from "primereact/inputmask";
+import { InputNumber } from "primereact/inputnumber";
 
 export enum FormItemTypes {
   input,
@@ -20,6 +21,8 @@ export enum FormItemTypes {
   genericDropdown,
   boolean,
   rehber,
+  inputMask,
+  inputNumber,
 }
 
 export interface FormSelectItem {
@@ -35,6 +38,7 @@ export interface IFormItem {
   setValue?: (value: any) => void;
   options?: FormSelectItem[];
   hidden?: boolean;
+  readonly?:boolean;
   baseApi?: ICrudBaseAPI<any>;
   returnField?: string;
   returnItemName?: string;
@@ -152,7 +156,20 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
     setRehberVisible({ ...rehberVisible, [rehberName]: false }); // Belirtilen rehber için görünürlük kapanıyor
   };
   const toast = useRef<Toast>(null);
-
+  const formatDate = (value: string | Date) => {
+    return new Date(value).toLocaleDateString("tr-TR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+  const parseDate = (dateString: string) => {
+    const [day, month, year] = dateString.split("/").map(Number);
+    const date = new Date(year, month - 1, day); 
+    date.setHours(date.getHours() + 3); 
+     // Saat, dakika, saniye ve milisaniyeyi sıfırla
+    return date;
+  };
   return (
     <Dialog
       visible={isShowing}
@@ -178,10 +195,12 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                     <FloatLabel>
                       <label htmlFor={item.name}>{item.title}</label>
                       <InputText
+                      style={{ width: "100%", minWidth: "250px" }}
+                        readOnly={item.readonly??false}
                         id={item.name}
                         className="form-control"
                         //placeholder={item.title}
-                        value={item.value || ""}
+                        value={item?.value}
                         onChange={(e) =>
                           item.setValue && item.setValue(e.target.value)
                         }
@@ -189,6 +208,28 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                       />
                     </FloatLabel>
                   </div>
+                  
+                ) : item.type === FormItemTypes.inputNumber ? (
+                  <div
+                    className={`col-md-${item.columnSize || 12}  mt-4`}
+                    key={index}
+                  >
+                    <FloatLabel>
+                      <label htmlFor={item.name}>{item.title}</label>
+                      <InputNumber
+                        readOnly={item.readonly??false}
+                        id={item.name}
+                        inputStyle={{ textAlign: "right" }}
+                        //placeholder={item.title}
+                        value={item.value || ""}
+                        onChange={(e) =>
+                          item.setValue && item.setValue(e.value)
+                        }
+                        required
+                      />
+                    </FloatLabel>
+                  </div>
+                  
                 ) : item.type === FormItemTypes.select && item.options ? (
                   <div
                     className={`col-md-${item.columnSize || 12}  mt-4`}
@@ -205,6 +246,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                                    appendTo="self" 
                                 /> */}
                       <Select
+                       isDisabled={item.readonly??false}
                         defaultValue={item.options.find(
                           (x) => x.value == item.value
                         )}
@@ -223,6 +265,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                     key={index}
                   >
                     <CreatableSelect
+                    isDisabled={item.readonly??false}
                       placeholder={item.title}
                       isMulti
                       onChange={(items: any) =>
@@ -236,20 +279,27 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                     className={`col-md-${item.columnSize || 12}  mt-4`}
                     key={index}
                   >
-                    <Calendar
-                      placeholder={item.title}
+                    
+                    <FloatLabel><label htmlFor={item.title}>{item.title}</label>
+                    <InputMask
+                    className="form-control"
+                     readOnly={item.readonly??false}
+                      value={formatDate(item?.value)}
+                      autoComplete="off"
+                      //placeholder={item.title}
                       onChange={(e) => {
                         if (e.value) {
-                          const formattedDate =
-                            e.value.toLocaleDateString("en-US");
+                          const formattedDate = parseDate(e.value!); // Girilen tarihi parse et
                           item.setValue && item.setValue(formattedDate);
                         } else {
                           item.setValue && item.setValue("");
                         }
                       }}
-                      dateFormat="mm/dd/yy"
                       mask="99/99/9999"
+                      placeholder="dd/mm/yyyy"
+                      slotChar="dd/mm/yyyy"
                     />
+                    </FloatLabel>
                   </div>
                 ) : item.type === FormItemTypes.boolean ? (
                   <div
@@ -265,6 +315,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                     <span style={{ marginRight: "10px" }}>{item.title}</span>
 
                     <InputSwitch
+                    readOnly={item.readonly??false}
                       checked={item.value === 1}
                       onChange={(e) => {
                         const newValue = e.value ? 1 : 0;
@@ -283,6 +334,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                   >
                     {/* {JSON.stringify(item.additionalFilters?.map(x=>({...x,value: formItems.find(y=>y.name==x.item)?.value})))} */}
                     <GenericDropdown
+                      isDisable={item.readonly??false}
                       value={item.value}
                       onChange={(selected) => {
                         item.setValue && item.setValue(selected?.value);

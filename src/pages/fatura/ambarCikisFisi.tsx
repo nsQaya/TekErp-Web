@@ -30,6 +30,10 @@ import { IBelgeSeri } from "../../utils/types/tanimlamalar/IBelgeSeri";
 import { IHucreOzet } from "../../utils/types/tanimlamalar/IHucreOzet";
 import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
 import { ITransferDataAmbarFisi } from "../../utils/types/fatura/ITransferDataAmbarFisi";
+import {
+  selectAllTextInputNumber,
+  selectAllTextInputText,
+} from "../../utils/helpers/selectAllText";
 
 // Form verileri için bir tip tanımı
 type FormDataBaslik = {
@@ -86,7 +90,7 @@ const App = () => {
   const currentDate = new Date();
   currentDate.setHours(3, 0, 0, 0);
 
-  const navigate= useNavigate();
+  const navigate = useNavigate();
 
   const [formDataBaslik, setFormDataBaslik] = useState<FormDataBaslik>({
     belgeSeri: "",
@@ -127,7 +131,7 @@ const App = () => {
     cikisKoduDialog: false,
   });
 
-  const[belgeReadOnly,setBelgeReadOnly]=useState<boolean>(false);
+  const [belgeReadOnly, setBelgeReadOnly] = useState<boolean>(false);
 
   const [gridData, setGridData] = useState<GridData[]>([]);
   const toast = useRef<Toast>(null);
@@ -163,9 +167,9 @@ const App = () => {
     [hucreOptions]
   );
 
-  useEffect(() => {
-    setTempStokKodu(selectedStokKodu);
-  }, [selectedStokKodu]);
+  // useEffect(() => {
+  //   setTempStokKodu(selectedStokKodu);
+  // }, [selectedStokKodu]);
 
   useEffect(() => {
     if (hucreOptions.length > 0 && !selectedHucre) {
@@ -183,13 +187,21 @@ const App = () => {
       try {
         const sortColumn = "Id";
         const sortDirection = 1;
-    
+
         const filters = {
           BelgeTip: { value: EBelgeTip.AmbarCikisFisi, matchMode: "equals" },
         };
 
-        const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
-        const response = await api.belgeSeri.getAllForGrid(0, 1000,dynamicQuery);
+        const dynamicQuery = transformFilter(
+          filters,
+          sortColumn,
+          sortDirection
+        );
+        const response = await api.belgeSeri.getAllForGrid(
+          0,
+          1000,
+          dynamicQuery
+        );
         if (response.data.value) {
           const options = response.data.value.items.map((item: IBelgeSeri) => ({
             label: item.seri,
@@ -306,121 +318,119 @@ const App = () => {
     }
   };
 
-  
-    const fetchData = async () => {
-      try {
-        const response = await api.ambarFisi.getByBelgeId(updateBelgeId);
-        if (response.data.status && response.data.value) {
-          const ambarFisi = response.data.value;
-          const belge = ambarFisi.belge!;
-          if (belge.aktarimDurumu === EAktarimDurumu.AktarimTamamlandi) {
-            toast.current?.show({
-              severity: "error",
-              summary: "Hata",
-              detail: "Netsis aktarımı tamamlanmış belgede değişiklik yapılamaz...",
-              life: 3000,
-            });
-            setBelgeReadOnly(true);
-    
-            // // 2 saniye sonra başka bir sayfaya yönlendirme
-            // setTimeout(() => {
-            //   navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
-            // }, 2000);
-    
-            // return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
 
-          }
-          
-          const belgeSeri = belge.no.substring(0, 3);
-          const belgeNumara = belge.no.substring(3);
-          let cikisYeriKodu = "";
 
-          switch (ambarFisi.cikisYeri) {
-            case EAmbarFisiCikisYeri.AnaMamulGrubu:
-              cikisYeriKodu = await fetchCikisYeriKoduFromAnaMamulGrubu(
-                ambarFisi.cikisYeriId
-              );
-              break;
-            case EAmbarFisiCikisYeri.MaliyetGrubu:
-              cikisYeriKodu = await fetchCikisYeriKoduFromMaliyetGrubu(
-                ambarFisi.cikisYeriId
-              );
-              break;
-            case EAmbarFisiCikisYeri.MasrafMerkezi:
-              cikisYeriKodu = await fetchCikisYeriKoduFromMasrafMerkezi(
-                ambarFisi.cikisYeriId
-              );
-              break;
-            case EAmbarFisiCikisYeri.Serbest:
-              cikisYeriKodu = await fetchCikisYeriKoduFromSerbest(
-                ambarFisi.cikisYeriId
-              );
-              break;
-            case EAmbarFisiCikisYeri.StokKodu:
-              cikisYeriKodu = await fetchCikisYeriKoduFromStokKodu(
-                ambarFisi.cikisYeriId
-              );
-              break;
-
-            default:
-              break;
-          }
-
-          setFormDataBaslik({
-            belgeSeri: belgeSeri,
-            belgeNumara: belgeNumara,
-            tarih: currentDate,
-            hareketTuru: ambarFisi.ambarHareketTur,
-            cikisYeri: ambarFisi.cikisYeri,
-            cikisYeriKodu: cikisYeriKodu,
-            cikisYeriKoduId: ambarFisi.cikisYeriId,
-            aciklama1: belge.aciklama1,
-            aciklama2: belge.aciklama2,
-            aciklama3: belge.aciklama3,
+  const fetchData = async () => {
+    try {
+      const response = await api.ambarFisi.getByBelgeId(updateBelgeId);
+      if (response.data.status && response.data.value) {
+        const ambarFisi = response.data.value;
+        const belge = ambarFisi.belge!;
+        if (belge.aktarimDurumu === EAktarimDurumu.AktarimTamamlandi) {
+          toast.current?.show({
+            severity: "error",
+            summary: "Hata",
+            detail:
+              "Netsis aktarımı tamamlanmış belgede değişiklik yapılamaz...",
+            life: 3000,
           });
+          setBelgeReadOnly(true);
 
-          const gridResponse = await api.stokHareket.getListByBelgeId(
-            updateBelgeId
-          );
-          if (gridResponse.data.value) {
-            setGridData(
-              gridResponse.data.value.items.map((item: IStokHareket) => ({
-                id: item.sira,
-                stokKartiId: item.stokKartiId,
-                stokKodu: item.stokKarti!.kodu,
-                stokAdi: item.stokKarti!.adi,
-                miktar: item.miktar,
-                istenilenMiktar: item.istenilenMiktar,
-                fiyat: item.fiyatTL,
-                cikisHucreId: item.cikisHucreId,
-                cikishucreKodu: item.cikisHucre?.kodu,
-                bakiye: item.bakiye,
-                olcuBirimId: item.olcuBirimId,
-                olcuBr: item.olcuBirim?.simge,
+          // // 2 saniye sonra başka bir sayfaya yönlendirme
+          // setTimeout(() => {
+          //   navigate("/fatura/depolararasitransferliste"); // Kullanıcıyı başka bir adrese yönlendir
+          // }, 2000);
 
-              }))
-            );
-
-            setFormDataDetay({
-              projeKoduId: gridResponse.data.value.items[0].projeId,
-              projeKodu: gridResponse.data.value.items[0].proje?.kodu,
-              uniteKoduId: gridResponse.data.value.items[0].uniteId,
-              uniteKodu: gridResponse.data.value.items[0].unite?.kodu,
-              stokKartiId: 0,
-              cikisHucreId: 0,
-              miktar: 0,
-              istenilenMiktar: 0,
-              olcuBrId: 0,
-              olcuBr: "",
-            });
-          }
+          // return; // Bu işlemi tamamladığı için geri kalanı çalıştırmasın
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
 
-  
+        const belgeSeri = belge.no.substring(0, 3);
+        const belgeNumara = belge.no.substring(3);
+        let cikisYeriKodu = "";
+
+        switch (ambarFisi.cikisYeri) {
+          case EAmbarFisiCikisYeri.AnaMamulGrubu:
+            cikisYeriKodu = await fetchCikisYeriKoduFromAnaMamulGrubu(
+              ambarFisi.cikisYeriId
+            );
+            break;
+          case EAmbarFisiCikisYeri.MaliyetGrubu:
+            cikisYeriKodu = await fetchCikisYeriKoduFromMaliyetGrubu(
+              ambarFisi.cikisYeriId
+            );
+            break;
+          case EAmbarFisiCikisYeri.MasrafMerkezi:
+            cikisYeriKodu = await fetchCikisYeriKoduFromMasrafMerkezi(
+              ambarFisi.cikisYeriId
+            );
+            break;
+          case EAmbarFisiCikisYeri.Serbest:
+            cikisYeriKodu = await fetchCikisYeriKoduFromSerbest(
+              ambarFisi.cikisYeriId
+            );
+            break;
+          case EAmbarFisiCikisYeri.StokKodu:
+            cikisYeriKodu = await fetchCikisYeriKoduFromStokKodu(
+              ambarFisi.cikisYeriId
+            );
+            break;
+
+          default:
+            break;
+        }
+
+        setFormDataBaslik({
+          belgeSeri: belgeSeri,
+          belgeNumara: belgeNumara,
+          tarih: currentDate,
+          hareketTuru: ambarFisi.ambarHareketTur,
+          cikisYeri: ambarFisi.cikisYeri,
+          cikisYeriKodu: cikisYeriKodu,
+          cikisYeriKoduId: ambarFisi.cikisYeriId,
+          aciklama1: belge.aciklama1,
+          aciklama2: belge.aciklama2,
+          aciklama3: belge.aciklama3,
+        });
+
+        const gridResponse = await api.stokHareket.getListByBelgeId(
+          updateBelgeId
+        );
+        if (gridResponse.data.value) {
+          setGridData(
+            gridResponse.data.value.items.map((item: IStokHareket) => ({
+              id: item.sira,
+              stokKartiId: item.stokKartiId,
+              stokKodu: item.stokKarti!.kodu,
+              stokAdi: item.stokKarti!.adi,
+              miktar: item.miktar,
+              istenilenMiktar: item.istenilenMiktar,
+              fiyat: item.fiyatTL,
+              cikisHucreId: item.cikisHucreId,
+              cikishucreKodu: item.cikisHucre?.kodu,
+              bakiye: item.bakiye,
+              olcuBirimId: item.olcuBirimId,
+              olcuBr: item.olcuBirim?.simge,
+            }))
+          );
+
+          setFormDataDetay({
+            projeKoduId: gridResponse.data.value.items[0].projeId,
+            projeKodu: gridResponse.data.value.items[0].proje?.kodu,
+            uniteKoduId: gridResponse.data.value.items[0].uniteId,
+            uniteKodu: gridResponse.data.value.items[0].unite?.kodu,
+            stokKartiId: 0,
+            cikisHucreId: 0,
+            miktar: 0,
+            istenilenMiktar: 0,
+            olcuBrId: 0,
+            olcuBr: "",
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
     if (updateBelgeId) {
@@ -436,7 +446,7 @@ const App = () => {
     }));
   };
 
-  const miktarRef = useRef<any>(null);
+  const miktarRef = useRef<InputNumber | null>(null);
   const stokKoduInputRef = useRef<any>(null);
 
   //stok getirme, gridden stok düzeltme, stok kodu okutunca bilgilerini getirme işlemleri
@@ -451,7 +461,7 @@ const App = () => {
     setHucreOptions([]);
     try {
       const response = await api.stok.getByKod(selectedStokKodu);
-      if (response.status) {
+      if (response?.status) {
         if (response.data.status) {
           setSelectedStokKodu(response.data.value.kodu);
           const alreadyHas = gridData.find(
@@ -465,25 +475,27 @@ const App = () => {
             ? alreadyHas.istenilenMiktar
             : 0;
           const alreadyHasHucreId = alreadyHas ? alreadyHas.cikisHucreId : 0;
-          const alreadyHasHucreKodu = alreadyHas ? alreadyHas.cikishucreKodu : "";
+          const alreadyHasHucreKodu = alreadyHas
+            ? alreadyHas.cikishucreKodu
+            : "";
 
           setFormDataDetay((prevFormData) => ({
             ...prevFormData,
-            stokKartiId:response.data.value.id!,
+            stokKartiId: response.data.value.id!,
             stokAdi: response.data.value.adi!,
             olcuBrId: response.data.value.stokOlcuBirim1Id,
             olcuBr: response.data.value.stokOlcuBirim1.simge,
             miktar: alreadyHasgMiktar - alreadyHasgBakiyeMiktar!,
             istenilenMiktar: alreadyHasgIstenilenMiktar!,
-            cikisHucreId:  alreadyHasHucreId 
-            ? alreadyHasHucreId 
-            : response.data.value.hucreOzets.length > 0 
+            cikisHucreId: alreadyHasHucreId
+              ? alreadyHasHucreId
+              : response.data.value.hucreOzets.length > 0
               ? response.data.value.hucreOzets[0].hucre.id
               : 0,
             cikishucreKodu: alreadyHasHucreKodu
-            ? alreadyHasHucreKodu
-            : response.data.value.hucreOzets[0].hucre.kodu,
-            bakiye:response.data.value.bakiye
+              ? alreadyHasHucreKodu
+              : response.data.value.hucreOzets[0].hucre.kodu,
+            bakiye: response.data.value.bakiye,
           }));
 
           if (
@@ -513,9 +525,14 @@ const App = () => {
           if (miktarRef.current) {
             miktarRef.current.focus();
           }
+        } else {
+          selectAllTextInputText(stokKoduInputRef);
         }
+      } else {
+        selectAllTextInputText(stokKoduInputRef);
       }
     } catch (error) {
+      selectAllTextInputText(stokKoduInputRef);
       console.error("Error fetching data:", error);
     }
   }, [gridData, selectedStokKodu, selectedId]);
@@ -526,7 +543,8 @@ const App = () => {
     }
   }, [selectedStokKodu, handleKeyPress]);
 
-  const handleDialogSelect = useCallback( //TODU: bunu T type a geçirince kaldırmak gerekiyor ama güncellemeler için ne yapacağımı daha bilmediğimden bir süre durabilir 
+  const handleDialogSelect = useCallback(
+    //TODU: bunu T type a geçirince kaldırmak gerekiyor ama güncellemeler için ne yapacağımı daha bilmediğimden bir süre durabilir
     (
       fieldName: string,
       dialogFieldName: string,
@@ -634,11 +652,43 @@ const App = () => {
       });
       return;
     }
-    if (formDataDetay.cikisHucreId === 0 || !formDataDetay.cikisHucreId || formDataDetay.cikisHucreId== undefined) {
+    if (
+      formDataDetay.cikisHucreId === 0 ||
+      !formDataDetay.cikisHucreId ||
+      formDataDetay.cikisHucreId == undefined
+    ) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
         detail: "Hatalı çıkış hücresi seçimi",
+        life: 3000,
+      });
+      return;
+    }
+
+    if (
+      formDataDetay.projeKoduId === 0 ||
+      !formDataDetay.projeKoduId ||
+      formDataDetay.projeKoduId == undefined
+    ) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Hatalı proje",
+        life: 3000,
+      });
+      return;
+    }
+
+    if (
+      formDataDetay.uniteKoduId === 0 ||
+      !formDataDetay.uniteKoduId ||
+      formDataDetay.uniteKoduId == undefined
+    ) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Hatalı Unite",
         life: 3000,
       });
       return;
@@ -693,8 +743,9 @@ const App = () => {
             ? {
                 ...item,
                 miktar: formDataDetay.miktar!,
-                cikishucreKodu: hucreOptions.find((o) => o.value === selectedHucre)
-                  ?.label,
+                cikishucreKodu: hucreOptions.find(
+                  (o) => o.value === selectedHucre
+                )?.label,
                 cikisHucreId: formDataDetay.cikisHucreId,
               }
             : item
@@ -722,15 +773,22 @@ const App = () => {
     }
 
     document.getElementById("getirButton")!.hidden = true;
+    setTempStokKodu("");
     setSelectedStokKodu("");
-    setFormDataDetay((formData) => ({ ...formData,stokKartiId:0, stokAdi: "", miktar: 0,istenilenMiktar:0,bakiye:0 }));
+    setFormDataDetay((formData) => ({
+      ...formData,
+      stokKartiId: 0,
+      stokAdi: "",
+      miktar: 0,
+      istenilenMiktar: 0,
+      bakiye: 0,
+    }));
     setSelectedId(0);
     setHucreOptions([]);
 
     if (stokKoduInputRef.current) {
       stokKoduInputRef.current.focus();
     }
-
   }, [formDataDetay, gridData, hucreOptions, selectedStokKodu, selectedHucre]);
 
   //Silme onaylaması yapıldıktan sonra
@@ -792,7 +850,7 @@ const App = () => {
       return false;
     }
 
-    if (gridData.filter(item => item.miktar > 0).length<=0) {
+    if (gridData.filter((item) => item.miktar > 0).length <= 0) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
@@ -834,65 +892,64 @@ const App = () => {
     try {
       const transferData: ITransferDataAmbarFisi = {
         belgeDto: {
-            id: updateBelgeId !== 0 ? updateBelgeId : 0, 
-            belgeTip: EBelgeTip.AmbarCikisFisi,
-            no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
-            tarih: formDataBaslik.tarih,
-            aciklama1: formDataBaslik.aciklama1,
-            aciklama2: formDataBaslik.aciklama2,
-            aciklama3: formDataBaslik.aciklama3,
-            tamamlandi: true,
-            aktarimDurumu: EAktarimDurumu.AktarimSirada  
+          id: updateBelgeId !== 0 ? updateBelgeId : 0,
+          belgeTip: EBelgeTip.AmbarCikisFisi,
+          no: formDataBaslik.belgeSeri + formDataBaslik.belgeNumara,
+          tarih: formDataBaslik.tarih,
+          aciklama1: formDataBaslik.aciklama1,
+          aciklama2: formDataBaslik.aciklama2,
+          aciklama3: formDataBaslik.aciklama3,
+          tamamlandi: true,
+          aktarimDurumu: EAktarimDurumu.AktarimSirada,
         },
         ambarFisiDto: {
-            id: 0,//updateBelgeId !== 0 ? await getAmbarFisiId(updateBelgeId) : 0,  
-            belgeId: updateBelgeId !== 0 ? updateBelgeId : 0,  
-            ambarHareketTur: formDataBaslik.hareketTuru,
-            cikisYeri: formDataBaslik.cikisYeri,
-            cikisYeriId: formDataBaslik.cikisYeriKoduId
-
+          id: 0, //updateBelgeId !== 0 ? await getAmbarFisiId(updateBelgeId) : 0,
+          belgeId: updateBelgeId !== 0 ? updateBelgeId : 0,
+          ambarHareketTur: formDataBaslik.hareketTuru,
+          cikisYeri: formDataBaslik.cikisYeri,
+          cikisYeriId: formDataBaslik.cikisYeriKoduId,
         },
-        stokHareketDto: gridData.filter(item => item.miktar > 0).map((item, index) => ({
-          id:0,// item.id,
-          belgeId: updateBelgeId !== 0 ? updateBelgeId : 0, 
-          stokKartiId: item.stokKartiId ?? 0,
-          masrafStokKartiId: item.stokKartiId ?? 0,
-          miktar: item.miktar ?? 0,
-          istenilenMiktar:item.istenilenMiktar,
-          fiyatTL: item.fiyat ?? 0,
-          fiyatDoviz: 0,
-          fiyatDovizTipiId: 1,
-          cikisHucreId: item.cikisHucreId ?? 0,
-          //girisHucreId: 0,
-          aciklama1: formDataBaslik.aciklama1 ?? "",
-          aciklama2: formDataBaslik.aciklama2 ?? "",
-          aciklama3: formDataBaslik.aciklama3 ?? "",
-          projeId: formDataDetay.projeKoduId ?? 0,
-          uniteId: formDataDetay.uniteKoduId ?? 0,
-          sira: index + 1,
-          girisCikis: "C",
-          olcuBirimId: item.olcuBirimId ?? 0,
-          seriKodu: "",
-          //stokHareketSeries: item.seriler || []
-      }))
-    };
-  
+        stokHareketDto: gridData
+          .filter((item) => item.miktar > 0)
+          .map((item, index) => ({
+            id: 0, // item.id,
+            belgeId: updateBelgeId !== 0 ? updateBelgeId : 0,
+            stokKartiId: item.stokKartiId ?? 0,
+            masrafStokKartiId: item.stokKartiId ?? 0,
+            miktar: item.miktar ?? 0,
+            istenilenMiktar: item.istenilenMiktar,
+            fiyatTL: item.fiyat ?? 0,
+            fiyatDoviz: 0,
+            fiyatDovizTipiId: 1,
+            cikisHucreId: item.cikisHucreId ?? 0,
+            //girisHucreId: 0,
+            aciklama1: formDataBaslik.aciklama1 ?? "",
+            aciklama2: formDataBaslik.aciklama2 ?? "",
+            aciklama3: formDataBaslik.aciklama3 ?? "",
+            projeId: formDataDetay.projeKoduId ?? 0,
+            uniteId: formDataDetay.uniteKoduId ?? 0,
+            sira: index + 1,
+            girisCikis: "C",
+            olcuBirimId: item.olcuBirimId ?? 0,
+            seriKodu: "",
+            //stokHareketSeries: item.seriler || []
+          })),
+      };
+
       // API'ye tek seferde gönderim
       const response = await api.ambarFisiSave.save(transferData);
-  
+
       if (!response.data.status) {
         throw new Error(
-          (
-            Object.entries(response.data.errors || {})
+          Object.entries(response.data.errors || {})
             .map(([key, messages]) => `${key}: ${messages.join(", ")}`)
-            .join("\n")
-           ) ||
-           response.data.detail ||
+            .join("\n") ||
+            response.data.detail ||
             "Veriler kaydedilirken bir hata oluştu."
         );
       }
-      navigate(`/fatura/ambarcikisfisiliste`)
-  
+      navigate(`/fatura/ambarcikisfisiliste`);
+
       // Başarılı durum mesajı
       toast.current?.show({
         severity: "success",
@@ -900,9 +957,8 @@ const App = () => {
         detail: "Veriler başarıyla kaydedildi",
         life: 3000,
       });
-  
+
       resetForm();
-  
     } catch (error: any) {
       toast.current?.show({
         severity: "error",
@@ -1069,8 +1125,11 @@ const App = () => {
           </div>
           <div className="col-md-3 col-sm-6 mt-4">
             <div className="p-inputgroup">
-              <Button id="getirButton" label="Getir" onClick={handleGetir} 
-              hidden={updateBelgeId>0 }
+              <Button
+                id="getirButton"
+                label="Getir"
+                onClick={handleGetir}
+                hidden={updateBelgeId > 0}
               />
             </div>
           </div>
@@ -1087,7 +1146,7 @@ const App = () => {
               icon="pi pi-check"
               loading={loading}
               onClick={handleSave}
-              disabled={(gridData.filter(item => item.miktar > 0).length<=0) }
+              disabled={gridData.filter((item) => item.miktar > 0).length <= 0}
               visible={!belgeReadOnly}
             />
           </div>
@@ -1312,8 +1371,8 @@ const App = () => {
               <label htmlFor="stokKodu">Stok Kodu</label>
               <div className="p-inputgroup">
                 <InputText
-                ref={stokKoduInputRef}
-                autoComplete="off"
+                  ref={stokKoduInputRef}
+                  autoComplete="off"
                   id="stokKodu"
                   name="stokKodu"
                   value={tempStokKodu}
@@ -1322,9 +1381,6 @@ const App = () => {
                     if (e.key === "Enter") {
                       setSelectedStokKodu(tempStokKodu);
                       handleKeyPress();
-                      if (miktarRef.current) {
-                        miktarRef.current.focus();
-                      }
                     }
                   }}
                 />
@@ -1339,16 +1395,14 @@ const App = () => {
                   onHide={() =>
                     setDialogVisible({ ...dialogVisible, stok: false })
                   }
-                  onSelect={(selectedValue) =>
-                    {setFormDataDetay((prevFormDataBaslik) => ({
+                  onSelect={(selectedValue) => {
+                    setFormDataDetay((prevFormDataBaslik) => ({
                       ...prevFormDataBaslik,
                       //stokKodu: selectedValue.kodu,
-                      stokAdi:selectedValue.adi,
+                      stokAdi: selectedValue.adi,
                       stokKartiId: selectedValue.id!,
                     }));
-                    setSelectedStokKodu(selectedValue.kodu);
-                  }
-                  }
+                  }}
                   // onSelect={(selectedValue) => {
                   //   handleDialogSelect("stokKodu", "kodu", selectedValue);
                   // }}
@@ -1411,6 +1465,7 @@ const App = () => {
                     handleAddToGrid();
                   }
                 }}
+                onFocus={() => selectAllTextInputNumber(miktarRef)}
                 ref={miktarRef}
                 inputStyle={{ textAlign: "right" }}
               />
@@ -1431,7 +1486,12 @@ const App = () => {
           </div>
         </div>
         <div className="p-col-12  mt-3">
-          <Button label="Ekle" icon="pi pi-plus" onClick={handleAddToGrid} disabled={belgeReadOnly}/>
+          <Button
+            label="Ekle"
+            icon="pi pi-plus"
+            onClick={handleAddToGrid}
+            disabled={belgeReadOnly}
+          />
         </div>
         <div className="p-col-12">
           <DataTable
@@ -1447,7 +1507,10 @@ const App = () => {
             rowClassName={(rowData) => {
               if (rowData.miktar === rowData.istenilenMiktar) {
                 return "green-row";
-              } else if (rowData.miktar > 0 && rowData.miktar < rowData.istenilenMiktar) {
+              } else if (
+                rowData.miktar > 0 &&
+                rowData.miktar < rowData.istenilenMiktar
+              ) {
                 return "yellow-row";
               } else {
                 return "";
@@ -1471,6 +1534,7 @@ const App = () => {
                     className="btn btn-info ms-1"
                     onClick={() => {
                       setSelectedStokKodu(rowData.stokKodu);
+                      setTempStokKodu(rowData.stokKodu);
                       setSelectedId(rowData.id);
                     }}
                   >

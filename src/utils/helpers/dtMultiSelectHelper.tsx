@@ -24,6 +24,24 @@ export const kilitliMiDDFilterTemplate = (options: ColumnFilterElementTemplateOp
   );
 };
 
+const onayliMiOptions = [
+  { label: "Evet", value: "1" },
+  { label: "Hayır", value: "0" }
+];
+
+export const onayliMiDDFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
+  return (
+    <Dropdown
+      value={options.value}
+      options={onayliMiOptions}
+      onChange={(e: DropdownChangeEvent) => {
+        options.filterApplyCallback(e.value);
+      }}
+      placeholder="Seçiniz"
+    />
+  );
+};
+
 // Dropdown filtresi
 const aktarimDurumuOptions = Object.keys(EAktarimDurumu)
   //.filter((key) => !isNaN(Number(EAktarimDurumu[key as keyof typeof EAktarimDurumu])))

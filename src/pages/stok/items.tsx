@@ -14,6 +14,7 @@ import { InputText } from "primereact/inputtext";
 import { ISapKod } from "../../utils/types/stok/ISapKod";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
+import { IHucre } from "../../utils/types/tanimlamalar/IHucre";
 
 export default () => {
   const myTable = createRef<ITableRef<IStokKartiWithDetail>>();
@@ -114,12 +115,14 @@ export default () => {
       header: "Kodu",
       //filter: true,
       //sortable: true,
+      style:{maxWidth:"90px"}
     },
     {
       field: "adi",
       header: "Adı",
       //filter: true,
       //sortable: true,
+      style:{maxWidth:"350px"}
     },
     {
       field: "sapKods",
@@ -128,18 +131,30 @@ export default () => {
       //sortable: true,
       body: (rowData) =>
         rowData.sapKods.map((item: ISapKod) => item.kod).join("-"),
+      style:{maxWidth:"100px"}
+    },
+    {
+      field: "hucres",
+      header: "Hücreler",
+      //filter: true,
+      //sortable: true,
+      body: (rowData) =>
+        rowData.hucres.map((item: IHucre) => item.kodu).join(" | "),
+      style:{maxWidth:"100px"}
     },
     {
       field: "stokGrupKodu.adi",
       header: "Grup Kodu",
       //filter: true,
       //sortable: true,
+      style:{maxWidth:"100px"}
     },
     {
       field: "stokKod1.adi",
       header: "Kod 1",
       //filter: true,
       //sortable: true,
+      style:{maxWidth:"100px"}
     },
     {
       header: "işlemler",

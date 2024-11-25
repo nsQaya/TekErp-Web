@@ -34,4 +34,8 @@ export interface INetsisSiparisFaturaOnay
     createdUserId?: string | null; 
     updatedUserId?: string | null; 
     deletedUserId?: string | null; 
+    durum:string;
+
+    
+
 }

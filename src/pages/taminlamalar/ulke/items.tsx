@@ -154,7 +154,7 @@ export default () => {
   };
 
   return (
-    <div className="container-fluid"style={{ marginTop: 1, paddingTop: 1 }}>
+    <div className="grid"style={{ marginTop: 1, paddingTop: 1 }}>
       <Toast ref={toast} />
       <ConfirmDialog
         visible={confirmVisible}
@@ -178,11 +178,8 @@ export default () => {
         validator={validateItems}
       />
       <AppBreadcrumb title="" />
-      <div className="row" style={{ marginTop: 1, paddingTop: 1 }}>
-        <div className="col-12" style={{ marginTop: 1, paddingTop: 1 }}>
-          <div className="card" style={{ marginTop: 1, paddingTop: 1 }} >
-            <div className="card-body" style={{ marginTop: 1, paddingTop: 1 }}>
-              <div className="table-responsive m-t-40" style={{ marginTop: 1, paddingTop: 1 }}>
+        <div className="col-12" >
+          <div className="p-card"  >
                 <AppTable
                   baseApi={api.ulke}
                   columns={columns}
@@ -205,10 +202,8 @@ export default () => {
                   }}
                 />
               </div>
-            </div>
-          </div>
+     
         </div>
-      </div>
     </div>
   );
 };

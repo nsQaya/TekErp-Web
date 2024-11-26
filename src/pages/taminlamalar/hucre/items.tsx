@@ -76,7 +76,11 @@ export default () => {
   ];
 
   const modalItems= [
-   
+    {
+      name: "id",
+      type: FormItemTypes.input,
+      hidden:true,
+    },
     {
       title: "Depo Kodu",
       name: "depoId",

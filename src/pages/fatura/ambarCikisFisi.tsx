@@ -1398,10 +1398,11 @@ const App = () => {
                   onSelect={(selectedValue) => {
                     setFormDataDetay((prevFormDataBaslik) => ({
                       ...prevFormDataBaslik,
-                      //stokKodu: selectedValue.kodu,
+                      stokKodu: selectedValue.kodu,
                       stokAdi: selectedValue.adi,
                       stokKartiId: selectedValue.id!,
                     }));
+                    setTempStokKodu(selectedValue.kodu);
                   }}
                   // onSelect={(selectedValue) => {
                   //   handleDialogSelect("stokKodu", "kodu", selectedValue);

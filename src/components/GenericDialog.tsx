@@ -130,6 +130,7 @@ const GenericDialog = <T extends {}>(props: GenericDialogProps<T>) => {
   return (
     <Dialog visible={props.visible} onHide={handleHide} header="Rehber">
       <DataTable
+      lazy // Bu çok önemli, db den geleni de filtrelemeye çalışıyor filan muhabbeti
       style={{  minHeight:'600px' }}
         size="small"
         value={data}

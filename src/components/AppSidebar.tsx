@@ -39,7 +39,7 @@ export default () => {
     {title: "Depo", href: "/tanimlamalar/depoes"},
     {title: "Hücre", href: "/tanimlamalar/hucres"},
     {title: "Döviz Tipi", href: "/tanimlamalar/dovizTipis"},
-    {title: "Plasiyer Kodu", href: "/tanimlamalar/plasiyers"},
+    // {title: "Plasiyer Kodu", href: "/tanimlamalar/plasiyers"},
     {title: "Proje Kodu", href: "/tanimlamalar/projes"},
     {title: "Ünite Kodu", href: "/tanimlamalar/unites"},
     {title: "Belge Seri", href: "/tanimlamalar/belgeSeris"},

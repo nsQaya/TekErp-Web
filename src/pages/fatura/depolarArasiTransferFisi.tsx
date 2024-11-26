@@ -1445,6 +1445,7 @@ const App: React.FC = () => {
                       stokAdi: selectedValue.adi,
                       stokKartiId: selectedValue.id!,
                     }));
+                    setTempStokKodu(selectedValue.kodu);
                     setSelectedStokKodu(selectedValue.kodu);
                   }}
                   // onSelect={(selectedValue) => {

@@ -604,7 +604,7 @@ const satinalmaTalepFisi = () => {
         talepTeklifStokHarekets: gridData
           .filter((item) => item.miktar > 0)
           .map((item, index) => ({
-            id: item.id,
+            id: isUpdate? item.id:0,
             belgeId: isUpdate ? updateBelgeId : 0,
             stokKartiId: item.stokKartiId ?? 0,
             miktar: item.miktar,

@@ -99,6 +99,7 @@ function ITable(
           acc[column.field] = {
             value: null,
             matchMode: matchMode, 
+            dataType:column.dataType
             //matchMode: FilterMatchMode.CONTAINS,
           };
         }

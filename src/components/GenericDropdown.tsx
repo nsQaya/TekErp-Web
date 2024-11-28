@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { ICrudBaseAPI } from "../utils/types";
-import { transformFilter } from "../utils/transformFilter";
+import { FilterMeta, transformFilter } from "../utils/transformFilter";
 import { SortOrder } from "primereact/datatable";
 import Select from "react-select";
 
@@ -36,7 +36,7 @@ const GenericDropdown: React.FC<GenericDropdownProps> = (props) => {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const nFilters = filters.reduce((acc : any, { item, value, matchMode }) => {
+    const nFilters:FilterMeta = filters.reduce((acc : any, { item, value, matchMode }) => {
       acc[item] = { item, value, matchMode };
       return acc;
     }, {});

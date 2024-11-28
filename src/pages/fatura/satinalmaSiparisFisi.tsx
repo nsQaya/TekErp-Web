@@ -12,7 +12,7 @@ import { InputText } from "primereact/inputtext";
 import { EBelgeTip } from "../../utils/types/enums/EBelgeTip";
 import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
 import api from "../../utils/api";
-import { transformFilter } from "../../utils/transformFilter";
+import { FilterMeta, transformFilter } from "../../utils/transformFilter";
 import { IBelgeSeri } from "../../utils/types/tanimlamalar/IBelgeSeri";
 import { InputMask } from "primereact/inputmask";
 import { IStokOlcuBirim } from "../../utils/types/tanimlamalar/IStokOlcuBirim";
@@ -31,6 +31,7 @@ import { selectAllTextInputNumber, selectAllTextInputText } from "../../utils/he
 import { roundToDecimal } from "../../utils/helpers/yuvarlama";
 import { fiyatDecimal, kurDecimal, miktarDecimal, tutarDecimal } from "../../utils/config";
 import TalepStokRehberDialog from "../../components/Rehber/TalepStokRehberDialog";
+import { Accordion, AccordionTab } from "primereact/accordion";
 
 const satinalmaSiparisFisi = () => {
   const currentDate = new Date();
@@ -217,7 +218,7 @@ const satinalmaSiparisFisi = () => {
         const sortColumn = "Id";
         const sortDirection = 1;
 
-        const filters = {
+        const filters:FilterMeta = {
           BelgeTip: { value: EBelgeTip.SatinalmaSiparis, matchMode: "equals" },
         };
 
@@ -1050,6 +1051,8 @@ useEffect(() => {
         rejectLabel="Hayır"
       />
       <div className="p-fluid p-formgrid p-grid">
+      <Accordion activeIndex={0}>
+      <AccordionTab header="Üst Bilgiler">
         <div className="row">
           <div className="col-md-3 col-sm-6 mt-4">
             <div className="p-inputgroup flex">
@@ -1263,7 +1266,10 @@ useEffect(() => {
             </FloatLabel>
           </div>
         </div>
-       
+        </AccordionTab>
+        </Accordion>
+        <Accordion activeIndex={0}>
+        <AccordionTab header="Kalem Bilgileri">
         <div className="row">
           <div className="col-md-2 col-sm-6 mt-4">
             <FloatLabel>
@@ -1590,6 +1596,7 @@ useEffect(() => {
               <InputNumber
                 id="fiyatNet"
                 name="fiyatNet"
+                readOnly
                 value={siparisStokHareketData.fiyatNet ?? 0}
                 min={0}
                 minFractionDigits={0}
@@ -1734,6 +1741,7 @@ useEffect(() => {
             />
           </div>
         </div>
+
         {JSON.stringify(siparisStokHareketData)}
         <div className="p-col-12">
           <DataTable
@@ -1810,6 +1818,140 @@ useEffect(() => {
             />
           </DataTable>
         </div>
+        </AccordionTab>
+        </Accordion>
+        <Accordion activeIndex={1}>
+        <AccordionTab header="Toplam Bilgileri">
+        <div className="row justify-content-end">
+        <div className="col-md-2 col-sm-6 mt-4">
+            <FloatLabel>
+              <label htmlFor="dovizToplam">Döviz Toplam</label>
+              <InputNumber
+                id="dovizToplam"
+                name="dovizToplam"
+                readOnly
+                value={siparisStokHareketData.fiyatNet ?? 0}
+                min={0}
+                minFractionDigits={0}
+                maxFractionDigits={tutarDecimal}
+                inputStyle={{ textAlign: "right" }}
+              />
+            </FloatLabel>
+          </div>
+          <div className="col-md-2 col-sm-6 mt-4">
+            <FloatLabel>
+              <label htmlFor="turkLirasiToplam">Türk Lirası Toplam</label>
+              <InputNumber
+                id="turkLirasiToplam"
+                name="turkLirasiToplam"
+                readOnly
+                value={siparisStokHareketData.fiyatNet ?? 0}
+                min={0}
+                minFractionDigits={0}
+                maxFractionDigits={tutarDecimal}
+                inputStyle={{ textAlign: "right" }}
+              />
+            </FloatLabel>
+          </div>
+        </div>
+        <div className="row justify-content-end">
+        <div className="col-md-2 col-sm-6 mt-4">
+            <FloatLabel>
+              <label htmlFor="dovizToplam">ss Toplam</label>
+              <InputNumber
+                id="dovizToplam"
+                name="dovizToplam"
+                readOnly
+                value={siparisStokHareketData.fiyatNet ?? 0}
+                min={0}
+                minFractionDigits={0}
+                maxFractionDigits={tutarDecimal}
+                inputStyle={{ textAlign: "right" }}
+              />
+            </FloatLabel>
+          </div>
+          <div className="col-md-2 col-sm-6 mt-4">
+            <FloatLabel>
+              <label htmlFor="turkLirasiToplam">Türk Lirası Toplam</label>
+              <InputNumber
+                id="turkLirasiToplam"
+                name="turkLirasiToplam"
+                readOnly
+                value={siparisStokHareketData.fiyatNet ?? 0}
+                min={0}
+                minFractionDigits={0}
+                maxFractionDigits={tutarDecimal}
+                inputStyle={{ textAlign: "right" }}
+              />
+            </FloatLabel>
+          </div>
+        </div>
+        <div className="row justify-content-end">
+        <div className="col-md-2 col-sm-6 mt-4">
+            <FloatLabel>
+              <label htmlFor="dovizToplam">Döviz Toplam</label>
+              <InputNumber
+                id="dovizToplam"
+                name="dovizToplam"
+                readOnly
+                value={siparisStokHareketData.fiyatNet ?? 0}
+                min={0}
+                minFractionDigits={0}
+                maxFractionDigits={tutarDecimal}
+                inputStyle={{ textAlign: "right" }}
+              />
+            </FloatLabel>
+          </div>
+          <div className="col-md-2 col-sm-6 mt-4">
+            <FloatLabel>
+              <label htmlFor="turkLirasiToplam">Türk Lirası Toplam</label>
+              <InputNumber
+                id="turkLirasiToplam"
+                name="turkLirasiToplam"
+                readOnly
+                value={siparisStokHareketData.fiyatNet ?? 0}
+                min={0}
+                minFractionDigits={0}
+                maxFractionDigits={tutarDecimal}
+                inputStyle={{ textAlign: "right" }}
+              />
+            </FloatLabel>
+          </div>
+        </div>
+        <div className="row justify-content-end">
+        <div className="col-md-2 col-sm-6 mt-4">
+            <FloatLabel>
+              <label htmlFor="dovizToplam">Döviz Toplam</label>
+              <InputNumber
+                id="dovizToplam"
+                name="dovizToplam"
+                readOnly
+                value={siparisStokHareketData.fiyatNet ?? 0}
+                min={0}
+                minFractionDigits={0}
+                maxFractionDigits={tutarDecimal}
+                inputStyle={{ textAlign: "right" }}
+              />
+            </FloatLabel>
+          </div>
+          <div className="col-md-2 col-sm-6 mt-4">
+            <FloatLabel>
+              <label htmlFor="turkLirasiToplam">Türk Lirası Toplam</label>
+              <InputNumber
+                id="turkLirasiToplam"
+                name="turkLirasiToplam"
+                readOnly
+                value={siparisStokHareketData.fiyatNet || 0}
+                min={0}
+                minFractionDigits={0}
+                maxFractionDigits={tutarDecimal}
+                inputStyle={{ textAlign: "right" }}
+              />
+            </FloatLabel>
+          </div>
+        </div>
+        </AccordionTab>
+        </Accordion>
       </div>
     </div>
     </>

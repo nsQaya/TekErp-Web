@@ -1,11 +1,12 @@
 import { SortOrder } from "primereact/datatable";
 
-type GridFilter = {
-  value: any; // Belirli bir tip belirleyebilirsiniz, örneğin string, number, vb.
-  matchMode?: string; // matchMode undefined olabileceği için optional yapıyoruz
+export type GridFilter = {
+  value: any; 
+  matchMode?: string; 
+  dataType?: "string" | "numeric" | "date";
 };
 
-type FilterMeta = {
+export type FilterMeta = {
   [key: string]: GridFilter | GridOperatorFilter; // Farklı tipleri desteklemek için union type kullanıyoruz
 };
 
@@ -49,7 +50,7 @@ function transformFilter(gridFilters: FilterMeta, sortColumn: string, sortDirect
                   transformedFilters.push({
                       field: key,
                       operator: mapMatchModeToOperator(constraint.matchMode || 'eq'),
-                      value: handleDateFilter(constraint.value).toString(),
+                      value: transformValueByType(constraint.value, constraint.dataType).toString(),
                       //value: constraint.value.toString(),
                       logic: "and",
                   });
@@ -60,7 +61,7 @@ function transformFilter(gridFilters: FilterMeta, sortColumn: string, sortDirect
               transformedFilters.push({
                   field: key,
                   operator: mapMatchModeToOperator(filter.matchMode || 'eq'),
-                  value: handleDateFilter(filter.value).toString(),
+                  value:transformValueByType(filter.value, filter.dataType).toString(),
                   //value: filter.value.toString(),
                   logic: "and",
               });
@@ -115,6 +116,17 @@ function mapMatchModeToOperator(matchMode: string): string {
       default:
           return "eq";
   }
+}
+
+// Veri tipi bazlı dönüşüm
+function transformValueByType(value: any, dataType?: string): any {
+  if (dataType === "date") {
+    return handleDateFilter(value);
+  }
+  if (dataType === "numeric" && typeof value === "string") {
+    return parseFloat(value.replace(",", "."));
+  }
+  return value;
 }
 // Tarih filtresi için özel işleme
 function handleDateFilter(value: any) {

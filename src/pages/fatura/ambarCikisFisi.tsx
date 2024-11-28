@@ -15,7 +15,7 @@ import { Dropdown } from "primereact/dropdown";
 import ProjeRehberDialog from "../../components/Rehber/ProjeRehberDialog";
 import UniteRehberDialog from "../../components/Rehber/UniteRehberDialog";
 import { InputNumber } from "primereact/inputnumber";
-import { transformFilter } from "../../utils/transformFilter";
+import { transformFilter, FilterMeta } from "../../utils/transformFilter";
 import api from "../../utils/api";
 import { Checkbox } from "primereact/checkbox";
 import { Accordion, AccordionTab } from "primereact/accordion";
@@ -189,7 +189,7 @@ const App = () => {
         const sortColumn = "Id";
         const sortDirection = 1;
 
-        const filters = {
+        const filters:FilterMeta = {
           BelgeTip: { value: EBelgeTip.AmbarCikisFisi, matchMode: "equals" },
         };
 
@@ -584,10 +584,10 @@ const App = () => {
     const sortColumn = "cikisHucre.kodu";
     const sortDirection = 1;
 
-    const filters = {
+    const filters:FilterMeta  = {
       ProjeKodu: { value: formDataDetay.projeKodu, matchMode: "equals" },
       PlasiyerKodu: { value: formDataDetay.uniteKodu, matchMode: "equals" },
-      istenilenMiktar: { value: "0", matchMode: "gt" },
+      istenilenMiktar: { value: "0", matchMode: "gt",dataType:"numeric" },
     };
     const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
 

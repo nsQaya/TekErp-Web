@@ -3,6 +3,8 @@ import api from "../../utils/api";
 import GenericDialogWithFetchData from "../GenericDialogWithFetchData";
 import { ITalepStokForSiparis } from "../../utils/types/fatura/ITalepStokForSiparis";
 import { dateFilterTemplate } from "../../utils/helpers/CalendarHelper";
+import { formatNumber } from "../../utils/helpers/formatNumberForGrid";
+import { miktarDecimal } from "../../utils/config";
 
 
 
@@ -32,14 +34,21 @@ const CariRehberDialog: React.FC<{
         {
           header: "Miktar",
           field: "miktar",
+          dataType:"numeric",
           sortable: true,
           filter: true,
+          body:((row:ITalepStokForSiparis) => 
+            {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.miktar,miktarDecimal)} </div>)})
         },
+       
         {
           header: "Sipariş Miktar",
           field: "siparisMiktar",
+          dataType:"numeric",
           sortable: true,
           filter: true,
+          body:((row:ITalepStokForSiparis) => 
+            {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisMiktar,miktarDecimal)} </div>)})
         },
         {
           header: "Teslim Tarihi",

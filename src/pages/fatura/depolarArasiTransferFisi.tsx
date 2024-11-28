@@ -14,7 +14,7 @@ import StokRehberDialog from "../../components/Rehber/StokRehberDialog";
 import { Dropdown } from "primereact/dropdown";
 import ProjeRehberDialog from "../../components/Rehber/ProjeRehberDialog";
 import { InputNumber } from "primereact/inputnumber";
-import { transformFilter } from "../../utils/transformFilter";
+import { FilterMeta, transformFilter } from "../../utils/transformFilter";
 import api from "../../utils/api";
 import { Checkbox } from "primereact/checkbox";
 import { Accordion, AccordionTab } from "primereact/accordion";
@@ -530,7 +530,7 @@ const App: React.FC = () => {
     const sortColumn = "Id";
     const sortDirection = 1;
 
-    const filters = {
+    const filters:FilterMeta = {
       BelgeNo: { value: formDataBaslik.isEmriNo, matchMode: "equals" },
       //PlasiyerKodu: { value: formDataDetay.uniteKodu, matchMode: "equals" },
       istenilenMiktar: { value: "0", matchMode: "gt" },

@@ -64,7 +64,7 @@ const GenericDialogWithFetchData = <T extends {}>(props: GenericDialogWithFetchD
                 break;
             }
     
-            acc[column.field] = { value: null, matchMode };
+            acc[column.field] = { value: null, matchMode,dataType:column.dataType };
           }
           return acc;
         }, {});

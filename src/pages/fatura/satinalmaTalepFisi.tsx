@@ -14,7 +14,7 @@ import { InputText } from "primereact/inputtext";
 import { EBelgeTip } from "../../utils/types/enums/EBelgeTip";
 import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
 import api from "../../utils/api";
-import { transformFilter } from "../../utils/transformFilter";
+import { FilterMeta, transformFilter } from "../../utils/transformFilter";
 import { IBelgeSeri } from "../../utils/types/tanimlamalar/IBelgeSeri";
 import StokRehberDialog from "../../components/Rehber/StokRehberDialog";
 import { InputMask } from "primereact/inputmask";
@@ -146,7 +146,7 @@ const satinalmaTalepFisi = () => {
         const sortColumn = "Id";
         const sortDirection = 1;
 
-        const filters = {
+        const filters:FilterMeta = {
           BelgeTip: { value: EBelgeTip.SatinalmaTalep, matchMode: "equals" },
         };
 

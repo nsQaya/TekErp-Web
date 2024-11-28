@@ -189,7 +189,7 @@ export default (props: IStokModalProps) => {
       api.stokKod5.getAll(0, 1000),
       api.stokOlcuBirim.getAll(0, 1000),
       api.dovizTipi.getAll(0, 1000),
-      api.hucre.getAll(0, 1000)
+      api.hucre.getAll(0, 9000)
     ]);
 
     setStokGrupKodus(

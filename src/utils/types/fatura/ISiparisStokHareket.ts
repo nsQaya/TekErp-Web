@@ -1,3 +1,4 @@
+
 import { IStok } from "../stok/IStok";
 import { IDovizTipi } from "../tanimlamalar/IDovizTipi";
 import { IProje } from "../tanimlamalar/IProje";
@@ -36,4 +37,6 @@ export interface ISiparisStokHareket
     proje?:IProje,
     uniteId:number,
     unite?:IUnite
+    kalanMiktar?: number,
+    sipDurum?: number,
 }

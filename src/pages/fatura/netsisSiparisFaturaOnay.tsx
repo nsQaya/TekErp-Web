@@ -14,6 +14,7 @@ import { formatNumber } from "../../utils/helpers/formatNumberForGrid";
 import { Tag } from "primereact/tag";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { onayliMiDDFilterTemplate } from "../../utils/helpers/dtMultiSelectHelper";
+import { fiyatDecimal, kurDecimal, miktarDecimal, tutarDecimal } from "../../utils/config";
 
 export default () => {
   const myTable = createRef<ITableRef<INetsisSiparisFaturaOnay>>();
@@ -108,23 +109,23 @@ const statusFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
     { header: "Stok Adı", field: "stokAdi", sortable: true, filter: true },
     { header: "Sipariş Miktarı", field: "siparisMiktari", sortable: true, filter: true, 
       body:((row:INetsisSiparisFaturaOnay) => 
-      {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisMiktari,2)} </div>)})
+      {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisMiktari,miktarDecimal)} </div>)})
     },
     { header: "", field: "siparisOlcuBirim", sortable: false, filter: false },
     { header: "Sipariş Net Fiyat", field: "siparisNetFiyat", sortable: true, filter: true, 
       body:((row:INetsisSiparisFaturaOnay) => 
-      {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisNetFiyat,5)} </div>)}) },
+      {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisNetFiyat,fiyatDecimal)} </div>)}) },
     { header: "Sipariş Brüt Fiyat", field: "siparisBrutFiyat", sortable: true, filter: true ,
       body:((row:INetsisSiparisFaturaOnay) => 
-        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisBrutFiyat,5)} </div>)})
+        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisBrutFiyat,fiyatDecimal)} </div>)})
     },
     { header: "Sipariş İskonto", field: "siparisIskonto", sortable: true, filter: true,
       body:((row:INetsisSiparisFaturaOnay) => 
-        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisIskonto,2)} </div>)})
+        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisIskonto,tutarDecimal)} </div>)})
      },
     { header: "Sipariş Kur", field: "siparisKur", sortable: true, filter: true ,
       body:((row:INetsisSiparisFaturaOnay) => 
-      {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisKur??0,5)} </div>)})},
+      {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisKur??0,kurDecimal)} </div>)})},
     { header: "Sipariş Döviz Tip", field: "siparisDovizTip", sortable: true, filter: true },
     { header: "Fatura Tarih", field: "faturaTarih", dataType: "date", sortable: true, filter: true, filterElement:dateFilterTemplate,
       body: (row: INetsisSiparisFaturaOnay) =>
@@ -139,34 +140,34 @@ const statusFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
     { header: "Fatura Fiş No", field: "faturaFisno", sortable: true, filter: true },
     { header: "Fatura Miktar", field: "faturaMiktar", sortable: true, filter: true,
       body:((row:INetsisSiparisFaturaOnay) => 
-        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaMiktar,2)} </div>)})
+        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaMiktar,miktarDecimal)} </div>)})
      },
     { header: "", field: "faturaOlcuBirim", sortable: false, filter: false },
     { header: "Fatura Net Fiyat", field: "faturaNetFiyat", sortable: true, filter: true,
       body:((row:INetsisSiparisFaturaOnay) => 
-        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaNetFiyat,5)} </div>)})
+        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaNetFiyat,fiyatDecimal)} </div>)})
      },
     { header: "Fatura Brüt Fiyat", field: "faturaBrutFiyat", sortable: true, filter: true,
       body:((row:INetsisSiparisFaturaOnay) => 
-        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaBrutFiyat,5)} </div>)})
+        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaBrutFiyat,fiyatDecimal)} </div>)})
      },
     { header: "Fatura Kur", field: "faturaKur", sortable: true, filter: true,
       body:((row:INetsisSiparisFaturaOnay) => 
-        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaKur??0,5)} </div>)})
+        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaKur??0,kurDecimal)} </div>)})
      },
     { header: "Fatura Döviz Tip", field: "faturaDovizTip", sortable: true, filter: true },
     { header: "Fatura Net Fiyat TL", field: "faturaNetFiyatTL", sortable: true, filter: true,
       body:((row:INetsisSiparisFaturaOnay) => 
-        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaNetFiyatTL,5)} </div>)})
+        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaNetFiyatTL,fiyatDecimal)} </div>)})
      },
     { header: "Fatura Brüt Fiyat TL", field: "faturaBrutFiyatTL", sortable: true, filter: true,
       body:((row:INetsisSiparisFaturaOnay) => 
-        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaBrutFiyatTL,5)} </div>)})
+        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaBrutFiyatTL,fiyatDecimal)} </div>)})
      },
     { header: "Fatura Döviz Tip TL", field: "faturaDovizTipTL", sortable: true, filter: true },
     { header: "Fatura Tutar", field: "faturaTutar", sortable: true, filter: true,
       body:((row:INetsisSiparisFaturaOnay) => 
-        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaTutar,2)} </div>)})
+        {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.faturaTutar,tutarDecimal)} </div>)})
      },
      { header: "Onay", field: "onay", sortable: true, dataType:"numeric", filter: true , filterElement:onayliMiDDFilterTemplate,
       body: (rowData : INetsisSiparisFaturaOnay) => (rowData.onay === 1 ? "Evet" : "Hayır")

@@ -39,6 +39,7 @@ import {
   selectAllTextInputNumber,
   selectAllTextInputText,
 } from "../../utils/helpers/selectAllText";
+import { miktarDecimal } from "../../utils/config";
 
 type FormDataBaslik = {
   isEmriNo: string;
@@ -1483,7 +1484,7 @@ const App: React.FC = () => {
                 value={formDataDetay.istenilenMiktar}
                 min={0}
                 minFractionDigits={2}
-                maxFractionDigits={5}
+                maxFractionDigits={miktarDecimal}
                 disabled
                 inputStyle={{ textAlign: "right" }}
                 onFocus={handleFocus}
@@ -1498,8 +1499,8 @@ const App: React.FC = () => {
                 name="miktar"
                 value={formDataDetay.miktar}
                 min={0}
-                minFractionDigits={0}
-                maxFractionDigits={2}
+                minFractionDigits={2}
+                maxFractionDigits={miktarDecimal}
                 onChange={(e) =>
                   setFormDataDetay((state) => ({
                     ...state,

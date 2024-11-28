@@ -18,6 +18,10 @@ export const dateFilterTemplate = (
       mask="99/99/9999"
       showIcon // Takvim simgesi
       locale="tr" // Türkçe yerelleştirme kullan
+      showButtonBar 
+      inputStyle={{ pointerEvents: "none" }}
+      hideOnDateTimeSelect 
+      //touchUI mobiller
     />
   );
 };

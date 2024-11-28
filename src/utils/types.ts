@@ -82,6 +82,11 @@ export interface ICrudBaseAPI<T> {
   deleteByString: (
     id: string
   ) => Promise<AxiosResponse<IBaseResponseValue<IEntity>, any>>;
+  getListTalepStokForSiparis(
+    page: number,
+    take: number,
+    dynamicQuery: DynamicQuery
+  ): Promise<{ data: { value: { items: T[]; count: number } } }>;
 
   save: (
     params: Partial<T>

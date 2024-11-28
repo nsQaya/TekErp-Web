@@ -31,5 +31,8 @@ export default ($axios: AxiosInstance) => ({
     },
     getListByBelgeId(id: number){
         return $axios.get<IBaseResponseValue<IPagedResponse<ITalepTeklifStokHareket>>>(`/${controller}/GetListByBelgeId?BelgeId=${id}`);
-    }
+    },
+    getListTalepStokForSiparis(page: number, take: number,dynamicQuery:DynamicQuery  ){
+        return $axios.post<IBaseResponseValue<IPagedResponse<ITalepTeklifStokHareket>>>(`/${controller}/GetListTalepStokForSiparis?PageIndex=${page}&PageSize=${take}`, dynamicQuery );
+    },
 });

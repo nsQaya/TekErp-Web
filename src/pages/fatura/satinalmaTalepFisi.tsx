@@ -24,6 +24,7 @@ import ProjeRehberDialog from "../../components/Rehber/ProjeRehberDialog";
 import UniteRehberDialog from "../../components/Rehber/UniteRehberDialog";
 import CariRehberDialog from "../../components/Rehber/CariRehberDialog";
 import { ITalepTeklifSaveData } from "../../utils/types/fatura/ITalepTeklifSaveData";
+import { miktarDecimal } from "../../utils/config";
 
 const satinalmaTalepFisi = () => {
   const currentDate = new Date();
@@ -1039,7 +1040,7 @@ const satinalmaTalepFisi = () => {
                 value={talepStokHareketData.miktar ?? 0}
                 min={0}
                 minFractionDigits={0}
-                maxFractionDigits={4}
+                maxFractionDigits={miktarDecimal}
                 onChange={(e) =>
                   setTalepStokHareketData((state) => ({
                     ...state,
@@ -1064,7 +1065,7 @@ const satinalmaTalepFisi = () => {
                 id="bilgiMiktar"
                 name="bilgiMiktar"
                 value={bilgiMiktar ?? 0}
-                maxFractionDigits={4}
+                maxFractionDigits={miktarDecimal}
                 disabled
                 inputStyle={{ textAlign: "right" }}
               />

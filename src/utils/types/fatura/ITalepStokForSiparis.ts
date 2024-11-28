@@ -1,11 +1,10 @@
 import { IStok } from "../stok/IStok";
-import { IDovizTipi } from "../tanimlamalar/IDovizTipi";
 import { IProje } from "../tanimlamalar/IProje";
 import { IStokOlcuBirim } from "../tanimlamalar/IStokOlcuBirim";
 import { IUnite } from "../tanimlamalar/IUnite";
 import { IBelge } from "./IBelge";
 
-export interface ITalepTeklifStokHareket
+export interface ITalepStokForSiparis
 {
     id?:number,
     belgeId?:number,
@@ -13,10 +12,8 @@ export interface ITalepTeklifStokHareket
     stokKartiId:number,
     stokKarti?:IStok,
     miktar:number,
-    fiyatTL:number,
-    fiyatDoviz?:number,
-    fiyatDovizTipiId?:number,
-    fiyatDovizTipi?:IDovizTipi,
+    siparisMiktar:number,
+    kalanMiktar:number,
     olcuBirimId:number,
     olcuBirim?:IStokOlcuBirim,
     girisCikis:string,

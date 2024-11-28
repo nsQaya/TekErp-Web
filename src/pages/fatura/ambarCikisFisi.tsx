@@ -34,6 +34,7 @@ import {
   selectAllTextInputNumber,
   selectAllTextInputText,
 } from "../../utils/helpers/selectAllText";
+import { miktarDecimal } from "../../utils/config";
 
 // Form verileri için bir tip tanımı
 type FormDataBaslik = {
@@ -1439,7 +1440,7 @@ const App = () => {
                 value={formDataDetay.istenilenMiktar}
                 min={0}
                 minFractionDigits={2}
-                maxFractionDigits={5}
+                maxFractionDigits={miktarDecimal}
                 disabled
                 inputStyle={{ textAlign: "right" }}
               />
@@ -1453,8 +1454,8 @@ const App = () => {
                 name="miktar"
                 value={formDataDetay.miktar}
                 min={0}
-                minFractionDigits={0}
-                maxFractionDigits={2}
+                minFractionDigits={2}
+                maxFractionDigits={miktarDecimal}
                 onChange={(e) =>
                   setFormDataDetay((state) => ({
                     ...state,

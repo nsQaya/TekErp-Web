@@ -17,6 +17,7 @@ import { IStokHareketSeri } from "../../utils/types/stok/IStokHareketSeri";
 import { IStokSeriBakiye } from "../../utils/types/stok/IStokSeriBakiye";
 import { useNavigate } from "react-router-dom";
 import { INetsisUretimSonuKaydiIsEmriRecete } from "../../utils/types/uretim/INetsisUretimSonuKaydiIsEmriRecete";
+import { miktarDecimal } from "../../utils/config";
 
 // // Grid verileri için bir tip tanımı
 // type GridData = {
@@ -744,7 +745,7 @@ const netsisUretimSonuKaydi = () => {
                 min={0}
                 invalid={miktarInvalid} 
                 minFractionDigits={0}
-                maxFractionDigits={4}
+                maxFractionDigits={miktarDecimal}
                 onChange={(e) =>
                   setNetsisUretimSonuKaydiData((state) => ({
                     ...state,

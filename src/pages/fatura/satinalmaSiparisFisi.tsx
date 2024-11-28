@@ -14,7 +14,6 @@ import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
 import api from "../../utils/api";
 import { transformFilter } from "../../utils/transformFilter";
 import { IBelgeSeri } from "../../utils/types/tanimlamalar/IBelgeSeri";
-import StokRehberDialog from "../../components/Rehber/StokRehberDialog";
 import { InputMask } from "primereact/inputmask";
 import { IStokOlcuBirim } from "../../utils/types/tanimlamalar/IStokOlcuBirim";
 import { InputNumber } from "primereact/inputnumber";
@@ -28,13 +27,23 @@ import { ISiparisStokHareket } from "../../utils/types/fatura/ISiparisStokHareke
 import { IDovizTipi } from "../../utils/types/tanimlamalar/IDovizTipi";
 import { ISiparisSaveData } from "../../utils/types/fatura/ISiparisSaveData";
 import { EIhracatIthalatTip } from "../../utils/types/enums/EIhracatIthalatTip";
+import { selectAllTextInputNumber, selectAllTextInputText } from "../../utils/helpers/selectAllText";
+import { roundToDecimal } from "../../utils/helpers/yuvarlama";
+import { fiyatDecimal, kurDecimal, miktarDecimal, tutarDecimal } from "../../utils/config";
+import TalepStokRehberDialog from "../../components/Rehber/TalepStokRehberDialog";
 
 const satinalmaSiparisFisi = () => {
   const currentDate = new Date();
   currentDate.setHours(3, 0, 0, 0);
   const navigate = useNavigate();
 
-  const miktarRef = useRef<any>(null);
+  const miktarRef = useRef<InputNumber | null>(null);
+  const dovizFiyatRef = useRef<InputNumber | null>(null);
+  const kurRef = useRef<InputNumber | null>(null);
+  const fiyatRef = useRef<InputNumber | null>(null);
+  
+
+
   const stokKoduInputRef = useRef<any>(null);
   const [tempStokKodu, setTempStokKodu] = useState("");
   const [tempCariKodu, setTempCariKodu] = useState("");
@@ -565,6 +574,11 @@ const satinalmaSiparisFisi = () => {
 
   //stokgetirme mevzusu, burada diğer işlerden farklı olarak bazı şeyler talepten gelecek. 
   const handleStokGetir = useCallback(async (stokKodu: string) => {
+    if (!stokKodu)
+      {
+        selectAllTextInputText(stokKoduInputRef);
+         return;
+      }
     //clearTalepStokHareketData();
     const response = await api.stok.getByKod(stokKodu);
 
@@ -605,8 +619,12 @@ const satinalmaSiparisFisi = () => {
 
       }));
     } else {
+      selectAllTextInputText(stokKoduInputRef);
     }
   }, []);
+
+  const [isDovizEnabled, setIsDovizEnabled] = useState(false);
+  const [dovizKur, setDovizKur] = useState(0);
 
   const dovizTipiDoldur=async ()=>{
     const dovizTipiResponse = await api.dovizTipi.getAll(0,99);
@@ -619,6 +637,21 @@ const satinalmaSiparisFisi = () => {
   useEffect(()=>{
     dovizTipiDoldur();
 },[]);
+
+useEffect(() => {
+  if (siparisStokHareketData.fiyatDovizTipiId === defaultDovizTipi.id) {
+    // Döviz tipi TL ise döviz fiyatı sıfırla
+    setSiparisStokHareketData((prevData) => ({
+      ...prevData,
+      fiyatDoviz: 0,
+
+    }));
+    setIsDovizEnabled(false);
+  } else {
+    setIsDovizEnabled(true);
+  }
+}, [siparisStokHareketData.fiyatDovizTipiId, defaultDovizTipi.id]);
+
 
   const stokOlcuBirimDoldur = (stokKarti: any) => {
     const options = [
@@ -917,6 +950,57 @@ const satinalmaSiparisFisi = () => {
   };
 
   // Dinamik hesaplama fonksiyonu
+
+  useEffect(() => {
+    if (siparisStokHareketData.fiyatDovizTipiId !== defaultDovizTipi.id) {
+      const yeniFiyatTL = roundToDecimal(
+        siparisStokHareketData.fiyatDoviz * dovizKur,
+        fiyatDecimal
+      );
+      setSiparisStokHareketData((prevData) => ({
+        ...prevData,
+        fiyatTL: yeniFiyatTL,
+      }));
+    }
+  }, [siparisStokHareketData.fiyatDoviz, siparisStokHareketData.fiyatDovizTipiId, dovizKur, defaultDovizTipi.id]);
+  
+
+  useEffect(() => {
+    const miktar = roundToDecimal(bilgiMiktar ?? 0, miktarDecimal);
+    const fiyatTL = roundToDecimal(siparisStokHareketData.fiyatTL ?? 0, fiyatDecimal);
+    const iskontoTL = roundToDecimal(siparisStokHareketData.iskontoTL ?? 0, tutarDecimal);
+  
+    const yeniTutar = roundToDecimal(miktar * fiyatTL - iskontoTL, tutarDecimal);
+  
+    setSiparisStokHareketData((prevData) => ({
+      ...prevData,
+      tutar: Math.max(0, yeniTutar),
+    }));
+  }, [
+    bilgiMiktar,
+    siparisStokHareketData.fiyatTL,
+    siparisStokHareketData.iskontoTL,
+  ]);
+  
+  
+  useEffect(() => {
+    const miktar = roundToDecimal(siparisStokHareketData.miktar ?? 0, miktarDecimal);
+    setSiparisStokHareketData((prevData) => ({
+      ...prevData,
+      miktar,
+    }));
+  }, [siparisStokHareketData.miktar]);
+  
+
+  useEffect(() => {
+    if (siparisStokHareketData.miktar > 0) {
+      calculateBilgiMiktar();
+    }
+  }, [
+    siparisStokHareketData.miktar,
+    siparisStokHareketData.olcuBirimId,
+    olcuBirimOptions,
+  ]);
   const calculateBilgiMiktar = useCallback(() => {
     if (siparisStokHareketData.olcuBirimId === olcuBirimOptions[0]?.id) {
       setBilgiMiktar(siparisStokHareketData.miktar);
@@ -949,17 +1033,8 @@ const satinalmaSiparisFisi = () => {
     olcuBirimOptions,
   ]);
 
-  useEffect(() => {
-    if (siparisStokHareketData.miktar > 0) {
-      calculateBilgiMiktar();
-    }
-  }, [
-    siparisStokHareketData.miktar,
-    siparisStokHareketData.olcuBirimId,
-    olcuBirimOptions,
-  ]);
-
   return (
+    <>
     <div className="container-fluid">
       {/* {JSON.stringify(talepStokHareketData.teslimTarihi)} */}
       <Toast ref={toast} />
@@ -1061,7 +1136,7 @@ const satinalmaSiparisFisi = () => {
               id="cariAdi"
               name="cariAdi"
               value={siparisData?.cari?.adi ?? ""}
-              disabled
+              readOnly
               autoComplete="off"
             />
           </div>
@@ -1188,134 +1263,7 @@ const satinalmaSiparisFisi = () => {
             </FloatLabel>
           </div>
         </div>
-        <div className="row">
-          <div className="col-md-2 col-sm-6 mt-4">
-            <FloatLabel>
-              <label htmlFor="cikisEvrakTarihi">Çıkış Evrakları Tarihi</label>
-              <InputMask
-                id="cikisEvrakTarihi"
-                name="cikisEvrakTarihi"
-                value={formatDate(siparisData?.cikisEvrakTarihi ?? currentDate)}
-                autoComplete="off"
-                mask="99/99/9999"
-                placeholder="dd/mm/yyyy"
-                slotChar="dd/mm/yyyy"
-                onChange={(e) => {
-                  const parsedDate = parseDate(e.value!); // Girilen tarihi parse et
-                  if (!isNaN(parsedDate.getTime())) {
-                    setSiparisData((prevData) => ({
-                      ...prevData,
-                      cikisEvrakTarihi: parsedDate, //new Date(e.value!),
-                    }));
-                  }
-                }}
-              />
-            </FloatLabel>
-          </div>
-          <div className="col-md-2 col-sm-6 mt-4">
-            <FloatLabel>
-              <label htmlFor="gumrukVarisTarihi">Gümrüğe Varış Tarihi</label>
-              <InputMask
-                id="gumrukVarisTarihi"
-                name="gumrukVarisTarihi"
-                value={formatDate(siparisData?.gumrukVarisTarihi ?? currentDate)}
-                autoComplete="off"
-                mask="99/99/9999"
-                placeholder="dd/mm/yyyy"
-                slotChar="dd/mm/yyyy"
-                onChange={(e) => {
-                  const parsedDate = parseDate(e.value!); // Girilen tarihi parse et
-                  if (!isNaN(parsedDate.getTime())) {
-                    setSiparisData((prevData) => ({
-                      ...prevData,
-                      gumrukVarisTarihi: parsedDate, //new Date(e.value!),
-                    }));
-                  }
-                }}
-              />
-            </FloatLabel>
-          </div>
-          <div className="col-md-4 col-sm-6 mt-4">
-            <FloatLabel>
-              <label htmlFor="tasiyiciFirma">Taşıyıcı Firma</label>
-              <InputText
-                id="tasiyiciFirma"
-                name="tasiyiciFirma"
-                value={siparisData?.tasiyiciFirma ?? ""}
-                autoComplete="off"
-                onChange={(e) =>
-                  setSiparisData((prevData) => ({
-                    ...prevData,
-                    tasiyiciFirma: e.target.value,
-                  }))
-                }
-              />
-            </FloatLabel>
-          </div>
-          <div className="col-md-2 col-sm-6 mt-4">
-            <FloatLabel>
-              <label htmlFor="varisEvraklariTarihi">Varış Evrakları Tarihi</label>
-              <InputMask
-                id="varisEvraklariTarihi"
-                name="varisEvraklariTarihi"
-                value={formatDate(siparisData?.varisEvraklariTarihi ?? currentDate)}
-                autoComplete="off"
-                mask="99/99/9999"
-                placeholder="dd/mm/yyyy"
-                slotChar="dd/mm/yyyy"
-                onChange={(e) => {
-                  const parsedDate = parseDate(e.value!); // Girilen tarihi parse et
-                  if (!isNaN(parsedDate.getTime())) {
-                    setSiparisData((prevData) => ({
-                      ...prevData,
-                      varisEvraklariTarihi: parsedDate, //new Date(e.value!),
-                    }));
-                  }
-                }}
-              />
-            </FloatLabel>
-          </div>
-          {/* <div className="col-md-2 col-sm-6 mt-4">
-            <FloatLabel>
-              <label htmlFor="stokKodu">Talep No</label>
-              <div className="p-inputgroup">
-                <InputText
-
-                  autoComplete="off"
-                  id="stokKodu"
-                  name="stokKodu"
-                  //value={siparisStokHareketData.talepTeklifStokHareket. ?? ""}
-                  onChange={(e) => setTempStokKodu(e.target.value)}
-                  
-                />
-                <Button
-                  label="..."
-                  onClick={() =>
-                    setDialogVisible({ ...dialogVisible, talep: true })
-                  }
-                />
-                <TalepRehberDialog
-                  isVisible={dialogVisible.talep}
-                  onHide={() =>
-                    setDialogVisible({ ...dialogVisible, talep: false })
-                  }
-                  onSelect={(selectedValue) => {
-
-                     setTempStokKodu(selectedValue.aciklama1);
-                    // handleStokGetir(selectedValue.kodu);
-                  }}
-                />
-              </div>
-              <InputText
-                id="talepTeklifId"
-                name="talepTeklifId"
-                //value={talepTeklifData?.talepTeklifStokHareketId?.toString() ?? ""}
-                type="hidden"
-                autoComplete="off"
-              />
-            </FloatLabel>
-          </div> */}
-        </div>
+       
         <div className="row">
           <div className="col-md-2 col-sm-6 mt-4">
             <FloatLabel>
@@ -1323,6 +1271,7 @@ const satinalmaSiparisFisi = () => {
               <div className="p-inputgroup">
                 <InputText
                   ref={stokKoduInputRef}
+                  readOnly
                   autoComplete="off"
                   id="stokKodu"
                   name="stokKodu"
@@ -1333,6 +1282,12 @@ const satinalmaSiparisFisi = () => {
                       handleStokGetir(tempStokKodu);
                     }
                   }}
+                  //Tekrar tekrar çalışmasın diye kapattım. 
+                  // onBlur={() => {
+                  //   if (tempStokKodu) {
+                  //     handleStokGetir(tempStokKodu);
+                  //   }
+                  // }}
                 />
                 <Button
                   label="..."
@@ -1340,24 +1295,17 @@ const satinalmaSiparisFisi = () => {
                     setDialogVisible({ ...dialogVisible, stok: true })
                   }
                 />
-                <StokRehberDialog
+                <TalepStokRehberDialog
                   isVisible={dialogVisible.stok}
                   onHide={() =>
                     setDialogVisible({ ...dialogVisible, stok: false })
                   }
                   onSelect={(selectedValue) => {
-                    setTempStokKodu(selectedValue.kodu);
-                    handleStokGetir(selectedValue.kodu);
+                    setTempStokKodu(selectedValue.stokKarti?.kodu!);
+                    handleStokGetir(selectedValue.stokKarti?.kodu!);
                   }}
                 />
               </div>
-              <InputText
-                id="stokKartiId"
-                name="stokKartiId"
-                value={siparisStokHareketData?.stokKartiId?.toString() ?? ""}
-                type="hidden"
-                autoComplete="off"
-              />
             </FloatLabel>
           </div>
           <div className="col-md-4 col-sm-6 mt-4">
@@ -1371,7 +1319,7 @@ const satinalmaSiparisFisi = () => {
                   ? siparisStokHareketData.stokKarti.adi
                   : ""
               }
-              disabled
+              readOnly
               autoComplete="off"
             />
             {/* </FloatLabel> */}
@@ -1431,7 +1379,7 @@ const satinalmaSiparisFisi = () => {
                 value={siparisStokHareketData.miktar ?? 0}
                 min={0}
                 minFractionDigits={0}
-                maxFractionDigits={4}
+                maxFractionDigits={miktarDecimal}
                 onChange={(e) =>
                   setSiparisStokHareketData((state) => ({
                     ...state,
@@ -1443,6 +1391,7 @@ const satinalmaSiparisFisi = () => {
                 //     handleAddToGrid();
                 //   }
                 // }}
+                onFocus={() => selectAllTextInputNumber(miktarRef)}
                 ref={miktarRef}
                 inputStyle={{ textAlign: "right" }}
               />
@@ -1456,7 +1405,7 @@ const satinalmaSiparisFisi = () => {
                 id="bilgiMiktar"
                 name="bilgiMiktar"
                 value={bilgiMiktar ?? 0}
-                maxFractionDigits={4}
+                maxFractionDigits={miktarDecimal}
                 disabled
                 inputStyle={{ textAlign: "right" }}
               />
@@ -1578,14 +1527,17 @@ const satinalmaSiparisFisi = () => {
                 value={siparisStokHareketData.fiyatDoviz ?? 0}
                 min={0}
                 minFractionDigits={0}
-                maxFractionDigits={4}
+                maxFractionDigits={fiyatDecimal}
                 onChange={(e) =>
                   setSiparisStokHareketData((state) => ({
                     ...state,
                     fiyatDoviz: Number(e.value),
                   }))
                 }
+                onFocus={() => selectAllTextInputNumber(dovizFiyatRef)}
+                ref={dovizFiyatRef}
                 inputStyle={{ textAlign: "right" }}
+                readOnly={!isDovizEnabled}
               />
             </FloatLabel>
           </div>
@@ -1595,17 +1547,17 @@ const satinalmaSiparisFisi = () => {
               <InputNumber
                 id="miktar"
                 name="miktar"
-                value={siparisStokHareketData.fiyatDoviz / siparisStokHareketData.fiyatNet }
+                value={dovizKur }
                 min={0}
                 minFractionDigits={0}
-                maxFractionDigits={4}
-                // onChange={(e) => //Kur değişiminde sadece hesap değişiecek.
-                //   setTalepStokHareketData((state) => ({
-                //     ...state,
-                //     miktar: Number(e.value),
-                //   }))
-                // }
+                maxFractionDigits={kurDecimal}
+                onChange={(e) => //Kur değişiminde sadece hesap değişiecek.
+                  setDovizKur(Number(e.value))
+                }
+                onFocus={() => selectAllTextInputNumber(kurRef)}
+                ref={kurRef}
                 inputStyle={{ textAlign: "right" }}
+                readOnly={!isDovizEnabled}
               />
             </FloatLabel>
           </div>
@@ -1618,14 +1570,17 @@ const satinalmaSiparisFisi = () => {
                 value={siparisStokHareketData.fiyatTL ?? 0}
                 min={0}
                 minFractionDigits={0}
-                maxFractionDigits={4}
+                maxFractionDigits={fiyatDecimal}
                 onChange={(e) =>
                   setSiparisStokHareketData((state) => ({
                     ...state,
                     fiyatTL: Number(e.value),
                   }))
                 }
+                onFocus={() => selectAllTextInputNumber(fiyatRef)}
+                ref={fiyatRef}
                 inputStyle={{ textAlign: "right" }}
+                readOnly={isDovizEnabled}
               />
             </FloatLabel>
           </div>
@@ -1638,8 +1593,7 @@ const satinalmaSiparisFisi = () => {
                 value={siparisStokHareketData.fiyatNet ?? 0}
                 min={0}
                 minFractionDigits={0}
-                maxFractionDigits={4}
-                disabled
+                maxFractionDigits={fiyatDecimal}
                 inputStyle={{ textAlign: "right" }}
               />
             </FloatLabel>
@@ -1653,13 +1607,14 @@ const satinalmaSiparisFisi = () => {
                 value={siparisStokHareketData.iskontoTL ?? 0}
                 min={0}
                 minFractionDigits={0}
-                maxFractionDigits={4}
+                maxFractionDigits={tutarDecimal}
                 onChange={(e) =>
                   setSiparisStokHareketData((state) => ({
                     ...state,
                     iskontoTL: Number(e.value),
                   }))
                 }
+                readOnly={true}
                 inputStyle={{ textAlign: "right" }}
               />
             </FloatLabel>
@@ -1674,7 +1629,6 @@ const satinalmaSiparisFisi = () => {
                   name="projeKodu"
                   value={siparisStokHareketData.proje?.kodu ?? ""}
                   readOnly
-                  disabled
                   autoComplete="off"
                 />
                 <Button
@@ -1717,7 +1671,6 @@ const satinalmaSiparisFisi = () => {
                   name="uniteKodu"
                   value={siparisStokHareketData.unite?.kodu ?? ""}
                   readOnly
-                  disabled
                   autoComplete="off"
                 />
                 <Button
@@ -1759,13 +1712,14 @@ const satinalmaSiparisFisi = () => {
                 value={siparisStokHareketData.tutar ?? 0}
                 min={0}
                 minFractionDigits={0}
-                maxFractionDigits={4}
+                maxFractionDigits={tutarDecimal}
                 onChange={(e) =>
                   setSiparisStokHareketData((state) => ({
                     ...state,
                     tutar: Number(e.value),
                   }))
                 }
+                readOnly={true}
                 inputStyle={{ textAlign: "right" }}
               />
             </FloatLabel>
@@ -1780,6 +1734,7 @@ const satinalmaSiparisFisi = () => {
             />
           </div>
         </div>
+        {JSON.stringify(siparisStokHareketData)}
         <div className="p-col-12">
           <DataTable
             size="small"
@@ -1857,6 +1812,7 @@ const satinalmaSiparisFisi = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 export default satinalmaSiparisFisi;

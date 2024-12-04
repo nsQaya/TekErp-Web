@@ -199,6 +199,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                         readOnly={item.readonly??false}
                         id={item.name}
                         className="form-control"
+                        autoComplete="off"
                         //placeholder={item.title}
                         value={item?.value}
                         onChange={(e) =>

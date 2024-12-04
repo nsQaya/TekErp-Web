@@ -39,13 +39,24 @@ export default () => {
   const confirmDelete = useCallback(async () => {
     if (itemToDelete) {
       try {
-        await api.hucre.delete(itemToDelete.id as number);
-        myTable.current?.refresh();
-        toast.current?.show({
-          severity: "success",
-          summary: "Başarılı",
-          detail: "Başarıyla silindi !",
-        });
+        const deleteResponse= await api.hucre.delete(itemToDelete.id as number);
+
+        if (deleteResponse?.data?.status === true) {
+          // Başarılı silme durumu
+          myTable.current?.refresh();
+          toast.current?.show({
+            severity: "success",
+            summary: "Başarılı",
+            detail: "Başarıyla silindi!",
+          });
+        } else {
+          // Hatalı silme durumu
+          toast.current?.show({
+            severity: "warn",
+            summary: "Silme İşlemi Başarısız",
+            detail: deleteResponse?.data?.detail || "Bilinmeyen bir hata oluştu.",
+          });
+        }
       } catch (error) {
         console.error("Silme işleminde hata:", error);
         toast.current?.show({

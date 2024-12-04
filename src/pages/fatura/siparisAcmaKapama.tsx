@@ -68,7 +68,7 @@ export default () => {
     },
     {
       header: "Durum", 
-      field: "siparisStokHarekets.sipDurum", 
+      field: "siparisStokHarekets.durum", 
       sortable: true,
       filter: true,
      
@@ -184,7 +184,7 @@ export default () => {
       <div className="card-body">
         <div className="table-responsive m-t-40">
           <AppTable
-            baseApi={api.siparisSave}
+            baseApi={api.siparisStokHareket}
             columns={columns}
             key={"SiparisAcmaKapama"}
             ref={myTable}

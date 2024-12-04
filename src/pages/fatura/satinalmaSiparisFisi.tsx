@@ -363,7 +363,7 @@ const satinalmaSiparisFisi = () => {
                 fiyatDovizTipi: siparisStokHareketData.fiyatDovizTipi,
                 fiyatDoviz: siparisStokHareketData.fiyatDoviz,
                 fiyatTL: siparisStokHareketData.fiyatTL,
-                fiyatNet: roundToDecimal(siparisStokHareketData.fiyatTL / olcuBirimCarpanFiyat ,fiyatDecimal), //gridi güncellerken net fiyat
+                fiyatNet: roundToDecimal(siparisStokHareketData.fiyatTL * olcuBirimCarpanFiyat ,fiyatDecimal), //gridi güncellerken net fiyat
                 //iskontoTL: siparisStokHareketData.iskontoTL,
                 tutar: siparisStokHareketData.tutar,
                 projeId: siparisStokHareketData.projeId,
@@ -402,7 +402,7 @@ const satinalmaSiparisFisi = () => {
         fiyatDovizTipi: siparisStokHareketData.fiyatDovizTipi,
         fiyatDoviz: siparisStokHareketData.fiyatDoviz,
         fiyatTL: siparisStokHareketData.fiyatTL,
-        fiyatNet: roundToDecimal(siparisStokHareketData.fiyatTL / olcuBirimCarpanFiyat,miktarDecimal), //gride eklerken net fiyat
+        fiyatNet: roundToDecimal(siparisStokHareketData.fiyatTL * olcuBirimCarpanFiyat,miktarDecimal), //gride eklerken net fiyat
         //iskontoTL: siparisStokHareketData.iskontoTL,
         tutar: siparisStokHareketData.tutar,
         projeId: siparisStokHareketData.projeId,
@@ -1059,9 +1059,9 @@ const satinalmaSiparisFisi = () => {
   useEffect(() => {
     const miktar = roundToDecimal((siparisStokHareketData.miktar  ?? 0) / olcuBirimCarpanMiktar, miktarDecimal);
 
-    siparisStokHareketData.fiyatNet=roundToDecimal(siparisStokHareketData.fiyatTL / olcuBirimCarpanFiyat,miktarDecimal);
+    siparisStokHareketData.fiyatNet=roundToDecimal(siparisStokHareketData.fiyatTL * olcuBirimCarpanFiyat,miktarDecimal);
 
-    const fiyatTL = roundToDecimal((siparisStokHareketData.fiyatTL ?? 0) / olcuBirimCarpanFiyat,fiyatDecimal);
+    const fiyatTL = roundToDecimal((siparisStokHareketData.fiyatTL ?? 0) * olcuBirimCarpanFiyat,fiyatDecimal);
 
     const yeniTutar = roundToDecimal( miktar * fiyatTL, tutarDecimal);
 

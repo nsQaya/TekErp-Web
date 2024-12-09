@@ -9,25 +9,25 @@ import { miktarDecimal } from "../../utils/config";
 
 
 
-const CariRehberDialog: React.FC<{
+const TalepStokRehberDialog: React.FC<{
    isVisible: boolean;
    onSelect: (item: ITalepStokForSiparis) => void; onHide: () => void }> = (props) => {
     const columns: ColumnProps[] = [
         {
-          header: "BelgeNo",
-          field: "belge.no",
+          header: "Belge No",
+          field: "belgeNo",
           sortable: true,
           filter: true,
         },
         {
           header: "Stok Kodu",
-          field: "stokKarti.kodu",
+          field: "stokKodu",
           sortable: true,
           filter: true,
         },   
         {
           header: "Stok Adı",
-          field: "stokKarti.adi",
+          field: "stokAdi",
           sortable: true,
           filter: true,
         },
@@ -40,16 +40,24 @@ const CariRehberDialog: React.FC<{
           body:((row:ITalepStokForSiparis) => 
             {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.miktar,miktarDecimal)} </div>)})
         },
-       
         {
-          header: "Sipariş Miktar",
-          field: "siparisMiktar",
+          header: "Kalan Miktar",
+          field: "kalanMiktar",
           dataType:"numeric",
           sortable: true,
           filter: true,
           body:((row:ITalepStokForSiparis) => 
-            {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisMiktar,miktarDecimal)} </div>)})
+            {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.kalanMiktar,miktarDecimal)} </div>)})
         },
+        // {
+        //   header: "Sipariş Miktarrw",
+        //   field: "siparisStokHarekets.belgeId",
+        //   dataType:"numeric",
+        //   sortable: true,
+        //   filter: true,
+        //   // body:((row:ITalepStokForSiparis) => 
+        //   //   {return ( <div style={{ textAlign: "right" }}>  {formatNumber(row.siparisMiktar,miktarDecimal)} </div>)})
+        // },
         {
           header: "Teslim Tarihi",
           field: "teslimTarihi",
@@ -79,10 +87,10 @@ const CariRehberDialog: React.FC<{
             columns={columns}
             onSelect={props.onSelect}
             defaultSortField="id"
-            // externalFilters={{
-            //   belgeTipi: { value: "907", matchMode: "equals" }, 
-            // }}
+            externalFilters={{
+              "KalanMiktar": { value: "0", matchMode: "gt" }, 
+            }}
           />
     )
 };
-export default CariRehberDialog;
+export default TalepStokRehberDialog;

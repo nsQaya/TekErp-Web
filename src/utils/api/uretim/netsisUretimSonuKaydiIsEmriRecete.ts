@@ -5,10 +5,11 @@ import { INetsisUretimSonuKaydiIsEmriRecete } from "../../types/uretim/INetsisUr
 const controller="NetsisUretimSonuKaydis";
 
 export default ($axios: AxiosInstance) => ({
-    getAll(isEmriNo: string){
+    getAll2(isEmriNo: string,depoKodu: string){
         return $axios.get<IBaseResponseValue<IPagedResponse<INetsisUretimSonuKaydiIsEmriRecete>>>(`/${controller}/GetListReceteByIsEmri`, {
             params: {
-                isEmriNo: isEmriNo
+                isEmriNo: isEmriNo,
+                depoKodu:depoKodu
             }
         });
     },

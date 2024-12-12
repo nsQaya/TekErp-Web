@@ -6,22 +6,22 @@ import AppTable, { ITableRef } from "../../components/AppTable";
 import api from "../../utils/api";
 import DynamicModal, { FormItemTypes, IFormItem } from "../../modals/DynamicModal";
 import AppBreadcrumb from "../../components/AppBreadcrumb";
-import { ISiparisAcmaKapama } from "../../utils/types/fatura/ISiparisAcmaKapama";
+import { ISiparis } from "../../utils/types/fatura/ISiparis";
 import { dateFilterTemplate } from "../../utils/helpers/CalendarHelper";
-import { onayliMiDDFilterTemplate } from "../../utils/helpers/dtMultiSelectHelper";
+
+
+
 
 export default () => {
-  const myTable = createRef<ITableRef<ISiparisAcmaKapama>>();
+  const myTable = createRef<ITableRef<ISiparis>>();
   const [isModalShowing, setModalShowing] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<ISiparisAcmaKapama | undefined>();
+  const [selectedItem, setSelectedItem] = useState<ISiparis | undefined>();
   const toast = useRef<Toast>(null);
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<ISiparisAcmaKapama | null>(null)
+  const [itemToDelete, setItemToDelete] = useState<ISiparis | null>(null);
+  
 
-  
   const onSuccess = () => {
- 
-  
     if (selectedItem) {
       toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla güncellendi !" });
     } else {
@@ -30,12 +30,13 @@ export default () => {
     myTable.current?.refresh();
     setModalShowing(false);
   };
-  
+
+ 
 
   const confirmDelete = useCallback(async () => {
     if (itemToDelete) {
       try {
-        await api.siparisSave.delete(itemToDelete.siparis.id as number);
+        await api.siparis.delete(itemToDelete.id as number);
         myTable.current?.refresh();
         toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla silindi !" });
       } catch (error) {
@@ -48,8 +49,7 @@ export default () => {
     }
   }, [itemToDelete]);
 
-  
-  const deleteItem = (item: ISiparisAcmaKapama) => {
+  const deleteItem = (item: ISiparis) => {
     setItemToDelete(item);
     setConfirmVisible(true);
   };
@@ -62,8 +62,6 @@ export default () => {
 
   
 
-  
-
   const columns: ColumnProps[] = [
     
     {
@@ -72,53 +70,27 @@ export default () => {
       sortable: true,
       filter: true
     },
-    { header: "Durum", 
-      field: "durum", 
-      sortable: true,
-      dataType:"numeric", 
-      filter: true , filterElement:onayliMiDDFilterTemplate,
-      body: (rowData : ISiparisAcmaKapama) => (rowData.durum === 1 ? "Evet" : "Hayır")
-     },
     {
-      header: "Miktar", 
-      field: "miktar", 
-      sortable: true,
-      filter: true,
-    },
-    {
-      header: "Kalan Miktar", 
-      field: "kalanMiktar", 
-      sortable: true,
-      filter: true,
-     
-    },
-    {
-      header: "Stok Kodu",
-      field: "stokKarti.kodu",
-      sortable: true,
-      filter: true,
-    },
-    {
-      header: "Stok Adı",
-      field: "stokKarti.adi",
+      header: "Cari Kodu",
+      field: "cari.kodu",
       sortable: true,
       filter: true
     },
-    { header: "Teslim Tarihi", field: "istenilenTeslimTarihi", dataType: "date", sortable: true, filter: true, filterElement:dateFilterTemplate,
-      body: (row: ISiparisAcmaKapama) =>
-        row.istenilenTeslimTarihi
-          ? new Date(row.istenilenTeslimTarihi).toLocaleDateString("tr-TR", {
+    {
+      header: "Cari İsim",
+      field: "cari.adi",
+      sortable: true,
+      filter: true
+    },
+    { header: "Tarih", field: "siparis.belge.tarih", dataType: "date", sortable: true, filter: true, filterElement:dateFilterTemplate,
+      body: (row: ISiparis) =>
+        row.belge?.tarih
+          ? new Date(row.belge?.tarih).toLocaleDateString("tr-TR", {
               day: "2-digit",
               month: "2-digit",
               year: "numeric",
             })
           : "",
-    },
-    {
-      header: "Cari İsim",
-      field: "siparis.cari.adi",
-      sortable: true,
-      filter: true
     },
     {
       header: "İşlemler",
@@ -143,7 +115,7 @@ export default () => {
       }
     },
   ];
-
+  
   const modalItems = [
     {
       name: "id",
@@ -151,17 +123,32 @@ export default () => {
       hidden: true
     },
     {
-      name: "stokKartiId",
+      name: "cariId",
       type: FormItemTypes.input,
       hidden: true
     },
     {
-      name: "talepTeklifStokHareketId",
+      name: "tip",
       type: FormItemTypes.input,
       hidden: true
     },
     {
-      name: "sira",
+      name: "ihracatIthalatTip",
+      type: FormItemTypes.input,
+      hidden: true
+    },
+    {
+      name: "dovizAraToplam",
+      type: FormItemTypes.input,
+      hidden: true
+    },
+    {
+      name: "araToplamTL",
+      type: FormItemTypes.input,
+      hidden: true
+    },
+    {
+      name: "dovizIskonto",
       type: FormItemTypes.input,
       hidden: true
     },
@@ -171,42 +158,12 @@ export default () => {
       hidden: true
     },
     {
-      name: "olcuBirimId",
+      name: "dovizKDV",
       type: FormItemTypes.input,
       hidden: true
     },
     {
-      name: "miktar",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "fiyatOlcuBirimId",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "girisCikis",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "fiyatDovizTipiId",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "fiyatDoviz",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "fiyatTL",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "fiyatNet",
+      name: "dovizNetToplam",
       type: FormItemTypes.input,
       hidden: true
     },
@@ -216,72 +173,40 @@ export default () => {
       hidden: true
     },
     {
-      name: "teslimTarihi",
+      name: "kdvtl",
+      type: FormItemTypes.input,
+      hidden: true
+    },
+    {
+      name: "netToplamTL",
+      type: FormItemTypes.input,
+      hidden: true
+    },
+    {
+      name: "cikisEvrakTarihi",
       type: FormItemTypes.date,
-      hidden: true
+      title: "Çıkış Evrak Tarihi",
+      
     },
     {
-      name: "tutar",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "projeId",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "uniteId",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      title: "Revize Teslim Tarihi",
-      name: "istenilenTeslimTarihi",
+      name: "gumrukVarisTarihi",
       type: FormItemTypes.date,
+      title: "Gümrük Varış Tarihi",
+      
     },
     {
-      title: "Sipariş Durumu", // Başlık
-      name: "durum", // Alan adı
-      type: FormItemTypes.boolean, // Select tipi
+      name: "varisEvraklariTarihi",
+      type: FormItemTypes.date,
+      title: "Varış Evrakları Tarihi",
+      
     },
-    //{
-     // title: "Sipariş Durumu", // Başlık
-     // name: "miktar", // Alan adı
-      //type: FormItemTypes.input, // Select tipi
-     // readonly:true
-    //},
-    
+    {
+      name: "tasiyiciFirma",
+      type: FormItemTypes.input,
+      title: "Taşıyıcı Firma",
+    },
     
   ] as IFormItem[]
-
-  const validateItems = (formItems: IFormItem[] | undefined) => {
-    if (!formItems) {
-      return "Form verileri yüklenemedi."; 
-    }
-  
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Bugünün sıfır saatine odaklan.
-  
-    const istenilenTeslimTarihi = formItems.find(item => item.name === "istenilenTeslimTarihi")?.value;
-  
-    // İstenilen Teslim Tarihi Kontrolü
-    if (!istenilenTeslimTarihi) {
-      return "İstenilen teslim tarihini girin.";
-    }
-  
-    const istenilenTeslimTarihiDate = new Date(istenilenTeslimTarihi);
-    if (isNaN(istenilenTeslimTarihiDate.getTime())) {
-      return "Geçersiz tarih formatı.";
-    }
-  
-    if (istenilenTeslimTarihiDate < today) {
-      return "Geçmiş tarihler kaydedilemez.";
-    }
-  
-    return null;
-  };
-  
 
   return (
     <div className="container-fluid">
@@ -300,23 +225,23 @@ export default () => {
       <DynamicModal
         isShownig={isModalShowing}
         title="Ekle"
-        api={api.siparisStokHareket}
+        api={api.siparis}
         items={modalItems}
         onDone={onSuccess}
         selectedItem={selectedItem}
         onHide={() => setModalShowing(false)}
-        validator={validateItems}
+        
       />
-      <AppBreadcrumb title="Sipariş Açma Kapama" />
+      <AppBreadcrumb title="İthalat Ek Bilgiler" />
 <div className="row">
   <div className="col-12">
     <div className="card">
       <div className="card-body">
         <div className="table-responsive m-t-40">
           <AppTable
-            baseApi={api.siparisStokHareket}
+            baseApi={api.siparis}
             columns={columns}
-            key={"SiparisAcmaKapama"}
+            key={"İthalatEkBilgiler"}
             ref={myTable}
             rowSelectable={false}
           />

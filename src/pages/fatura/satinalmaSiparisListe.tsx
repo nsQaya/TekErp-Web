@@ -89,6 +89,7 @@ const  SatinalmaSiparisListe =  ({ baseApi, navigatePath }: IListeProps) => {
       sortable: true,
       filter: true,
     },
+   
     // {
     //   field: "belge.belgetip",
     //   header: "Belge Tip",

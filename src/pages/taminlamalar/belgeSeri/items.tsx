@@ -128,7 +128,7 @@ export default () => {
     },
   ];
 
-  const modalItems = [
+ const modalItems = [
     {
       name: "id",
       type: FormItemTypes.input,

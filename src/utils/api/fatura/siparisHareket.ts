@@ -7,8 +7,9 @@ import { ISiparisStokHareket } from "../../types/fatura/ISiparisStokHareket";
 const controller="SiparisStokHarekets";
 
 export default ($axios: AxiosInstance) => ({
+    
     getAllForGrid(page: number, take: number,dynamicQuery:DynamicQuery  ){
-        return $axios.post<IBaseResponseValue<IPagedResponse<ISiparisStokHareket>>>(`/${controller}/GetListForGrid?PageIndex=${page}&PageSize=${take}`, dynamicQuery );
+        return $axios.post<IBaseResponseValue<IPagedResponse<ISiparisStokHareket>>>(`/${controller}/GetListSiparisStokHareketForAcmaKapama?PageIndex=${page}&PageSize=${take}`, dynamicQuery );
     },
     getAll(page: number, take: number){
         return $axios.get<IBaseResponseValue<IPagedResponse<ISiparisStokHareket>>>(`/${controller}`, {

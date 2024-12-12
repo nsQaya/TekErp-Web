@@ -81,7 +81,7 @@ import talepTeklifStokHareket from "../api/fatura/talepTeklifStokHareket";
 import { ITalepTeklifStokHareket } from "../types/fatura/ITalepTeklifStokHareket";
 import { INetsisUretimSonuKaydi } from "../types/uretim/INetsisUretimSonuKaydi";
 import siparis from "../api/fatura/siparis";
-import siparisStokHareket from "../api/fatura/siparis";
+import siparisStokHareket from "../api/fatura/siparisHareket";
 
 import netsisUretimSonuKaydi from "../api/uretim/netsisUretimSonuKaydi";
 import netsisUretimSonuKaydiIsEmriRecete from "../api/uretim/netsisUretimSonuKaydiIsEmriRecete";

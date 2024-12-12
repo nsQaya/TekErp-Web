@@ -52,6 +52,7 @@ import SatinalmaSiparisFisi from "../pages/fatura/satinalmaSiparisFisi";
 import SatinalmaSiparisListe from "../pages/fatura/satinalmaSiparisListe";
 import SiparisAcmaKapama from "../pages/fatura/siparisAcmaKapama";
 import NetsisSiparisFaturaOnay from "../pages/fatura/netsisSiparisFaturaOnay";
+import İthalatEkBilgiler from "../pages/fatura/ithalatEkBilgiler";
 
 
 export default createHashRouter([
@@ -267,6 +268,10 @@ export default createHashRouter([
             path: "siparisacmakapama",
             element: <SiparisAcmaKapama/>,
           },
+          {
+            path: "ithalatekbilgiler",
+            element: < İthalatEkBilgiler/>,
+          }
           
         ],
       },

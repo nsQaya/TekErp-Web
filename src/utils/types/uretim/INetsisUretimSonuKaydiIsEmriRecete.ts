@@ -1,8 +1,11 @@
 export interface INetsisUretimSonuKaydiIsEmriRecete
 {
     id:number,
-    mamuL_KODU:string,
-    haM_KODU:string,
-    bileseN_ISIM:string,
-    miktar:number
+    mamulKodu:string,
+    hammaddeKodu:string,
+    hammaddeAdi:string,
+    miktar:number,
+    bakiye:number,
+    olcuBirim:string
+
 }

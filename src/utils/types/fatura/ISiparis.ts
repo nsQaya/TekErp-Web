@@ -10,7 +10,7 @@ export interface ISiparis
     belge?:IBelge,
     cariId:number,
     cari?:ICari,
-    faturaTip:EFaturaTip,
+    tip:EFaturaTip,
     ithalatIhracatTip?:EIhracatIthalatTip,
     exportReferansNo?:string,
     odemeKodu:string,

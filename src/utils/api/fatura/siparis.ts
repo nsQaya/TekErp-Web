@@ -32,10 +32,10 @@ export default ($axios: AxiosInstance) => ({
         return $axios.get<IBaseResponseValue<ISiparis>>(`/${controller}/${id}`);
     },
     getByBelgeId(id: number){
-        return $axios.get<IBaseResponseValue<ISiparis>>(`/${controller}/GetByBelgeId?BelgeId=${id}`);
+        return $axios.get<IBaseResponseValue<ISiparis>>(`/${controller}/GetSiparisByBelgeId?BelgeId=${id}`);
     },
     save(saveData: Partial<ISiparisSaveData>){
-        return $axios.put<IBaseResponseValue<ISiparisSaveData>>(`/${controller}/save`, 
+        return $axios.put<IBaseResponseValue<ISiparisSaveData>>(`/${controller}/SaveSiparis`, 
            { 
             SaveSiparisDto: saveData
            

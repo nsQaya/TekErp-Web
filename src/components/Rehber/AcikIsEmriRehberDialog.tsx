@@ -81,9 +81,9 @@ const IsEmriRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IIsEmr
             returnField="isEmriNo"
             onSelect={props.onSelect}
             defaultSortField="isEmriNo"
-            // externalFilters={{
-            //   "USK_STATUS": { value: "T", matchMode: "notEquals" }, 
-            // }}
+            externalFilters={{
+              "USK_STATUS": { value: "T", matchMode: "notEquals" }, 
+            }}
           />
     )
 };

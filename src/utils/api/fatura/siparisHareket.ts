@@ -32,6 +32,6 @@ export default ($axios: AxiosInstance) => ({
         return $axios.get<IBaseResponseValue<ISiparisStokHareket>>(`/${controller}/${id}`);
     },
     getListByBelgeId(id: number){
-        return $axios.get<IBaseResponseValue<IPagedResponse<ISiparisStokHareket>>>(`/${controller}/GetListByBelgeId?BelgeId=${id}`);
+        return $axios.get<IBaseResponseValue<IPagedResponse<ISiparisStokHareket>>>(`/${controller}/GetListSiparisStokHareketsByBelgeId?BelgeId=${id}`);
     }
 });

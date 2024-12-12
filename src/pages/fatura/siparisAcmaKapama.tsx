@@ -72,6 +72,7 @@ export default () => {
       sortable: true,
       filter: true
     },
+   
     { header: "Durum", 
       field: "durum", 
       sortable: true,

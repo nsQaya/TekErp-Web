@@ -95,6 +95,8 @@ import { ISiparisSaveData } from "../types/fatura/ISiparisSaveData";
 import { ISiparis } from "../types/fatura/ISiparis";
 import { ISiparisStokHareket } from "../types/fatura/ISiparisStokHareket";
 import { INetsisSiparisFaturaOnay } from "../types/fatura/INetsisSiparisFaturaOnay";
+import { IDovizKur } from "../types/tanimlamalar/IDovizKur";
+import netsisKur from "../api/tanimlamalar/dovizTipi";
 
 
 var instance: AxiosInstance = axios.create({
@@ -218,6 +220,7 @@ const repositories = {
   yetki: yetki(instance) as unknown as ICrudBaseAPI<IYetki>,
 
   dovizTipi: dovizTipi(instance) as unknown as ICrudBaseAPI<IDovizTipi>,
+  
   ihtiyacPlanlamaRapor: ihtiyacPlanlamaRapor(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlamaRapor>,
   ihtiyacPlanlama: ihtiyacPlanlama(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlama>,
   isEmri: isEmri(instance) as unknown as ICrudBaseAPI<IIsEmri>,
@@ -244,6 +247,7 @@ const repositories = {
   netsisUretimSonuKaydiIsEmriRecete:netsisUretimSonuKaydiIsEmriRecete(instance) as unknown as INetsisBaseAPI<INetsisUretimSonuKaydiIsEmriRecete>,
   netsisDepoIzin:netsisDepoIzin(instance) as unknown as ICrudBaseAPI<INetsisDepoIzin>,
   netsisSiparisFaturaOnay:netsisSiparisFaturaOnay (instance) as unknown as ICrudBaseAPI<INetsisSiparisFaturaOnay>,
+  netsisDovizKur: netsisKur(instance) as unknown as INetsisBaseAPI<IDovizKur>,
 
 
 };

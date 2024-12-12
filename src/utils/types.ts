@@ -91,6 +91,7 @@ export interface ICrudBaseAPI<T> {
   save: (
     params: Partial<T>
   ) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
+  
 }
 
 export interface IRaporBaseAPI<T> {

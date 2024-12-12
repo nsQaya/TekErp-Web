@@ -1,6 +1,5 @@
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
-import IsEmriRehberDialog from "../../components/Rehber/IsEmriRehberDialog";
 import { Button } from "primereact/button";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { INetsisUretimSonuKaydi } from "../../utils/types/uretim/INetsisUretimSonuKaydi";
@@ -18,6 +17,7 @@ import { IStokSeriBakiye } from "../../utils/types/stok/IStokSeriBakiye";
 import { useNavigate } from "react-router-dom";
 import { INetsisUretimSonuKaydiIsEmriRecete } from "../../utils/types/uretim/INetsisUretimSonuKaydiIsEmriRecete";
 import { miktarDecimal } from "../../utils/config";
+import AcikIsEmriRehberDialog from "../../components/Rehber/AcikIsEmriRehberDialog";
 
 // // Grid verileri için bir tip tanımı
 // type GridData = {
@@ -340,8 +340,9 @@ const netsisUretimSonuKaydi = () => {
     setLoadingGetir(true);
 
     try {
-      const response = await api.netsisUretimSonuKaydiIsEmriRecete.getAll(
-        netsisUretimSonuKaydiData.isEmriNo!
+      const response = await api.netsisUretimSonuKaydiIsEmriRecete.getAll2(
+        netsisUretimSonuKaydiData.isEmriNo!,
+        netsisUretimSonuKaydiData.cikisDepo?.toString()!
       );
 
       if (response.data.value && response.data.value.count > 0) {
@@ -350,10 +351,12 @@ const netsisUretimSonuKaydi = () => {
     
         const newGridData: INetsisUretimSonuKaydiIsEmriRecete[] = data.items.map((item, index) => ({
           id: index +1 ,
-          mamuL_KODU:item.mamuL_KODU,
-          haM_KODU:item.haM_KODU,
-          bileseN_ISIM:item.bileseN_ISIM,
-          miktar:item.miktar
+          mamulKodu:item.mamulKodu,
+          hammaddeKodu:item.hammaddeKodu,
+          hammaddeAdi:item.hammaddeAdi,
+          miktar:item.miktar,
+          bakiye:item.bakiye,
+          olcuBirim:item.olcuBirim
         }));
 
         setGridData(newGridData);
@@ -488,7 +491,7 @@ const netsisUretimSonuKaydi = () => {
                     setDialogVisible({ ...dialogVisible, isEmriNo: true })
                   }
                 />
-                <IsEmriRehberDialog
+                <AcikIsEmriRehberDialog
                   isVisible={dialogVisible.isEmriNo}
                   onHide={() =>
                     setDialogVisible({ ...dialogVisible, isEmriNo: false })
@@ -896,10 +899,12 @@ const netsisUretimSonuKaydi = () => {
             virtualScrollerOptions={{ itemSize: 46 }}
           >
             <Column field="id" header="#" />
-            <Column field="mamuL_KODU" header="Mamul Kodu"/>
-            <Column field="haM_KODU" header="Hammadde Kodu" />
-            <Column field="bileseN_ISIM" header="Hammadde Adı" />
+            <Column field="mamulKodu" header="Mamul Kodu"/>
+            <Column field="hammaddeKodu" header="Hammadde Kodu" />
+            <Column field="hammaddeAdi" header="Hammadde Adı" />
             <Column field="miktar" header="Miktar" />
+            <Column field="bakiye" header="Depo Bakiye" />
+            <Column field="olcuBirim" header="Ölçü Birim" />
             {/* <Column field="depoBakiye" header="Depo Bakiye" /> */}
             
           </DataTable>

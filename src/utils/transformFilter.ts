@@ -94,8 +94,10 @@ function transformFilter(gridFilters: FilterMeta, sortColumn: string, sortDirect
 
 function mapMatchModeToOperator(matchMode: string): string {
   switch (matchMode) {
-      case "equals":
+     case "equals":
           return "eq";
+      case "notEquals":
+          return "neq";
       case "startsWith":
           return "startswith";
       case "contains":

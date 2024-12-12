@@ -30,13 +30,14 @@ export interface ISiparisStokHareket
     fiyatDovizTipi:IDovizTipi,
     fiyatDoviz:number,
     fiyatTL:number,
-    fiyatNet:number,
-    iskontoTL:number,
+    //fiyatNet:number,
+    //iskontoTL:number,
     tutar:number,
     projeId:number,
     proje?:IProje,
     uniteId:number,
     unite?:IUnite
     kalanMiktar?: number,
-    sipDurum?: number,
+    durum?: number,
+    teslimMiktar?:number
 }

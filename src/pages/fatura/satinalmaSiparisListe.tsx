@@ -10,7 +10,6 @@ import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
 import api from "../../utils/api";
 import { dateFilterTemplate } from "../../utils/helpers/CalendarHelper";
 import { aktarimDurumuDDFilterTemplate } from "../../utils/helpers/dtMultiSelectHelper";
-import { FilterMatchMode } from "primereact/api";
 import { ISiparis } from "../../utils/types/fatura/ISiparis";
 
 
@@ -117,7 +116,8 @@ const  SatinalmaSiparisListe =  ({ baseApi, navigatePath }: IListeProps) => {
       dataType:"numeric",
       sortable: false,
       filter: true,
-      filterElement: (options) => aktarimDurumuDDFilterTemplate(options, "AktarimHata"), // "AktarimHata" varsayılan olarak seçili olacak
+      //filterElement: (options) => aktarimDurumuDDFilterTemplate(options, "AktarimHata"), // "AktarimHata" varsayılan olarak seçili olacak
+      filterElement:aktarimDurumuDDFilterTemplate,
       body: (row)=> {
         return getEnumNameAktarimDurumu(row.belge.aktarimDurumu);
       }
@@ -149,12 +149,12 @@ const  SatinalmaSiparisListe =  ({ baseApi, navigatePath }: IListeProps) => {
     },
   ];
 
-  const defaultFilters = {
-    "belge.aktarimDurumu": {
-      value: EAktarimDurumu.AktarimHata, // Varsayılan değer
-      matchMode: FilterMatchMode.EQUALS,
-    },
-  };
+  // const defaultFilters = {
+  //   "belge.aktarimDurumu": {
+  //     value: EAktarimDurumu.AktarimHata, // Varsayılan değer
+  //     matchMode: FilterMatchMode.EQUALS,
+  //   },
+  // };
 
   return (
     <div className="container-fluid">
@@ -182,7 +182,7 @@ const  SatinalmaSiparisListe =  ({ baseApi, navigatePath }: IListeProps) => {
                   key={"Satınalma Sipariş"}
                   ref={myTable}
                   rowSelectable={false}
-                  defaultFilters={defaultFilters} // Varsayılan filtreler burada geçildi
+                  //defaultFilters={defaultFilters} // Varsayılan filtreler burada geçildi
                   appendHeader={() => {
                     return (
                       <Button

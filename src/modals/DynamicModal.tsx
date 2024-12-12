@@ -285,7 +285,7 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
                     <InputMask
                     className="form-control"
                      readOnly={item.readonly??false}
-                      value={formatDate(item?.value)}
+                      value={item?.value ?  formatDate(item?.value):""}
                       autoComplete="off"
                       //placeholder={item.title}
                       onChange={(e) => {

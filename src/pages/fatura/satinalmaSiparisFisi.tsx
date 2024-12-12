@@ -61,12 +61,12 @@ const satinalmaSiparisFisi = () => {
   const [olcuBirimCarpanMiktar, setOlcuBirimCarpanMiktar] = useState(0);
   const [olcuBirimCarpanFiyat, setOlcuBirimCarpanFiyat] = useState(0);
 
-  const [olcuBirimOptions, setOlcuBirimOptions] = useState<IStokOlcuBirim[]>(
-    []
-  );
+  const [olcuBirimOptions, setOlcuBirimOptions] = useState<IStokOlcuBirim[]>([]);
   const [dovizTipiOptions, setDovizTipiOptions] = useState<IDovizTipi[]>([]);
 
   const [saveLoading, setSaveLoading] = useState(false);
+
+  const [isEditing, setIsEditing] = useState(false);
 
   //Belge Data işlemleri başlangıç
   const [belgeData, setBelgeData] = useState<IBelge>({
@@ -174,7 +174,7 @@ const satinalmaSiparisFisi = () => {
       fiyatDovizTipi: defaultDovizTipi,
       fiyatDoviz: 0,
       fiyatTL: 0,
-      fiyatNet: 0,
+      //fiyatNet: 0,
       //iskontoTL: 0,
       tutar: 0,
       projeId: 0,
@@ -361,9 +361,9 @@ const satinalmaSiparisFisi = () => {
     useState<ISiparisStokHareket | null>(null);
 
   //gride doldurma işlemleri
-  const handleAddToGrid = useCallback(() => {
+  const handleAddOrUpdate  = useCallback(() => {
     if (!validateAddToGrid()) return;
-    if (selectedGridItem) {
+    if (isEditing && selectedGridItem) {
       setGridData((prevGridData) =>
         prevGridData.map((item) =>
           item.sira === siparisStokHareketData?.sira
@@ -376,8 +376,8 @@ const satinalmaSiparisFisi = () => {
                   siparisStokHareketData.talepTeklifStokHareketId,
                 talepTeklifStokHareket:
                   siparisStokHareketData.talepTeklifStokHareket,
-                girisCikis: siparisStokHareketData.girisCikis,
-                sira: siparisStokHareketData.sira,
+                //girisCikis: siparisStokHareketData.girisCikis,
+                //sira: siparisStokHareketData.sira,
                 seriKodu: siparisStokHareketData.seriKodu,
                 olcuBirimId:
                   siparisStokHareketData.stokKarti?.stokOlcuBirim1Id!,
@@ -389,19 +389,17 @@ const satinalmaSiparisFisi = () => {
                 teslimTarihi: siparisStokHareketData.teslimTarihi,
                 istenilenTeslimTarihi:
                   siparisStokHareketData.istenilenTeslimTarihi,
-                fiyatOlcuBirimId:
-                  siparisStokHareketData.stokKarti?.stokOlcuBirim1Id!, //siparisStokHareketData.fiyatOlcuBirimId,
-                fiyatOlcuBirim:
-                  siparisStokHareketData.stokKarti?.stokOlcuBirim1, //siparisStokHareketData.fiyatOlcuBirim,
+                fiyatOlcuBirimId:siparisStokHareketData.fiyatOlcuBirimId,
+                fiyatOlcuBirim:siparisStokHareketData.fiyatOlcuBirim,
                 fiyatDovizTipiId: siparisStokHareketData.fiyatDovizTipiId,
                 fiyatDovizTipi: siparisStokHareketData.fiyatDovizTipi,
                 fiyatDoviz: siparisStokHareketData.fiyatDoviz,
                 fiyatTL: siparisStokHareketData.fiyatTL,
-                fiyatNet: roundToDecimal(
-                  siparisStokHareketData.fiyatTL * olcuBirimCarpanFiyat,
-                  fiyatDecimal
-                ), //gridi güncellerken net fiyat
-                //iskontoTL: siparisStokHareketData.iskontoTL,
+                // fiyatNet: roundToDecimal(
+                //    siparisStokHareketData.fiyatTL * olcuBirimCarpanFiyat,
+                //    fiyatDecimal
+                //  ), //gridi güncellerken net fiyat
+                // //iskontoTL: siparisStokHareketData.iskontoTL,
                 tutar: siparisStokHareketData.tutar,
                 projeId: siparisStokHareketData.projeId,
                 proje: siparisStokHareketData.proje,
@@ -438,16 +436,13 @@ const satinalmaSiparisFisi = () => {
         ), //siparisStokHareketData!.miktar,
         teslimTarihi: siparisStokHareketData.teslimTarihi,
         istenilenTeslimTarihi: siparisStokHareketData.istenilenTeslimTarihi,
-        fiyatOlcuBirimId: siparisStokHareketData.stokKarti?.stokOlcuBirim1Id!, //siparisStokHareketData.fiyatOlcuBirimId,
-        fiyatOlcuBirim: siparisStokHareketData.stokKarti?.stokOlcuBirim1, //siparisStokHareketData.fiyatOlcuBirim,
+        fiyatOlcuBirimId: siparisStokHareketData.fiyatOlcuBirimId,
+        fiyatOlcuBirim: siparisStokHareketData.fiyatOlcuBirim,
         fiyatDovizTipiId: siparisStokHareketData.fiyatDovizTipiId,
         fiyatDovizTipi: siparisStokHareketData.fiyatDovizTipi,
         fiyatDoviz: siparisStokHareketData.fiyatDoviz,
         fiyatTL: siparisStokHareketData.fiyatTL,
-        fiyatNet: roundToDecimal(
-          siparisStokHareketData.fiyatTL * olcuBirimCarpanFiyat,
-          miktarDecimal
-        ), //gride eklerken net fiyat
+        //fiyatNet: roundToDecimal(siparisStokHareketData.fiyatTL * olcuBirimCarpanFiyat,fiyatDecimal), //gride eklerken net fiyat
         //iskontoTL: siparisStokHareketData.iskontoTL,
         tutar: siparisStokHareketData.tutar,
         projeId: siparisStokHareketData.projeId,
@@ -462,7 +457,9 @@ const satinalmaSiparisFisi = () => {
     // setTalepStokHareket((stokHareket) => ({ ...stokHareket,
     //     stokKartiId:0, stokAdi: "", miktar: 0,istenilenMiktar:0,bakiye:0 }));
     clearSiparisStokHareketData();
-  }, [siparisStokHareketData, gridData]);
+    setIsEditing(false);
+  }, [isEditing,selectedGridItem,siparisStokHareketData, gridData]);
+
 
   //Gride ekleme öncesi validasyon kontrolleri
   const validateAddToGrid = () => {
@@ -704,45 +701,19 @@ const satinalmaSiparisFisi = () => {
   //gridden düzeltme işlemleri
   const handleEditGridItem = useCallback(async (item: ISiparisStokHareket) => {
     setSelectedGridItem(item);
+    setIsEditing(true);
     // Seçilen grid item'ını formda göstermek için ilgili state'leri güncelle
     setSiparisStokHareketData({
-      id: item.id,
-      belgeId: item.belgeId,
-      belge: item.belge,
-      stokKartiId: item.stokKartiId,
-      stokKarti: item?.stokKarti,
-      //stokAdi: formDataDetay.stokAdi,
-      talepTeklifStokHareketId: item.talepTeklifStokHareketId,
-      talepTeklifStokHareket: item.talepTeklifStokHareket,
-      girisCikis: item.girisCikis,
-      sira: item.sira,
-      seriKodu: item.seriKodu,
-      olcuBirimId: item.stokKarti?.stokOlcuBirim1Id!, // item.olcuBirimId,
-      olcuBirim: item.stokKarti?.stokOlcuBirim1, //item.olcuBirim,
-      miktar: item.miktar,
-      teslimTarihi: item.teslimTarihi,
-      istenilenTeslimTarihi: item.istenilenTeslimTarihi,
-      fiyatOlcuBirimId: item.stokKarti?.stokOlcuBirim1Id!, //item.fiyatOlcuBirimId,
-      fiyatOlcuBirim: item.stokKarti?.stokOlcuBirim1, //item.fiyatOlcuBirim,
-      fiyatDovizTipiId: item.fiyatDovizTipiId,
-      fiyatDovizTipi: item.fiyatDovizTipi,
-      fiyatDoviz: item.fiyatDoviz,
-      fiyatTL: item.fiyatTL,
-      fiyatNet: item.fiyatNet, //günceller inputları doldurma
-      //iskontoTL: item.iskontoTL,
-      tutar: item.tutar,
-      projeId: item.projeId,
-      proje: item.proje,
-      uniteId: item.uniteId,
-      unite: item.unite,
+      ...item
     });
+    stokOlcuBirimDoldur(item.stokKarti);
 
-    const response = await api.stok.getByKod(item.stokKarti?.kodu!);
-    if (response?.data?.status && response?.data?.value) {
-      const stokKarti = response.data.value;
-      // Ölçü birimi seçeneklerini oluşturma
-      stokOlcuBirimDoldur(stokKarti);
-    }
+    // const response = await api.stok.getByKod(item.stokKarti?.kodu!);
+    // if (response?.data?.status && response?.data?.value) {
+    //   const stokKarti = response.data.value;
+    //   // Ölçü birimi seçeneklerini oluşturma
+    //   stokOlcuBirimDoldur(stokKarti);
+    // }
   }, []);
 
   //stokgetirme mevzusu, burada diğer işlerden farklı olarak bazı şeyler talepten gelecek.
@@ -924,7 +895,7 @@ const satinalmaSiparisFisi = () => {
 
             fiyatDoviz: item.fiyatDoviz,
             fiyatTL: item.fiyatTL,
-            fiyatNet: item.fiyatNet, //save için back e gönderirken
+            //fiyatNet: item.fiyatNet, //save için back e gönderirken
             //iskontoTL: item.iskontoTL,
             tutar: item.tutar,
             projeId: item.projeId,
@@ -1106,7 +1077,7 @@ const satinalmaSiparisFisi = () => {
             fiyatDovizTipi: item.fiyatDovizTipi,
             fiyatDoviz: item.fiyatDoviz,
             fiyatTL: item.fiyatTL,
-            fiyatNet: item.fiyatNet, //güncelleme için apiden gelen net
+            //fiyatNet: item.fiyatNet, //güncelleme için apiden gelen net
             //iskontoTL: item.iskontoTL,
             tutar: item.tutar,
             projeId: item.projeId,
@@ -1170,15 +1141,18 @@ const satinalmaSiparisFisi = () => {
   ]);
 
   useEffect(() => {
+    debugger;
+    if(siparisStokHareketData.miktar > 0)
+    {
     const miktar = roundToDecimal(
       (siparisStokHareketData.miktar ?? 0) / olcuBirimCarpanMiktar,
       miktarDecimal
     );
 
-    siparisStokHareketData.fiyatNet = roundToDecimal(
-      siparisStokHareketData.fiyatTL * olcuBirimCarpanFiyat,
-      miktarDecimal
-    );
+    // siparisStokHareketData.fiyatNet = roundToDecimal(
+    //   siparisStokHareketData.fiyatTL * olcuBirimCarpanFiyat,
+    //   miktarDecimal
+    // );
 
     const fiyatTL = roundToDecimal(
       (siparisStokHareketData.fiyatTL ?? 0) * olcuBirimCarpanFiyat,
@@ -1191,6 +1165,7 @@ const satinalmaSiparisFisi = () => {
       ...prevData,
       tutar: Math.max(0, yeniTutar),
     }));
+  }
   }, [
     olcuBirimCarpanMiktar,
     olcuBirimCarpanFiyat,
@@ -1224,6 +1199,7 @@ const satinalmaSiparisFisi = () => {
   }, [siparisStokHareketData.olcuBirimId, olcuBirimOptions]);
 
   const calculateOlcuBirimFiyatCarpan = useCallback(() => {
+    debugger;
     if (siparisStokHareketData.fiyatOlcuBirimId === olcuBirimOptions[0]?.id) {
       setOlcuBirimCarpanFiyat(1);
     } else if (
@@ -1252,17 +1228,31 @@ const satinalmaSiparisFisi = () => {
     if (siparisData.tip === EFaturaTip.YurtDisi) {
       setYurtDisiBelgeMi(true);
     }
+    else setYurtDisiBelgeMi(false);
   }, [siparisData.tip]);
 
   const dovizKurGetir = useCallback(async () => {
+    debugger;
     try {
+
+      if(isEditing && siparisStokHareketData.fiyatDovizTipiId === selectedGridItem?.fiyatDovizTipiId)
+      {
+        setDovizKur(roundToDecimal( selectedGridItem?.fiyatTL!/ selectedGridItem?.fiyatDoviz!,kurDecimal));
+      }
+      else
+      {
+
+
       const dovizKurResponse = await api.netsisDovizKur.get(
         siparisStokHareketData.fiyatDovizTipi.tcmbId
       );
+
       if (dovizKurResponse.data?.value) {
         const dovizData = dovizKurResponse.data.value;
         setDovizKur(dovizData?.alis!);
       }
+
+    }
     } catch (error) {}
   }, [siparisStokHareketData.fiyatDovizTipi]);
 
@@ -1858,7 +1848,7 @@ const satinalmaSiparisFisi = () => {
                       id="fiyatNet"
                       name="fiyatNet"
                       disabled
-                      value={siparisStokHareketData.fiyatNet ?? 0}
+                      //value={siparisStokHareketData.fiyatNet ?? 0}
                       min={0}
                       minFractionDigits={fiyatDecimal}
                       maxFractionDigits={fiyatDecimal}
@@ -1994,9 +1984,9 @@ const satinalmaSiparisFisi = () => {
                 </div>
                 <div className="p-col-12  mt-3">
                   <Button
-                    label="Ekle"
-                    icon="pi pi-plus"
-                    onClick={handleAddToGrid}
+                      label={isEditing ? "Güncelle" : "Ekle"} // Change label dynamically
+                      icon={isEditing ? "pi pi-refresh" : "pi pi-plus"} // Change icon dynamically
+                    onClick={handleAddOrUpdate}
                     disabled={belgeReadOnly}
                   />
                 </div>
@@ -2053,7 +2043,7 @@ const satinalmaSiparisFisi = () => {
                       );
                     }}
                   />
-                  <Column
+                  {/* <Column
                     field="fiyatNet"
                     header="FiyatNet"
                     body={(row: ISiparisStokHareket) => {
@@ -2064,7 +2054,7 @@ const satinalmaSiparisFisi = () => {
                         </div>
                       );
                     }}
-                  />
+                  /> */}
                   <Column
                     field="fiyatDoviz"
                     header="Döviz Fiyat"
@@ -2113,6 +2103,7 @@ const satinalmaSiparisFisi = () => {
                         <button
                           className="btn btn-info ms-1"
                           onClick={() => {
+                            debugger;
                             setTempStokKodu(rowData.stokKarti.kodu);
                             handleEditGridItem(rowData);
                           }}

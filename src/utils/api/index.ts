@@ -17,7 +17,7 @@ import { IUlke } from "../types/tanimlamalar/IUlke";
 import { IDovizTipi } from "../types/tanimlamalar/IDovizTipi";
 
 import cari from "./cari/cari";
-import {IIhtiyacPlanlamaRapor} from "../types/planlama/IIhtiyacPlanlamaRapor";
+import {IIhtiyacPlanlamaRapor, IIhtiyacPlanlamaRaporForTalep} from "../types/planlama/IIhtiyacPlanlamaRapor";
 import stokKod from "./stok/stokKod";
 import cariKod from "./cari/cariKod";
 import ulke  from "./tanimlamalar/ulke";
@@ -222,6 +222,7 @@ const repositories = {
   dovizTipi: dovizTipi(instance) as unknown as ICrudBaseAPI<IDovizTipi>,
   
   ihtiyacPlanlamaRapor: ihtiyacPlanlamaRapor(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlamaRapor>,
+  ihtiyacPlanlamaRaporTalep: ihtiyacPlanlamaRapor(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlamaRaporForTalep>,
   ihtiyacPlanlama: ihtiyacPlanlama(instance) as unknown as ICrudBaseAPI<IIhtiyacPlanlama>,
   isEmri: isEmri(instance) as unknown as ICrudBaseAPI<IIsEmri>,
 

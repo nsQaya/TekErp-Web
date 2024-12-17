@@ -30,5 +30,6 @@ export default ($axios: AxiosInstance) => ({
     },
     get(id: number){
         return $axios.get<IBaseResponseValue<IIhtiyacPlanlama>>(`/${controller}/${id}`);
-    }
+    },
+    
 });

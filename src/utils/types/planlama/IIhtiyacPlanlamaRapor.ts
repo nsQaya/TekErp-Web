@@ -30,3 +30,8 @@ export interface IIhtiyacPlanlamaRapor {
     olcuBrId:number,
     olcuBr:string,
 }
+export interface IIhtiyacPlanlamaRaporForTalep {
+    stokKodu:string,
+    miktar:number,
+    dahilMi:boolean
+}

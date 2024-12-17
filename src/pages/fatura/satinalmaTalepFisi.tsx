@@ -213,8 +213,10 @@ const satinalmaTalepFisi = () => {
     useState<ITalepTeklifStokHareket | null>(null);
 
   //gride doldurma işlemleri
-  const handleAddToGrid = useCallback(() => {
-    if (!validateAddToGrid()) return;
+  const handleAddToGrid = useCallback(async () => {
+    const isValid = await validateAddToGrid();
+    if (!isValid) return; 
+
     if (selectedGridItem) {
       setGridData((prevGridData) =>
         prevGridData.map((item) =>
@@ -278,6 +280,7 @@ const satinalmaTalepFisi = () => {
     }
 
     setSelectedGridItem(null);
+    setBilgiMiktar(0);
     // setTalepStokHareket((stokHareket) => ({ ...stokHareket,
     //     stokKartiId:0, stokAdi: "", miktar: 0,istenilenMiktar:0,bakiye:0 }));
     clearTalepStokHareketData();
@@ -285,22 +288,12 @@ const satinalmaTalepFisi = () => {
     // if (stokKoduInputRef.current) {
     //   stokKoduInputRef.current.focus();
     // }
-  }, [talepStokHareketData, gridData]);
+  }, [talepStokHareketData, gridData,bilgiMiktar]);
 
   //Gride ekleme öncesi validasyon kontrolleri
-  const validateAddToGrid = () => {
-    // if (!belgeData?.no) { //Bunu kaydet kısmına ekleyeyim
-    //   toast.current?.show({
-    //     severity: "error",
-    //     summary: "Hata",
-    //     detail: "Numara alanı hatalı...",
-    //     life: 3000,
-    //   });
-    //   return false;
-    // }
+  const validateAddToGrid =async () => {
 
     if (talepStokHareketData.teslimTarihi) {
-        debugger;
       const teslimTarihi = new Date(talepStokHareketData.teslimTarihi);
 
       if (isNaN(teslimTarihi.getTime())) {
@@ -348,7 +341,7 @@ const satinalmaTalepFisi = () => {
       return false;
     }
 
-    if (!talepStokHareketData?.miktar || talepStokHareketData.miktar <= 0) {
+    if (!talepStokHareketData?.miktar || talepStokHareketData.miktar <= 0 || bilgiMiktar<=0) {
       toast.current?.show({
         severity: "error",
         summary: "Hata",
@@ -358,8 +351,62 @@ const satinalmaTalepFisi = () => {
       return false;
     }
 
+    const isStokTalepUygun = await stokTalepIcinUygunMu();
+
+
+    if (!isStokTalepUygun)
+    {
+        toast.current?.show({
+          severity: "error",
+          summary: "Hata",
+          detail: "Miktar ihtiyaçdan fazla...",
+          life: 3000,
+        });
+        return false;
+      
+    }
+
     return true;
   };
+
+  const stokTalepIcinUygunMu = useCallback(async () => {
+    const stokTalepResponse = await api.ihtiyacPlanlamaRaporTalep.getByKod(
+      talepStokHareketData.stokKarti?.kodu!
+    );
+
+    if (stokTalepResponse?.data?.status && stokTalepResponse?.data.value) {
+      const stokTalepData = stokTalepResponse.data.value;
+
+      if (!stokTalepData.dahilMi) return false;
+
+      if (stokTalepData.miktar < bilgiMiktar) {//Girilen, izin verilenden büyük mü?
+        return false;
+      }
+
+      // Grid'deki aynı stoğa ait toplam miktarı hesapla
+      const mevcutToplamMiktar = gridData
+        .filter(
+          (item) =>
+            item.stokKarti?.kodu === talepStokHareketData.stokKarti?.kodu
+        )
+        .reduce((acc, curr) => acc + (curr.miktar || 0), 0);
+      let toplamMiktar = mevcutToplamMiktar + bilgiMiktar;
+
+      if (selectedGridItem) {//Eğer bu bir düzenleme ise, onu da düş
+        toplamMiktar = toplamMiktar - selectedGridItem.miktar;
+      }
+      // Toplam miktarı API'deki ihtiyaç miktarıyla karşılaştır
+      if (stokTalepData.miktar < toplamMiktar) {
+        return false; // İhtiyaç miktarından fazla eklenemez
+      }
+    }
+    return true;
+  }, [
+    talepStokHareketData.stokKarti?.kodu,
+    gridData,
+    selectedGridItem,
+    bilgiMiktar
+  ]);
 
   //Alt taraf grid işlemleri bitiş
 
@@ -466,7 +513,7 @@ const satinalmaTalepFisi = () => {
       uniteId: item.uniteId,
       unite: item.unite,
     });
-    debugger;
+
     const response = await api.stok.getByKod(item.stokKarti?.kodu!);
     if (response?.data?.status && response?.data?.value) {
         const stokKarti = response.data.value;
@@ -485,8 +532,6 @@ const satinalmaTalepFisi = () => {
 
     if (response?.data?.status && response?.data?.value) {
       const stokKarti = response.data.value;
-
-      debugger;
 
       // Ölçü birimi seçeneklerini oluşturma
     //   const options = [
@@ -678,9 +723,7 @@ const satinalmaTalepFisi = () => {
 
   const fetchSavedData = async () => {
     try {
-      debugger;
       const response = await api.talepTeklif.getByBelgeId(updateBelgeId);
-      debugger;
       if (response.data.status && response.data.value) {
         const talepTeklifResponse = response.data.value;
         const belge = talepTeklifResponse.belge!;
@@ -814,7 +857,8 @@ const satinalmaTalepFisi = () => {
 
   return (
     <div className="container-fluid">
-        {/* {JSON.stringify(talepStokHareketData.teslimTarihi)} */}
+        {JSON.stringify(talepStokHareketData.miktar)}
+        - {JSON.stringify(bilgiMiktar)}
       <Toast ref={toast} />
       <ConfirmDialog
         visible={itemDeleteVisible}

@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
 import { IBaseResponseValue, IPagedResponse } from "../../types";
-import { IIhtiyacPlanlamaRapor } from "../../types/planlama/IIhtiyacPlanlamaRapor";
+import { IIhtiyacPlanlamaRapor, IIhtiyacPlanlamaRaporForTalep } from "../../types/planlama/IIhtiyacPlanlamaRapor";
 import { DynamicQuery } from "../../transformFilter";
 
 const controller="ihtiyacPlanlamas";
@@ -14,6 +14,9 @@ export default ($axios: AxiosInstance) => ({
     },
     getListForDepolarArasiTransferFisi(dynamicQuery:DynamicQuery  ){
         return $axios.post<IBaseResponseValue<IPagedResponse<IIhtiyacPlanlamaRapor>>>(`/${controller}/GetListIhtiyacPlanlamaRaporForDepolarArasiTransferFisi`, dynamicQuery );
+    },
+    getByKod(stokKodu: string){
+        return $axios.get<IBaseResponseValue<IIhtiyacPlanlamaRaporForTalep>>(`/${controller}/GetStokIhtiyacPlanlamaForTalep?stokKodu=${stokKodu}`);
     },
     getAll(page: number, take: number){
         return $axios.get<IBaseResponseValue<IPagedResponse<IIhtiyacPlanlamaRapor>>>(`/${controller}`, {

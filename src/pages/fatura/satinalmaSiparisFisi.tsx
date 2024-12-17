@@ -360,9 +360,138 @@ const satinalmaSiparisFisi = () => {
   const [selectedGridItem, setSelectedGridItem] =
     useState<ISiparisStokHareket | null>(null);
 
+      //Gride ekleme öncesi validasyon kontrolleri
+  const validateAddToGrid = async () => {
+
+    if (siparisStokHareketData.teslimTarihi) {
+      const teslimTarihi = new Date(siparisStokHareketData.teslimTarihi);
+
+      if (isNaN(teslimTarihi.getTime())) {
+        // gerçekten tarih mi kontrol mevzusu
+        toast.current?.show({
+          severity: "error",
+          summary: "Hata",
+          detail: "Hatalı tarih...",
+          life: 3000,
+        });
+        return false;
+      }
+    }
+
+    if (
+      !siparisStokHareketData?.proje ||
+      siparisStokHareketData?.projeId <= 0
+    ) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Hatalı Proje",
+        life: 3000,
+      });
+      return false;
+    }
+
+    if (
+      !siparisStokHareketData?.unite ||
+      siparisStokHareketData?.uniteId <= 0
+    ) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Hatalı Ünite",
+        life: 3000,
+      });
+      return false;
+    }
+
+    if (
+      !siparisStokHareketData?.stokKarti ||
+      siparisStokHareketData?.stokKartiId <= 0
+    ) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Hatalı Stok",
+        life: 3000,
+      });
+      return false;
+    }
+
+    if (!siparisStokHareketData?.miktar || siparisStokHareketData.miktar <= 0 ) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Miktar sıfırdan büyük olmalı...",
+        life: 3000,
+      });
+      return false;
+    }
+
+    const stokSiparisIcinUygun = await stokSiparisIcinUygunMu();
+
+    
+    if (!stokSiparisIcinUygun)
+      {
+          toast.current?.show({
+            severity: "error",
+            summary: "Hata",
+            detail: "Miktar talepten fazla...",
+            life: 3000,
+          });
+          return false;
+        
+      }
+
+    return true;
+  };
+
+  const stokSiparisIcinUygunMu = useCallback(async () => {
+    const stokTalepResponse = await api.talepTeklifStokHareket.get(siparisStokHareketData.talepTeklifStokHareketId);
+
+    if (stokTalepResponse?.data?.status && stokTalepResponse?.data.value) {
+      const stokTalepData = stokTalepResponse.data.value;
+
+
+
+
+      if (stokTalepData.miktar < siparisStokHareketData.miktar) {//Girilen, izin verilenden büyük mü?
+        return false;
+      }
+
+      // Grid'deki aynı stoğa ait toplam miktarı hesapla
+      const mevcutToplamMiktar = gridData
+        .filter(
+          (item) =>
+            item.stokKarti?.kodu === siparisStokHareketData.stokKarti?.kodu
+        )
+        .reduce((acc, curr) => acc + (curr.miktar || 0), 0);
+      let toplamMiktar = mevcutToplamMiktar + siparisStokHareketData.miktar;
+
+      if (selectedGridItem) {//Eğer bu bir düzenleme ise, onu da düş
+        toplamMiktar = toplamMiktar - selectedGridItem.miktar;
+      }
+      // Toplam miktarı API'deki ihtiyaç miktarıyla karşılaştır
+      if (stokTalepData.miktar < toplamMiktar) {
+        return false; // İhtiyaç miktarından fazla eklenemez
+      }
+    }
+    return true;
+  }, [
+    siparisStokHareketData.talepTeklifStokHareketId,
+    siparisStokHareketData.stokKarti?.kodu,
+    gridData,
+    selectedGridItem,
+    siparisStokHareketData.miktar
+  ]);
+
   //gride doldurma işlemleri
-  const handleAddOrUpdate  = useCallback(() => {
-    if (!validateAddToGrid()) return;
+  const handleAddOrUpdate  = useCallback(async () => {
+
+    const isValid = await validateAddToGrid();
+    if (!isValid) return; 
+
+    //if (!validateAddToGrid()) return;
+
     if (isEditing && selectedGridItem) {
       setGridData((prevGridData) =>
         prevGridData.map((item) =>
@@ -461,84 +590,6 @@ const satinalmaSiparisFisi = () => {
   }, [isEditing,selectedGridItem,siparisStokHareketData, gridData]);
 
 
-  //Gride ekleme öncesi validasyon kontrolleri
-  const validateAddToGrid = () => {
-    // if (!belgeData?.no) { //Bunu kaydet kısmına ekleyeyim
-    //   toast.current?.show({
-    //     severity: "error",
-    //     summary: "Hata",
-    //     detail: "Numara alanı hatalı...",
-    //     life: 3000,
-    //   });
-    //   return false;
-    // }
-
-    if (siparisStokHareketData.teslimTarihi) {
-      const teslimTarihi = new Date(siparisStokHareketData.teslimTarihi);
-
-      if (isNaN(teslimTarihi.getTime())) {
-        // gerçekten tarih mi kontrol mevzusu
-        toast.current?.show({
-          severity: "error",
-          summary: "Hata",
-          detail: "Hatalı tarih...",
-          life: 3000,
-        });
-        return false;
-      }
-    }
-
-    if (
-      !siparisStokHareketData?.proje ||
-      siparisStokHareketData?.projeId <= 0
-    ) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Hata",
-        detail: "Hatalı Proje",
-        life: 3000,
-      });
-      return false;
-    }
-
-    if (
-      !siparisStokHareketData?.unite ||
-      siparisStokHareketData?.uniteId <= 0
-    ) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Hata",
-        detail: "Hatalı Ünite",
-        life: 3000,
-      });
-      return false;
-    }
-
-    if (
-      !siparisStokHareketData?.stokKarti ||
-      siparisStokHareketData?.stokKartiId <= 0
-    ) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Hata",
-        detail: "Hatalı Stok",
-        life: 3000,
-      });
-      return false;
-    }
-
-    if (!siparisStokHareketData?.miktar || siparisStokHareketData.miktar <= 0) {
-      toast.current?.show({
-        severity: "error",
-        summary: "Hata",
-        detail: "Miktar sıfırdan büyük olmalı...",
-        life: 3000,
-      });
-      return false;
-    }
-
-    return true;
-  };
 
   //Alt taraf grid işlemleri bitiş
 

@@ -97,7 +97,12 @@ import { ISiparisStokHareket } from "../types/fatura/ISiparisStokHareket";
 import { INetsisSiparisFaturaOnay } from "../types/fatura/INetsisSiparisFaturaOnay";
 import { IDovizKur } from "../types/tanimlamalar/IDovizKur";
 import netsisKur from "../api/tanimlamalar/dovizTipi";
-
+import sayim from "./stok/sayim";
+import { IStokSayimYetki } from "../types/stok/IStokSayimYetki";
+import { IStokSayim } from "../types/stok/IStokSayim";
+import sayimYetki from "./stok/sayimYetki";
+import sayimDetay from "./stok/sayimDetay";
+import { IStokSayimDetay } from "../types/stok/IStokSayimDetay";
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
@@ -190,6 +195,13 @@ const repositories = {
   stokHareket:stokHareket(instance) as unknown as ICrudBaseAPI<IStokHareket>,
   stokHareketSeri:stokHareketSeri(instance) as unknown as ICrudBaseAPI<IStokHareketSeri>,
   stokSeriBakiye:stokHareketSeri(instance) as unknown as ICrudBaseAPI<IStokSeriBakiye>,
+  sayim: sayim (instance) as unknown as ICrudBaseAPI<IStokSayim>,
+  sayimYetki: sayimYetki (instance) as unknown as ICrudBaseAPI<IStokSayimYetki>,
+  sayimDetay: sayimDetay (instance) as unknown as ICrudBaseAPI<IStokSayimDetay>,
+ 
+  
+ 
+
 
   netsisStokHareket:netsisStokHareket(instance) as unknown as INetsisBaseAPI<INetsisStokHareket>,
   netsisStokHareketSeri:netsisStokHareketSeri(instance) as unknown as INetsisBaseAPI<INetsisStokHareket>,

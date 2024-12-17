@@ -60,6 +60,9 @@ export default () => {
     {title: "Kod 4", href: "/stok/code4"},
     {title: "Kod 5", href: "/stok/code5"},
     {title: "Hareketler", href: "/stok/stokHareketler"},
+    {title: "Sayım ", href: "/stok/sayim"}, 
+    {title: "Sayım Yetki", href: "/stok/sayimYetki"}, 
+    {title: "Sayım Detay", href: "/stok/sayimDetay"}, 
   ]);
 
   const [cariPages] =useState([

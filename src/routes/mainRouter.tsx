@@ -10,6 +10,9 @@ import StockCode3Items from "../pages/stok/code3/items";
 import StockCode4Items from "../pages/stok/code4/items";
 import StockCode5Items from "../pages/stok/code5/items";
 import StockHareketlerNetsis from "../pages/stok/stokHarehetNetsis";
+import Sayim from "../pages/stok/sayim/items";
+import SayimYetki from "../pages/stok/sayimYetki/items";
+import SayimDetay from "../pages/stok/sayimDetay/items";
 
 import CariItems from "../pages/cari/cari";
 import CariGrupKoduItems from "../pages/cari/cariGrupKod";
@@ -53,6 +56,10 @@ import SatinalmaSiparisListe from "../pages/fatura/satinalmaSiparisListe";
 import SiparisAcmaKapama from "../pages/fatura/siparisAcmaKapama";
 import NetsisSiparisFaturaOnay from "../pages/fatura/netsisSiparisFaturaOnay";
 import İthalatEkBilgiler from "../pages/fatura/ithalatEkBilgiler";
+
+
+
+
 
 
 export default createHashRouter([
@@ -161,6 +168,21 @@ export default createHashRouter([
             path: "stokHareketler",
             element: <StockHareketlerNetsis />,
           },
+          {
+            path: "sayim",
+            element: <Sayim/>,
+          },
+          {
+            path: "sayimYetki",
+            element: <SayimYetki/>,
+          },
+          {
+            path: "sayimDetay",
+            element: <SayimDetay/>,
+          },
+         
+         
+          
         ],
       },
       {

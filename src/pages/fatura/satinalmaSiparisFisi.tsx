@@ -2037,8 +2037,8 @@ const satinalmaSiparisFisi = () => {
                   <Button
                       label={isEditing ? "Güncelle" : "Ekle"} // Change label dynamically
                       icon={isEditing ? "pi pi-refresh" : "pi pi-plus"} // Change icon dynamically
-                    onClick={handleAddOrUpdate}
-                    disabled={belgeReadOnly}
+                      onClick={handleAddOrUpdate}
+                      disabled={belgeReadOnly}
                   />
                 </div>
               </div>

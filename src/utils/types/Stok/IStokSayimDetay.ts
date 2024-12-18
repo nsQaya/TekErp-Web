@@ -9,15 +9,15 @@ export interface IStokSayimDetay
 
 {
     id?: number;
-    sayimId: number;
-    sayim:IStokSayim;
-    stokId: number;
-    stok: IStok;
+    stokSayimId: number;
+    stokSayim?:IStokSayim;
+    stokKartiId: number;
+    stokKarti?: IStok;
     miktar: number;
     seri: string;
     hucreId: number;
-    hucre: IHucre;
-    olcuBirimiId: number;
-    olcuBirimi: IStokOlcuBirim;
+    hucre?: IHucre;
+    olcuBrId: number;
+    olcuBirim?: IStokOlcuBirim;
     aciklama: string;
 }

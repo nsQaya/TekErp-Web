@@ -5,7 +5,7 @@ import { INetsisSirket } from "../../utils/types/tanimlamalar/INetsisSirket";
 
 
 
-const HucreRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: INetsisSirket) => void; onHide: () => void }> = (props) => {
+const NetsisSirketRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: INetsisSirket) => void; onHide: () => void }> = (props) => {
     const columns: ColumnProps[] = [
         {
           header: "sirketAdi",
@@ -27,4 +27,4 @@ const HucreRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: INetsis
           />
     )
 };
-export default HucreRehberDialog;
+export default NetsisSirketRehberDialog;

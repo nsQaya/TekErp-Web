@@ -4,7 +4,6 @@ import { Toast } from "primereact/toast";
 import { IStokSayimDetay } from "../../../utils/types/stok/IStokSayimDetay";
 import api from "../../../utils/api";
 import { InputText } from "primereact/inputtext";
-import SayimRehberDialog from "../../../components/Rehber/SayimRehberiDialog";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { FloatLabel } from "primereact/floatlabel";
@@ -21,6 +20,7 @@ import { ConfirmDialog } from "primereact/confirmdialog";
 import { formatNumber } from "../../../utils/helpers/formatNumberForGrid";
 import { selectAllTextInputNumber, selectAllTextInputText } from "../../../utils/helpers/selectAllText";
 import { getUserIdFromToken } from "../../../store/userIdFromToken";
+import StokSayimYetkiRehberiDialog from "../../../components/Rehber/StokSayimYetkiRehberiDialog";
 
 
 
@@ -506,7 +506,7 @@ const stokSayimDetay = () => {
                     setDialogVisible({ ...dialogVisible, no: true })
                   }
                 />
-                <SayimRehberDialog
+                <StokSayimYetkiRehberiDialog
                   isVisible={dialogVisible.no}
                   onHide={() =>
                     setDialogVisible({ ...dialogVisible, no: false })
@@ -514,8 +514,8 @@ const stokSayimDetay = () => {
                   onSelect={(selectedValue) => {
                     setStokSayimDetayData((prevState) => ({
                       ...prevState,
-                      stokSayimId: selectedValue.id!,
-                      stokSayim: selectedValue,
+                      stokSayimId: selectedValue.sayim.id!,
+                      stokSayim: selectedValue.sayim,
                     }));
                   }}
                 />
@@ -750,11 +750,11 @@ const stokSayimDetay = () => {
             emptyMessage="Kayıt yok."
             virtualScrollerOptions={{ itemSize: 46 }}
           >
-            <Column field="id" header="#" hidden />
-            <Column field="stokKarti.kodu" header="Stok Kodu" />
-            <Column field="stokKarti.adi" header="Stok Adı" />
-            <Column field="seri" header="Seri" />
-            <Column field="hucre.kodu" header="Hücre" />
+            <Column field="id" header="#" hidden  />
+            <Column field="stokKarti.kodu" header="Stok Kodu" filter  />
+            <Column field="stokKarti.adi" header="Stok Adı" filter />
+            <Column field="seri" header="Seri" filter />
+            <Column field="hucre.kodu" header="Hücre" filter />
             <Column
               field="miktar"
               header="Miktar"
@@ -766,8 +766,8 @@ const stokSayimDetay = () => {
                 );
               }}
             />
-            <Column field="olcuBirim.simge" header="Ölçü Birim" />
-            <Column field="aciklama" header="Açıklama" />
+            <Column field="olcuBirim.simge" header="Ölçü Birim" filter/>
+            <Column field="aciklama" header="Açıklama" filter/>
             <Column
               body={(rowData) => (
                 <div style={{ display: "flex", alignItems: "center" }}>

@@ -55,7 +55,7 @@ const GenericDialog = <T extends {}>(props: GenericDialogProps<T>) => {
 
   const fetchData = useCallback(
     debounce(async () => {
-      setLoading(true);      
+      setLoading(true);
       const combinedFilters = mergeFilters(filters, props.externalFilters);
       const dynamicQuery = transformFilter(
         combinedFilters,
@@ -63,10 +63,11 @@ const GenericDialog = <T extends {}>(props: GenericDialogProps<T>) => {
         sortOrder ?? 1
       );
       const response = await props.baseApi.getAllForGrid(0, 10, dynamicQuery);
-      setData(response.data.value.items);
+      if (response?.data?.value?.items) setData(response.data.value.items);
+
       setLoading(false);
     }, 300),
-    [filters,sortField,sortOrder, props.baseApi]
+    [filters, sortField, sortOrder, props.baseApi]
   );
 
   useEffect(() => {

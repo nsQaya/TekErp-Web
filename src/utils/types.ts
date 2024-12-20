@@ -47,50 +47,26 @@ export interface ICrudBaseAPI<T> {
     take: number,
     dynamicQuery: DynamicQuery
   ): Promise<{ data: { value: { items: T[]; count: number } } }>;
-  getListForAmbarCikisFisi(
-    dynamicQuery: DynamicQuery
-  ): Promise<{ data: { value: { items: T[]; count: number } } }>;
-  getListForDepolarArasiTransferFisi(
-    dynamicQuery: DynamicQuery
-  ): Promise<{ data: { value: { items: T[]; count: number } } }>;
-  getAll(
-    page: number,
-    take: number
-  ): Promise<{ data: { value: { items: T[]; count: number } } }>;
-  getListByBelgeId(
-    id: number
-  ): Promise<{ data: { value: { items: T[]; count: number } } }>;
-  getListByUserId(
-    id: string
-  ): Promise<{ data: { value: { items: T[]; count: number } } }>;
+  getListForAmbarCikisFisi(dynamicQuery: DynamicQuery): Promise<{ data: { value: { items: T[]; count: number } } }>;
+  getListForDepolarArasiTransferFisi(dynamicQuery: DynamicQuery): Promise<{ data: { value: { items: T[]; count: number } } }>;
+  getAll(page: number,take: number): Promise<{ data: { value: { items: T[]; count: number } } }>;
+  getListByBelgeId(id: number): Promise<{ data: { value: { items: T[]; count: number } } }>;
+  getListByUserId(id: string): Promise<{ data: { value: { items: T[]; count: number } } }>;
   get: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
   getByKod: (id: string) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
   getByBelgeId: (id: number) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
-  getBySeri: (
-    seri: string,
-    belgeTip: EBelgeTip
-  ) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
-  create: (
-    params: Partial<T>
-  ) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
-  update: (
-    params: Partial<T>
-  ) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
-  delete: (
-    id: number
-  ) => Promise<AxiosResponse<IBaseResponseValue<IEntity>, any>>;
-  deleteByString: (
-    id: string
-  ) => Promise<AxiosResponse<IBaseResponseValue<IEntity>, any>>;
+  getBySeri: (seri: string,belgeTip: EBelgeTip) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
+  create: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
+  update: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
+  delete: (id: number) => Promise<AxiosResponse<IBaseResponseValue<IEntity>, any>>;
+  deleteByString: (id: string) => Promise<AxiosResponse<IBaseResponseValue<IEntity>, any>>;
   getListTalepStokForSiparis(
     page: number,
     take: number,
     dynamicQuery: DynamicQuery
   ): Promise<{ data: { value: { items: T[]; count: number } } }>;
 
-  save: (
-    params: Partial<T>
-  ) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
+  save: (params: Partial<T>) => Promise<AxiosResponse<IBaseResponseValue<T>, any>>;
   
 }
 

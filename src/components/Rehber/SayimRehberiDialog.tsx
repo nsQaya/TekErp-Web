@@ -43,9 +43,9 @@ const SayimRehberDialog: React.FC<{ isVisible: boolean; onSelect: (item: IStokSa
             returnField="id"
             onSelect={props.onSelect}
             defaultSortField="no"
-            // externalFilters={{
-            //   "USK_STATUS": { value: "T", matchMode: "notEquals" }, 
-            // }}
+            externalFilters={{
+              Kilit: { value: "0", matchMode: "equals" }, 
+            }}
           />
     )
 };

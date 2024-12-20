@@ -1321,6 +1321,7 @@ const satinalmaSiparisFisi = () => {
   return (
     <>
       <div className="container-fluid">
+        {JSON.stringify(selectedGridItem)}
         <Toast ref={toast} />
         <ConfirmDialog
           visible={itemDeleteVisible}
@@ -2074,8 +2075,7 @@ const satinalmaSiparisFisi = () => {
                     body={(row: ISiparisStokHareket) => {
                       return (
                         <div style={{ textAlign: "right" }}>
-                          {" "}
-                          {formatNumber(row.miktar, miktarDecimal)}{" "}
+                          {formatNumber(row.miktar, miktarDecimal)}
                         </div>
                       );
                     }}
@@ -2088,32 +2088,19 @@ const satinalmaSiparisFisi = () => {
                     body={(row: ISiparisStokHareket) => {
                       return (
                         <div style={{ textAlign: "right" }}>
-                          {" "}
-                          {formatNumber(row.fiyatTL, fiyatDecimal)}{" "}
+                          {formatNumber(row.fiyatTL, fiyatDecimal)}
                         </div>
                       );
                     }}
                   />
-                  {/* <Column
-                    field="fiyatNet"
-                    header="FiyatNet"
-                    body={(row: ISiparisStokHareket) => {
-                      return (
-                        <div style={{ textAlign: "right" }}>
-                          {" "}
-                          {formatNumber(row.fiyatNet, fiyatDecimal)}{" "}
-                        </div>
-                      );
-                    }}
-                  /> */}
+                 
                   <Column
                     field="fiyatDoviz"
                     header="Döviz Fiyat"
                     body={(row: ISiparisStokHareket) => {
                       return (
                         <div style={{ textAlign: "right" }}>
-                          {" "}
-                          {formatNumber(row.fiyatDoviz, fiyatDecimal)}{" "}
+                          {formatNumber(row.fiyatDoviz, fiyatDecimal)}
                         </div>
                       );
                     }}
@@ -2126,8 +2113,7 @@ const satinalmaSiparisFisi = () => {
                     body={(row: ISiparisStokHareket) => {
                       return (
                         <div style={{ textAlign: "right" }}>
-                          {" "}
-                          {formatNumber(row.tutar, tutarDecimal)}{" "}
+                          {formatNumber(row.tutar, tutarDecimal)}
                         </div>
                       );
                     }}

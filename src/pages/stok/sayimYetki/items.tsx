@@ -122,7 +122,7 @@ export default () => {
         sortable: true,
                   dataType:"numeric", 
                   filter: true , filterElement:onayliMiDDFilterTemplate,
-                  body: (rowData : IStokSayimYetki) => (rowData.degistrime === 1 ? "Evet" : "Hayır")
+                  body: (rowData : IStokSayimYetki) => (rowData.degistirme === 1 ? "Evet" : "Hayır")
     },
     {
       header: "Silme",

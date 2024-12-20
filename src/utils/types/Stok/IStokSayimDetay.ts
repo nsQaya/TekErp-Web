@@ -17,7 +17,7 @@ export interface IStokSayimDetay
     seri: string;
     hucreId: number;
     hucre?: IHucre;
-    olcuBrId: number;
+    olcuBirimId: number;
     olcuBirim?: IStokOlcuBirim;
     aciklama: string;
 }

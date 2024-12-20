@@ -1,7 +1,6 @@
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback,  useEffect,  useRef, useState } from "react";
 import { Toast } from "primereact/toast";
-import { useNavigate } from "react-router-dom";
 import { IStokSayimDetay } from "../../../utils/types/stok/IStokSayimDetay";
 import api from "../../../utils/api";
 import { InputText } from "primereact/inputtext";
@@ -16,6 +15,12 @@ import { miktarDecimal } from "../../../utils/config";
 import { Dropdown } from "primereact/dropdown";
 import HucreRehberDialog from "../../../components/Rehber/HucreRehberDialog";
 import { IStokOlcuBirim } from "../../../utils/types/tanimlamalar/IStokOlcuBirim";
+import { FilterMeta, transformFilter } from "../../../utils/transformFilter";
+import { IStokSayimYetki } from "../../../utils/types/stok/IStokSayimYetki";
+import { ConfirmDialog } from "primereact/confirmdialog";
+import { formatNumber } from "../../../utils/helpers/formatNumberForGrid";
+import { selectAllTextInputNumber, selectAllTextInputText } from "../../../utils/helpers/selectAllText";
+import { getUserIdFromToken } from "../../../store/userIdFromToken";
 
 
 
@@ -30,10 +35,26 @@ const stokSayimDetay = () => {
     hucre: false,
   });
 
-  const [loadingGetir, setLoadingGetir] = useState(false);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const miktarRef = useRef<InputNumber | null>(null);
+  const stokKoduInputRef = useRef<any>(null);
+
+  const [gridData, setGridData] = useState<IStokSayimDetay[]>([]);
+
+  const [olcuBirimOptions, setOlcuBirimOptions] = useState<IStokOlcuBirim[]>(
+    []
+  );
+
+  const [sayimYetki, setSayimYetki] = useState<IStokSayimYetki | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [selectedGridItem, setSelectedGridItem] = useState<IStokSayimDetay | null>(null);
+
+  const [itemDeleteVisible, setItemDeleteVisible] = useState(false);
 
   const toast = useRef<Toast>(null);
+
+  const [tempStokKodu, setTempStokKodu] = useState("");
 
   //Netsis üretim sonu kaydı Data işlemleri başlangıç
   const [stokSayimDetayData, setStokSayimDetayData] =
@@ -44,36 +65,68 @@ const stokSayimDetay = () => {
       miktar: 0,
       seri: "",
       hucreId: 0,
-      olcuBrId: 0,
+      olcuBirimId: 0,
       aciklama: "",
       hucre: undefined,
       olcuBirim: undefined,
       stokSayim: undefined,
       stokKarti: undefined
+});
 
-    });
   const clearStokSayimData = () => {
     setStokSayimDetayData((prevData) => ({
       ...prevData,
       id: 0,
-      stokId: 0,
+      stokKartiId: 0,
+      stokKarti:undefined,
       miktar: 0,
       seri: "",
-      olcuBirimiId: 0,
+      olcuBirimId: 0,
+      olcuBirim:undefined,
       aciklama: "",
       olcuBirimi: undefined,
-      sayim: undefined,
-      stok: undefined
     }));
+    setTempStokKodu("");
   };
+
+  const confirmItemDelete = useCallback(() => {
+    if (selectedGridItem) {
+      deleteItem(selectedGridItem);
+      setItemDeleteVisible(false);
+    }
+  }, [selectedGridItem]);
+
+  const deleteItem = useCallback(async (item: IStokSayimDetay) => {
+    try {
+
+      await api.sayimDetay.delete(item.id!);
+
+      await fetchAndSetGridData(item.stokSayimId, setGridData!);
+
+      setSelectedGridItem(null);
+
+      toast.current?.show({
+        severity: "success",
+        summary: "Başarılı",
+        detail: "Kayıt silindi",
+        life: 3000,
+      });
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Kayıt silinemedi",
+        life: 3000,
+      });
+    }
+  }, []);
 
 
   //stokgetirme mevzusu
   const handleStokGetir = useCallback(async (stokKodu: string | undefined) => {
-debugger;
     if (stokKodu) {
       const response = await api.stok.getByKod(stokKodu);
-
 
       if (response?.data?.status && response?.data?.value) {
         const stokKarti = response.data.value;
@@ -87,8 +140,12 @@ debugger;
 
         }));
         stokOlcuBirimDoldur(stokKarti);
+        if (miktarRef.current) {
+          miktarRef.current.focus();
+        }
 
       } else {
+          selectAllTextInputText(stokKoduInputRef);
         setStokSayimDetayData((prevState) => ({
           ...prevState,
           stokKarti: undefined,
@@ -104,65 +161,8 @@ debugger;
     }
   }, [stokSayimDetayData]);
 
-  const handleAciklamaGetir = useCallback(async (aciklama: string | undefined) => {
-
-    if (aciklama) {
-      const response = await api.sayim.getByKod(aciklama);
-
-
-      if (response?.data?.status && response?.data?.value) {
-        const sayimAciklama = response.data.value;
-
-        //setSelectedOlcuBirim(options[0]); // İlk değeri seçili yapabilirsiniz
-
-        setStokSayimDetayData((prevState) => ({
-          ...prevState,
-          aciklama: sayimAciklama.aciklama,
-        }));
-      } else {
-        setStokSayimDetayData((prevState) => ({
-          ...prevState,
-          aciklama: "",
-        
-        }));
-
-      }
-    }
-  }, [stokSayimDetayData]);
-  
-  const handleHucreGetir = useCallback(async (hucre: string | undefined) => {
-
-    if (hucre) {
-      const response = await api.sayimDetay.getByKod(hucre);
-
-
-      if (response?.data?.status && response?.data?.value) {
-        const sayimHucre = response.data.value;
-
-        //setSelectedOlcuBirim(options[0]); // İlk değeri seçili yapabilirsiniz
-
-        setStokSayimDetayData((prevState) => ({
-          ...prevState,
-          hucre: sayimHucre.hucre,
-
-
-      }));
-      }
-    }
-  }, []);
-
-
-  const clearAciklamaSelection = () => {
-    //setTempStokKodu("");
-    setStokSayimDetayData((prevState) => ({
-      ...prevState,
-      aciklama: "",
-    }));
-  };
-
-
   const clearStokKartiSelection = () => {
-    //setTempStokKodu("");
+    setTempStokKodu("");
     setStokSayimDetayData((prevState) => ({
       ...prevState,
       stokKarti: undefined,
@@ -178,15 +178,7 @@ debugger;
     }));
   };
 
-  const [gridData, setGridData] = useState<IStokSayimDetay[]>([]);
 
-
-
-
-  const [miktarInvalid, setMiktarInvalid] = useState(false);
-  const [olcuBirimOptions, setOlcuBirimOptions] = useState<IStokOlcuBirim[]>(
-    []
-  );
 
   const stokOlcuBirimDoldur = (
     stokKarti: any,
@@ -204,23 +196,31 @@ debugger;
 
   //apiye kaydetme isteği gönderimi
   const handleSave = useCallback(async () => {
+    if(!validateAddToGrid())
+      return;
 
-    //setSaveLoading(true);
     try {
       const saveData: IStokSayimDetay = {
         //SaveTalepTeklifDto
         id: stokSayimDetayData.id,
         stokKartiId: stokSayimDetayData.stokKartiId,
         stokSayimId: stokSayimDetayData.stokSayimId,
-        stokSayim: stokSayimDetayData.stokSayim,
         miktar: stokSayimDetayData.miktar,
         hucreId: stokSayimDetayData.hucreId,
         aciklama: stokSayimDetayData.aciklama,
-        olcuBrId: stokSayimDetayData.olcuBrId,
+        olcuBirimId: stokSayimDetayData.olcuBirimId,
         seri: stokSayimDetayData.seri
       }
-      // API'ye tek seferde gönderim
-      const response = await api.sayimDetay.create(saveData);
+
+      let response;
+
+      if (isEditing && selectedGridItem && selectedGridItem.id && selectedGridItem.id>0) {
+        response = await api.sayimDetay.update(saveData);
+      }
+      else  
+      {
+        response = await api.sayimDetay.create(saveData);
+      }
 
       if (!response.data.status) {
         throw new Error(
@@ -233,15 +233,18 @@ debugger;
           "Veriler kaydedilirken bir hata oluştu."
         );
       }
-      navigate(`/uretim/netsisUretimSonuKaydiListe`);
+
+      await fetchAndSetGridData(stokSayimDetayData.stokSayimId, setGridData!);
 
       // Başarılı durum mesajı
       toast.current?.show({
         severity: "success",
         summary: "Başarılı",
-        detail: "Veriler başarıyla kaydedildi",
+        detail: isEditing ? "Güncelleme işlemi başarılı." : "Kayıt işlemi başarılı.",
         life: 3000,
       });
+
+      clearStokSayimData();
 
     } catch (error: any) {
       toast.current?.show({
@@ -256,14 +259,219 @@ debugger;
     }
   }, [stokSayimDetayData]);
 
+
+  const fetchAndSetGridData = async (
+    stokSayimId: number,
+    setGridData: (data: IStokSayimDetay[]) => void
+  ) => {
+    try {
+      debugger;
+
+      // if(sayimYetki?.gorme!=1)
+      //   setSayimYetki(null);
+
+      setLoading(true);
+
+      const sortColumn = "Id";
+      const sortDirection = -1;
+
+      const filters: FilterMeta = {
+        StokSayimId: { value: stokSayimId, matchMode: "equals" },
+      };
+
+      const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
+
+      const sayimGridDataResponse = await api.sayimDetay.getAllForGrid(
+        0,
+        9999,
+        dynamicQuery
+      );
+
+      if (sayimGridDataResponse?.data?.value?.items) {
+        const sayimGridData = sayimGridDataResponse.data.value.items;
+
+        if (sayimGridData) {
+          setGridData(
+            sayimGridData.map((item: IStokSayimDetay) => ({
+              ...item,
+            }))
+          );
+        }
+      }
+      else {
+        setGridData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching grid data:", error);
+      throw error; 
+    } finally {
+      setLoading(false);
+    }
+  };
+
+   const getSayimYetki = async (stokSayimId: number) => {
+    try {
+      const sortColumn = "Id";
+      const sortDirection = 1;
+  
+      const userId = getUserIdFromToken();
+  
+      const filters: FilterMeta = {
+        SayimId: { value: stokSayimId, matchMode: "equals" },
+        UserId: { value: userId, matchMode: "equals" },
+      };
+  
+      const dynamicQuery = transformFilter(filters, sortColumn, sortDirection);
+  
+      const sayimYetkiResponse = await api.sayimYetki.getAllForGrid(
+        0,
+        9999,
+        dynamicQuery
+      );
+  
+      if (
+        sayimYetkiResponse?.data?.value &&
+        sayimYetkiResponse?.data?.value?.items
+      ) {
+        const sayimYetkiData = sayimYetkiResponse.data.value.items[0];
+        return sayimYetkiData; 
+      }
+  
+      return null;
+    } catch (error) {
+      console.error("Error fetching sayim yetki:", error);
+      throw error;
+    }
+  };
+
+  const fetchSayimYetki = async () => {
+    const result = await getSayimYetki(stokSayimDetayData.id!);
+    setSayimYetki(result);
+  };
+
+  useEffect(() => {
+    if (!stokSayimDetayData.stokSayimId) return;
+
+    // const fechSayimYetki= async () => {
+    //   await fetchAndSetSayimYetki(stokSayimDetayData.stokSayimId);
+    // };
+
+    // fechSayimYetki();
+
+    fetchSayimYetki();
+  
+    const fetchData = async () => {
+      try {
+        debugger;
+        await fetchAndSetGridData(stokSayimDetayData.stokSayimId, setGridData);
+      } catch (error) {
+        setGridData([]);
+        toast.current?.show({
+          severity: "error",
+          summary: "Hata",
+          detail: "Veriler getirilemedi",
+          life: 3000,
+        });
+      }
+    };
+  
+    fetchData();
+  }, [stokSayimDetayData.stokSayimId]);
+
+  const validateAddToGrid = () => {
+
+    if (!stokSayimDetayData.stokSayim && stokSayimDetayData.stokKartiId>0) {
+        toast.current?.show({
+          severity: "error",
+          summary: "Hata",
+          detail: "Sayım seçimi yapmadınız...",
+          life: 3000,
+        });
+        return false;
+      }
+    
+
+    if (
+      !stokSayimDetayData?.stokKarti ||
+      stokSayimDetayData?.stokKartiId <= 0
+    ) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Stok seçimi yapmadınız...",
+        life: 3000,
+      });
+      return false;
+    }
+
+    if (
+      !stokSayimDetayData?.hucre ||
+      stokSayimDetayData?.hucreId <= 0
+    ) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Hücre seçimi yapmadınız...",
+        life: 3000,
+      });
+      return false;
+    }
+
+    if (
+      !stokSayimDetayData?.olcuBirim ||
+      stokSayimDetayData?.olcuBirimId <= 0
+    ) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Ölçü birimi seçimi yapmadınız...",
+        life: 3000,
+      });
+      return false;
+    }
+
+    if (!stokSayimDetayData?.miktar || stokSayimDetayData.miktar <= 0 ) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Miktar sıfırdan büyük olmalı...",
+        life: 3000,
+      });
+      return false;
+    }
+    return true;
+  };
+
+
+  //gridden düzeltme işlemleri
+  const handleEditGridItem = useCallback(async (item: IStokSayimDetay) => {
+    debugger;
+    setSelectedGridItem(item);
+    setIsEditing(true);
+    // Seçilen grid item'ını formda göstermek için ilgili state'leri güncelle
+    setStokSayimDetayData({
+      ...item
+    });
+    stokOlcuBirimDoldur(item.stokKarti);
+  }, []);
+
   return (
     <div className="container-fluid">
-      {JSON.stringify(stokSayimDetayData)}
       <Toast ref={toast} />
+      <ConfirmDialog
+        visible={itemDeleteVisible}
+        onHide={() => setItemDeleteVisible(false)}
+        message="Silmek istediğinizden emin misiniz?"
+        header="Onay"
+        icon="pi pi-exclamation-triangle"
+        accept={confirmItemDelete}
+        reject={() => setItemDeleteVisible(false)}
+        acceptLabel="Evet"
+        rejectLabel="Hayır"
+      />
       <div className="p-fluid p-formgrid p-grid">
-        {/* {JSON.stringify(seciliSeriler)} */}
         <div className="row">
-          <div className="col-lg-4 col-md-6 col-sm-12 mt-4">
+          <div className="col-lg-3 col-md-6 col-sm-12 mt-4">
             <FloatLabel>
               <label htmlFor="isEmriNo"> Sayım</label>
               <div className="p-inputgroup">
@@ -272,12 +480,16 @@ debugger;
                   autoComplete="off"
                   id="sayim"
                   name="sayim"
-                value={stokSayimDetayData.stokSayim?.no? stokSayimDetayData.stokSayim?.no : ""}
-                //readOnly
-                // onChange={(e) => {
-                //   setTempSayim(e.target.value);
-                //   //handleIsEmriNoGetir();
-                // }}
+                  value={
+                    stokSayimDetayData.stokSayim?.no
+                      ? stokSayimDetayData.stokSayim?.no
+                      : ""
+                  }
+                  //readOnly
+                  // onChange={(e) => {
+                  //   setTempSayim(e.target.value);
+                  //   //handleIsEmriNoGetir();
+                  // }}
                 />
                 {/* {tempIsEmriNo && (
                 <Button
@@ -288,15 +500,6 @@ debugger;
                   onClick={() => setTempSayim("")}
                 />
                 )} */}
-                {stokSayimDetayData.stokSayim && (
-                  <Button
-                    type="button"
-                    icon="pi pi-filter-slash"
-                    label=""
-                    outlined
-                    onClick={() => clearAciklamaSelection()}
-                  />
-                )}
                 <Button
                   icon="pi pi-search"
                   onClick={() =>
@@ -311,26 +514,22 @@ debugger;
                   onSelect={(selectedValue) => {
                     setStokSayimDetayData((prevState) => ({
                       ...prevState,
-                     stokSayimId: selectedValue.id!,
-                     stokSayim: selectedValue
+                      stokSayimId: selectedValue.id!,
+                      stokSayim: selectedValue,
                     }));
                   }}
                 />
               </div>
             </FloatLabel>
-            <InputText
-              id="stokSayimId"
-              name="stokSayimId"
-              value={stokSayimDetayData?.stokSayim?.id?.toString()}
-              type="hidden"
-              autoComplete="off"
-            />
           </div>
-          <div className="col-lg-4 col-md-6 col-sm-12 mt-4">
+          <div className="col-lg-9 col-md-6 col-sm-12 mt-4">
             <InputText
               id="aciklama"
               name="aciklama"
-              value={stokSayimDetayData?.stokSayim?.aciklama ? stokSayimDetayData.stokSayim.aciklama : ""
+              value={
+                stokSayimDetayData?.stokSayim?.aciklama
+                  ? stokSayimDetayData.stokSayim.aciklama
+                  : ""
               }
               readOnly
               autoComplete="off"
@@ -338,23 +537,23 @@ debugger;
           </div>
         </div>
         <div className="row">
-          <div className="col-lg-4 col-md-6 col-sm-12 mt-4">
+          <div className="col-lg-3 col-md-6 col-sm-12 mt-4">
             <FloatLabel>
               <label htmlFor="stokKodu">Stok Kodu</label>
               <div className="p-inputgroup">
                 <InputText
-                  //ref={stokKoduInputRef}
+                  ref={stokKoduInputRef}
                   invalid={stokSayimDetayData.stokKarti?.kodu ? false : true}
                   autoComplete="off"
                   id="stokKodu"
                   name="stokKodu"
-                 value={stokSayimDetayData.stokKarti?.kodu ? stokSayimDetayData.stokKarti?.kodu : ""}
-                // onChange={(e) => setTempStokKodu(e.target.value)}
-                // onKeyDown={(e) => {
-                //   if (e.key === "Enter" || e.key === "Tab") {
-                //     handleStokGetir(tempStokKodu);
-                //   }
-                // }}
+                  value={tempStokKodu}
+                  onChange={(e) => setTempStokKodu(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === "Tab") {
+                      handleStokGetir(tempStokKodu);
+                    }
+                  }}
                 />
                 {stokSayimDetayData.stokKarti?.kodu && (
                   <Button
@@ -378,7 +577,7 @@ debugger;
                     setDialogVisible({ ...dialogVisible, stokKarti: false })
                   }
                   onSelect={(selectedValue) => {
-                    //setTempStokKodu(selectedValue.kodu);
+                    setTempStokKodu(selectedValue.kodu);
                     handleStokGetir(selectedValue.kodu);
                   }}
                 />
@@ -392,31 +591,29 @@ debugger;
               autoComplete="off"
             />
           </div>
-          <div className="col-lg-4 col-md-6 col-sm-12 mt-4">
+          <div className="col-lg-6 col-md-6 col-sm-12 mt-4">
             <FloatLabel>
               <label htmlFor="stokAdi">Stok Adı</label>
               <InputText
                 id="adi"
                 name="adi"
-                value={stokSayimDetayData?.stokKarti?.adi ? stokSayimDetayData.stokKarti.adi : ""
+                value={
+                  stokSayimDetayData?.stokKarti?.adi
+                    ? stokSayimDetayData.stokKarti.adi
+                    : ""
                 }
                 readOnly
                 autoComplete="off"
               />
             </FloatLabel>
           </div>
-          <div className="col-lg-4 col-md-6 col-sm-12 mt-4">
+          <div className="col-lg-3 col-md-6 col-sm-12 mt-4">
             <FloatLabel>
               <label htmlFor="hucre">Açıklama</label>
-              <InputText
-                id="aciklama"
-                name="aciklama"
-              />
+              <InputText id="aciklama" name="aciklama" />
             </FloatLabel>
           </div>
-        </div>
 
-        <div className="row">
           <div className="col-lg-3 col-md-6 col-sm-12 mt-4">
             <FloatLabel>
               <label htmlFor="stokKodu">Hücre</label>
@@ -427,15 +624,13 @@ debugger;
                   autoComplete="off"
                   id="hucre"
                   name="hucre"
-                 value={stokSayimDetayData.hucre?.kodu ? stokSayimDetayData.hucre.kodu:""}
-                // onChange={(e) => setTempStokKodu(e.target.value)}
-                // onKeyDown={(e) => {
-                //   if (e.key === "Enter" || e.key === "Tab") {
-                //     handleStokGetir(tempStokKodu);
-                //   }
-                // }}
+                  value={
+                    stokSayimDetayData.hucre?.kodu
+                      ? stokSayimDetayData.hucre.kodu
+                      : ""
+                  }
                 />
-                 {stokSayimDetayData.hucre?.kodu && (
+                {stokSayimDetayData.hucre?.kodu && (
                   <Button
                     type="button"
                     icon="pi pi-filter-slash"
@@ -461,14 +656,10 @@ debugger;
                       ...prevState,
                       hucre: selectedValue,
                       hucreId: selectedValue.id!,
-            
                     }));
-                    //setTempStokKodu(selectedValue.kodu);
-                    handleHucreGetir(selectedValue.kodu);
                   }}
                 />
               </div>
-
             </FloatLabel>
           </div>
           <div className="col-lg-2 col-md-6 col-sm-12 mt-4">
@@ -477,13 +668,13 @@ debugger;
               <InputText
                 id="seri"
                 name="seri"
-              // value={stokSayimDetayData.hucre}
-              // onChange={(e) => {
-              //   setStokSayimDetayData((state) => ({
-              //     ...state,
-              //     hucreId: e.target.value, // Kullanıcının girdiği değer doğrudan alınıyor
-              //   }));
-              // }}
+                value={stokSayimDetayData.seri}
+                onChange={(e) => {
+                  setStokSayimDetayData((state) => ({
+                    ...state,
+                    seri: e.target.value, // Kullanıcının girdiği değer doğrudan alınıyor
+                  }));
+                }}
               />
             </FloatLabel>
           </div>
@@ -491,7 +682,7 @@ debugger;
             <Dropdown
               id="olcuBirimi"
               options={olcuBirimOptions} // Liste verileri burada kullanılır
-              value={stokSayimDetayData.olcuBrId}
+              value={stokSayimDetayData.olcuBirimId}
               onChange={(e) => {
                 const selectedBirim = olcuBirimOptions.find(
                   (option) => option.id === e.value
@@ -501,7 +692,7 @@ debugger;
                   setStokSayimDetayData((prevData) => ({
                     ...prevData,
                     olcuBirim: selectedBirim!, // Seçilen olcuBirim nesnesini set et
-                    olcuBrId: selectedBirim.id!, // Id'sini de güncelleyebilirsiniz
+                    olcuBirimId: selectedBirim.id!, // Id'sini de güncelleyebilirsiniz
                   }));
                 }
               }}
@@ -518,10 +709,11 @@ debugger;
               <InputNumber
                 id="miktar"
                 name="miktar"
-                value={stokSayimDetayData.miktar}
+                value={stokSayimDetayData.miktar ?? 0}
                 min={0}
-                invalid={miktarInvalid}
-                minFractionDigits={0}
+                //locale="de-DE"
+                //invalid={miktarInvalid}
+                minFractionDigits={miktarDecimal}
                 maxFractionDigits={miktarDecimal}
                 onChange={(e) =>
                   setStokSayimDetayData((state) => ({
@@ -529,82 +721,88 @@ debugger;
                     miktar: Number(e.value),
                   }))
                 }
+                onFocus={() => selectAllTextInputNumber(miktarRef)}
+                ref={miktarRef}
                 inputStyle={{ textAlign: "right" }}
               />
             </FloatLabel>
           </div>
           <div className="col-lg-3 col-md-6 col-sm-12 mt-4">
             <Button
-              label="Ekle"
-              icon="pi pi-plus"
+              label={isEditing ? "Güncelle" : "Ekle"} // Change label dynamically
+              icon={isEditing ? "pi pi-refresh" : "pi pi-plus"} // Change icon dynamically
               onClick={handleSave}
-
+              //disabled={belgeReadOnly}
             />
           </div>
-
-          <div className="col-lg-2 col-md-6 col-sm-12 mt-4">
-
-            {/* <div className="col-lg-4 col-md-12 col-sm-12 mt-4">
-            <FloatLabel>
-              <label htmlFor="aciklama">Açıklama</label>
-              <div className="p-inputgroup">
-                <InputText
-                  //ref={stokKoduInputRef}
-                  autoComplete="off"
-                  id="aciklama"
-                  name="aciklama"
-                  value={netsisUretimSonuKaydiData.aciklama}
-                  onChange={(e) =>
-                    setNetsisUretimSonuKaydiData((state) => ({
-                      ...state,
-                      aciklama: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-            </FloatLabel>
-          </div> */}
-          </div>
         </div>
+
         <div className="p-col-12">
           <DataTable
             size="small"
             stripedRows
             value={gridData}
             rows={100}
-            loading={loadingGetir}
+            loading={loading}
             dataKey="id"
             scrollable
             scrollHeight="480px"
             emptyMessage="Kayıt yok."
-            // rowClassName={(rowData) => {
-            //   if (rowData.miktar === rowData.istenilenMiktar) {
-            //     return "green-row";
-            //   } else if (rowData.miktar > 0 && rowData.miktar < rowData.istenilenMiktar) {
-            //     return "yellow-row";
-            //   } else {
-            //     return "";
-            //   }
-            // }}
             virtualScrollerOptions={{ itemSize: 46 }}
           >
-            <Column field="id" header="#" />
-            <Column field="stokKodu" header="Stok Kodu" />
-            <Column field="stokAdı" header="Stok Adı" />
+            <Column field="id" header="#" hidden />
+            <Column field="stokKarti.kodu" header="Stok Kodu" />
+            <Column field="stokKarti.adi" header="Stok Adı" />
             <Column field="seri" header="Seri" />
-            <Column field="miktar" header="Miktar" />
-            <Column field="bakiye" header="Depo Bakiye" />
-            <Column field="olcuBirim" header="Ölçü Birim" />
+            <Column field="hucre.kodu" header="Hücre" />
+            <Column
+              field="miktar"
+              header="Miktar"
+              body={(row: IStokSayimDetay) => {
+                return (
+                  <div style={{ textAlign: "right" }}>
+                    {formatNumber(row.miktar, miktarDecimal)}
+                  </div>
+                );
+              }}
+            />
+            <Column field="olcuBirim.simge" header="Ölçü Birim" />
             <Column field="aciklama" header="Açıklama" />
-            {/* <Column field="depoBakiye" header="Depo Bakiye" /> */}
-
+            <Column
+              body={(rowData) => (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  {
+                  sayimYetki?.degistirme == 1 && (
+                    <button
+                      className="btn btn-info ms-1"
+                      onClick={() => {
+                        setTempStokKodu(rowData.stokKarti.kodu);
+                        handleStokGetir(rowData.stokKarti.kodu);
+                        handleEditGridItem(rowData);
+                      }}
+                    >
+                      <i className="ti-pencil"></i>
+                    </button>
+                  )}
+                  {sayimYetki?.silme == 1 && (
+                    <button
+                      className="btn btn-danger ms-1"
+                      onClick={() => {
+                        setSelectedGridItem(rowData);
+                        setItemDeleteVisible(true);
+                      }}
+                    >
+                      <i className="ti-trash"></i>
+                    </button>
+                  )}
+                </div>
+              )}
+              header="İşlemler"
+            />
           </DataTable>
         </div>
       </div>
     </div>
-
-
-
   );
 };
 

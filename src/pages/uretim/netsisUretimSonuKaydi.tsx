@@ -747,7 +747,7 @@ const netsisUretimSonuKaydi = () => {
                 value={netsisUretimSonuKaydiData.miktar}
                 min={0}
                 invalid={miktarInvalid} 
-                minFractionDigits={0}
+                minFractionDigits={miktarDecimal}
                 maxFractionDigits={miktarDecimal}
                 onChange={(e) =>
                   setNetsisUretimSonuKaydiData((state) => ({

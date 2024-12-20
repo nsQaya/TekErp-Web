@@ -12,6 +12,6 @@ export interface IStokSayimYetki
     user: IKullanici;
     gorme: number;
     ekleme: number;  
-    degistrime: number;
+    degistirme: number;
     silme: number;
 }

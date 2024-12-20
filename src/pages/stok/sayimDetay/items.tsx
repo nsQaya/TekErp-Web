@@ -84,7 +84,6 @@ const stokSayimDetay = () => {
       olcuBirimId: 0,
       olcuBirim:undefined,
       aciklama: "",
-      olcuBirimi: undefined,
     }));
     setTempStokKodu("");
   };
@@ -711,9 +710,9 @@ const stokSayimDetay = () => {
                 name="miktar"
                 value={stokSayimDetayData.miktar ?? 0}
                 min={0}
-                //locale="de-DE"
-                //invalid={miktarInvalid}
-                minFractionDigits={miktarDecimal}
+                locale="tr-TR"
+                invalid={!stokSayimDetayData.miktar ||  isNaN(Number(stokSayimDetayData.miktar))} // Adjust based on validation
+                minFractionDigits={1}
                 maxFractionDigits={miktarDecimal}
                 onChange={(e) =>
                   setStokSayimDetayData((state) => ({
@@ -721,6 +720,7 @@ const stokSayimDetay = () => {
                     miktar: Number(e.value),
                   }))
                 }
+                
                 onFocus={() => selectAllTextInputNumber(miktarRef)}
                 ref={miktarRef}
                 inputStyle={{ textAlign: "right" }}
@@ -746,11 +746,11 @@ const stokSayimDetay = () => {
             loading={loading}
             dataKey="id"
             scrollable
-            scrollHeight="480px"
+            //scrollHeight="480px"
             emptyMessage="Kayıt yok."
-            virtualScrollerOptions={{ itemSize: 46 }}
+            //virtualScrollerOptions={{ itemSize: 46 }}
           >
-            <Column field="id" header="#" hidden  />
+            <Column field="id" header="#" sortable />
             <Column field="stokKarti.kodu" header="Stok Kodu" filter  />
             <Column field="stokKarti.adi" header="Stok Adı" filter />
             <Column field="seri" header="Seri" filter />

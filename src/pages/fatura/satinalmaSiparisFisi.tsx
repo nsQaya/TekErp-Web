@@ -1684,7 +1684,8 @@ const satinalmaSiparisFisi = () => {
                       name="miktar"
                       value={siparisStokHareketData.miktar ?? 0}
                       min={0}
-                      minFractionDigits={miktarDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={miktarDecimal}
                       onChange={(e) =>
                         setSiparisStokHareketData((state) => ({
@@ -1835,7 +1836,8 @@ const satinalmaSiparisFisi = () => {
                       name="fiyatDoviz"
                       value={siparisStokHareketData.fiyatDoviz ?? 0}
                       min={0}
-                      minFractionDigits={fiyatDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={fiyatDecimal}
                       onChange={(e) =>
                         setSiparisStokHareketData((state) => ({
@@ -1858,7 +1860,8 @@ const satinalmaSiparisFisi = () => {
                       name="miktar"
                       value={dovizKur}
                       min={0}
-                      minFractionDigits={kurDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={kurDecimal}
                       onChange={(
                         e //Kur değişiminde sadece hesap değişiecek.
@@ -1878,7 +1881,8 @@ const satinalmaSiparisFisi = () => {
                       name="fiyatTL"
                       value={siparisStokHareketData.fiyatTL ?? 0}
                       min={0}
-                      minFractionDigits={fiyatDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={fiyatDecimal}
                       onChange={(e) =>
                         setSiparisStokHareketData((state) => ({
@@ -1902,7 +1906,8 @@ const satinalmaSiparisFisi = () => {
                       disabled
                       //value={siparisStokHareketData.fiyatNet ?? 0}
                       min={0}
-                      minFractionDigits={fiyatDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={fiyatDecimal}
                       inputStyle={{ textAlign: "right" }}
                     />
@@ -1916,7 +1921,7 @@ const satinalmaSiparisFisi = () => {
                       name="iskontoTL"
                       value={siparisStokHareketData.iskontoTL ?? 0}
                       min={0}
-                      minFractionDigits={tutarDecimal}
+                      minFractionDigits={1}
                       maxFractionDigits={tutarDecimal}
                       onChange={(e) =>
                         setSiparisStokHareketData((state) => ({
@@ -2021,7 +2026,8 @@ const satinalmaSiparisFisi = () => {
                       name="tutar"
                       value={siparisStokHareketData.tutar ?? 0}
                       min={0}
-                      minFractionDigits={tutarDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={tutarDecimal}
                       onChange={(e) =>
                         setSiparisStokHareketData((state) => ({
@@ -2174,7 +2180,8 @@ const satinalmaSiparisFisi = () => {
                       readOnly
                       value={siparisData.dovizAraToplam ?? 0}
                       min={0}
-                      minFractionDigits={tutarDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={tutarDecimal}
                       inputStyle={{ textAlign: "right" }}
                     />
@@ -2189,7 +2196,8 @@ const satinalmaSiparisFisi = () => {
                       readOnly
                       value={siparisData.araToplamTL ?? 0}
                       min={0}
-                      minFractionDigits={tutarDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={tutarDecimal}
                       inputStyle={{ textAlign: "right" }}
                     />
@@ -2208,7 +2216,8 @@ const satinalmaSiparisFisi = () => {
                       value={genelIskontoOran}
                       min={0}
                       max={100}
-                      minFractionDigits={oranDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={oranDecimal}
                       inputStyle={{ textAlign: "right" }}
                       onChange={(e) =>
@@ -2238,7 +2247,8 @@ const satinalmaSiparisFisi = () => {
                       value={siparisData.dovizIskonto ?? 0}
                       min={0}
                       max={siparisData.dovizAraToplam}
-                      minFractionDigits={tutarDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={tutarDecimal}
                       inputStyle={{ textAlign: "right" }}
                       onChange={(e) =>
@@ -2269,7 +2279,8 @@ const satinalmaSiparisFisi = () => {
                       value={siparisData.iskontoTL ?? 0}
                       min={0}
                       max={siparisData.araToplamTL}
-                      minFractionDigits={tutarDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={tutarDecimal}
                       inputStyle={{ textAlign: "right" }}
                       onChange={(e) =>
@@ -2301,7 +2312,8 @@ const satinalmaSiparisFisi = () => {
                       value={siparisData.dovizKDV ?? 0}
                       readOnly={siparisData.dovizAraToplam == 0}
                       min={0}
-                      minFractionDigits={tutarDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={tutarDecimal}
                       inputStyle={{ textAlign: "right" }}
                       onChange={(e) =>
@@ -2322,7 +2334,8 @@ const satinalmaSiparisFisi = () => {
                       readOnly
                       value={siparisData.kdvTL ?? 0}
                       min={0}
-                      minFractionDigits={tutarDecimal}
+                      locale="tr-TR"
+                      minFractionDigits={1}
                       maxFractionDigits={tutarDecimal}
                       inputStyle={{ textAlign: "right" }}
                     />
@@ -2339,7 +2352,8 @@ const satinalmaSiparisFisi = () => {
                       readOnly
                       value={siparisData.dovizNetToplam ?? 0}
                       min={0}
-                      minFractionDigits={tutarDecimal}
+                      locale="tr-TR"
+                minFractionDigits={1}
                       maxFractionDigits={tutarDecimal}
                       inputStyle={{ textAlign: "right" }}
                     />
@@ -2354,7 +2368,8 @@ const satinalmaSiparisFisi = () => {
                       readOnly
                       value={siparisData.netToplamTL || 0}
                       min={0}
-                      minFractionDigits={tutarDecimal}
+                      locale="tr-TR"
+                minFractionDigits={1}
                       maxFractionDigits={tutarDecimal}
                       inputStyle={{ textAlign: "right" }}
                     />

@@ -1483,7 +1483,8 @@ const App: React.FC = () => {
                 name="istenilenMiktar"
                 value={formDataDetay.istenilenMiktar}
                 min={0}
-                minFractionDigits={2}
+                locale="tr-TR"
+                minFractionDigits={1}
                 maxFractionDigits={miktarDecimal}
                 disabled
                 inputStyle={{ textAlign: "right" }}
@@ -1499,7 +1500,8 @@ const App: React.FC = () => {
                 name="miktar"
                 value={formDataDetay.miktar}
                 min={0}
-                minFractionDigits={2}
+                locale="tr-TR"
+                minFractionDigits={1}
                 maxFractionDigits={miktarDecimal}
                 onChange={(e) =>
                   setFormDataDetay((state) => ({

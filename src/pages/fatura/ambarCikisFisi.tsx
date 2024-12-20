@@ -1439,7 +1439,8 @@ const App = () => {
                 name="istenilenMiktar"
                 value={formDataDetay.istenilenMiktar}
                 min={0}
-                minFractionDigits={miktarDecimal}
+                locale="tr-TR"
+                minFractionDigits={1}
                 maxFractionDigits={miktarDecimal}
                 disabled
                 inputStyle={{ textAlign: "right" }}
@@ -1454,7 +1455,8 @@ const App = () => {
                 name="miktar"
                 value={formDataDetay.miktar}
                 min={0}
-                minFractionDigits={miktarDecimal}
+                locale="tr-TR"
+                minFractionDigits={1}
                 maxFractionDigits={miktarDecimal}
                 onChange={(e) =>
                   setFormDataDetay((state) => ({

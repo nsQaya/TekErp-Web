@@ -1083,7 +1083,8 @@ const satinalmaTalepFisi = () => {
                 name="miktar"
                 value={talepStokHareketData.miktar ?? 0}
                 min={0}
-                minFractionDigits={miktarDecimal}
+                locale="tr-TR"
+                minFractionDigits={1}
                 maxFractionDigits={miktarDecimal}
                 onChange={(e) =>
                   setTalepStokHareketData((state) => ({

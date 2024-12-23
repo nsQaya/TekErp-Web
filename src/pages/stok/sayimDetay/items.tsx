@@ -70,7 +70,7 @@ const stokSayimDetay = () => {
 
   //stokgetirme mevzusu
   const handleStokGetir = useCallback(async (stokKodu: string | undefined) => {
-debugger;
+
     if (stokKodu) {
       const response = await api.stok.getByKod(stokKodu);
 

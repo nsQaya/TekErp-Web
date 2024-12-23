@@ -1,5 +1,6 @@
 
 
+import { EAktarimDurumu } from "../enums/EAktarimDurumu";
 import { IHucre } from "../tanimlamalar/IHucre";
 import { ISapKod } from "./ISapKod";
 import { IStokBarkod } from "./IStokBarkod";
@@ -38,7 +39,7 @@ export interface IStokKartiWithDetail {
   asgariStokMiktari: number;
   azamiStokMiktari: number;
   minimumSiparisMiktari: number;
-  aktarimDurumu: number;
+  aktarimDurumu: EAktarimDurumu;
   stokBarkods: IStokBarkod[];
   sapKods: ISapKod[];
    hucres: IHucre[];

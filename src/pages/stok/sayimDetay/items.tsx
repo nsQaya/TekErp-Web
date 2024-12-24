@@ -739,18 +739,23 @@ const stokSayimDetay = () => {
 
         <div className="p-col-12">
           <DataTable
+          //lazy
             size="small"
             stripedRows
             value={gridData}
-            rows={100}
+            //rows={100}
             loading={loading}
             dataKey="id"
             scrollable
-            //scrollHeight="480px"
+            scrollHeight="500px"
             emptyMessage="Kayıt yok."
-            //virtualScrollerOptions={{ itemSize: 46 }}
+            virtualScrollerOptions={{ itemSize: 35 }}
           >
-            <Column field="id" header="#" sortable />
+            <Column field="id" header="#" sortable hidden/>
+            <Column
+    header="No"
+    body={(_, options) => gridData.length - options.rowIndex}
+  />
             <Column field="stokKarti.kodu" header="Stok Kodu" filter  />
             <Column field="stokKarti.adi" header="Stok Adı" filter />
             <Column field="seri" header="Seri" filter />

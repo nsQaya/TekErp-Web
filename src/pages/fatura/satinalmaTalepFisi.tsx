@@ -377,7 +377,7 @@ const satinalmaTalepFisi = () => {
     if (stokTalepResponse?.data?.status && stokTalepResponse?.data.value) {
       const stokTalepData = stokTalepResponse.data.value;
 
-      if (!stokTalepData.dahilMi) return false;
+      if (!stokTalepData.dahilMi) return true;
 
       if (stokTalepData.miktar < bilgiMiktar) {//Girilen, izin verilenden büyük mü?
         return false;
@@ -857,8 +857,6 @@ const satinalmaTalepFisi = () => {
 
   return (
     <div className="container-fluid">
-        {JSON.stringify(talepStokHareketData.miktar)}
-        - {JSON.stringify(bilgiMiktar)}
       <Toast ref={toast} />
       <ConfirmDialog
         visible={itemDeleteVisible}

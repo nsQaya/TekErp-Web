@@ -15,6 +15,8 @@ import { ISapKod } from "../../utils/types/stok/ISapKod";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { IHucre } from "../../utils/types/tanimlamalar/IHucre";
+import { aktarimDurumuDDFilterTemplate, onayliMiDDFilterTemplate } from "../../utils/helpers/dtMultiSelectHelper";
+import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
 
 export default () => {
   const myTable = createRef<ITableRef<IStokKartiWithDetail>>();
@@ -109,6 +111,11 @@ export default () => {
     }
   }, [selectedStokIDS]);
 
+   const getEnumNameAktarimDurumu = (value: number) => {
+      return EAktarimDurumu[value];
+    };
+  
+
   const columns: ColumnProps[] = [
      {
       field: "kodu",
@@ -156,6 +163,17 @@ export default () => {
       //sortable: true,
       style:{maxWidth:"100px"}
     },
+     {
+          header: "Aktarım Durumu",
+          field: "aktarimDurumu",
+          dataType:"numeric",
+          sortable: false,
+          //filterElement: (options) => aktarimDurumuDDFilterTemplate(options, "AktarimHata"), // "AktarimHata" varsayılan olarak seçili olacak
+          filterElement:aktarimDurumuDDFilterTemplate,
+          body: (row)=> {
+            return getEnumNameAktarimDurumu(row.aktarimDurumu);
+          }
+        },
     {
       header: "işlemler",
       style: { minWidth: "150px" },

@@ -166,6 +166,7 @@ const satinalmaSiparisFisi = () => {
       olcuBirimId: 0,
       olcuBirim: undefined,
       miktar: 0,
+      kalanMiktar:0,
       teslimTarihi: currentDate,
       istenilenTeslimTarihi: currentDate,
       fiyatOlcuBirimId: 0,
@@ -446,15 +447,28 @@ const satinalmaSiparisFisi = () => {
   };
 
   const stokSiparisIcinUygunMu = useCallback(async () => {
-    const stokTalepResponse = await api.talepTeklifStokHareket.get(siparisStokHareketData.talepTeklifStokHareketId);
 
-    if (stokTalepResponse?.data?.status && stokTalepResponse?.data.value) {
-      const stokTalepData = stokTalepResponse.data.value;
+    const sortColumn = "id";
+    const sortDirection = 1;
 
+    const filters: FilterMeta = {
+      id: { value: siparisStokHareketData.talepTeklifStokHareketId, matchMode: "equals" },
+    };
 
+    const dynamicQuery = transformFilter(
+      filters,
+      sortColumn,
+      sortDirection
+    );
 
+    const stokTalepResponse = await api.talepTeklifStokHareketForSiparis.getListTalepStokForSiparis(0,1,dynamicQuery);
 
-      if (stokTalepData.miktar < siparisStokHareketData.miktar) {//Girilen, izin verilenden büyük mü?
+    if (stokTalepResponse?.data?.value && stokTalepResponse?.data.value.items.length > 0) {
+      const stokTalepData = stokTalepResponse.data.value.items[0];
+
+      //apiden gelen miktar yerine kalan miktar gerekli
+
+      if (stokTalepData.kalanMiktar < siparisStokHareketData.miktar) {//Girilen, izin verilenden büyük mü?
         return false;
       }
 
@@ -465,13 +479,13 @@ const satinalmaSiparisFisi = () => {
             item.stokKarti?.kodu === siparisStokHareketData.stokKarti?.kodu
         )
         .reduce((acc, curr) => acc + (curr.miktar || 0), 0);
-      let toplamMiktar = mevcutToplamMiktar + siparisStokHareketData.miktar;
+      let toplamMiktar = mevcutToplamMiktar + siparisStokHareketData.kalanMiktar!;
 
       if (selectedGridItem) {//Eğer bu bir düzenleme ise, onu da düş
         toplamMiktar = toplamMiktar - selectedGridItem.miktar;
       }
       // Toplam miktarı API'deki ihtiyaç miktarıyla karşılaştır
-      if (stokTalepData.miktar < toplamMiktar) {
+      if (stokTalepData.kalanMiktar < toplamMiktar) {
         return false; // İhtiyaç miktarından fazla eklenemez
       }
     }
@@ -1321,7 +1335,6 @@ const satinalmaSiparisFisi = () => {
   return (
     <>
       <div className="container-fluid">
-        {JSON.stringify(selectedGridItem)}
         <Toast ref={toast} />
         <ConfirmDialog
           visible={itemDeleteVisible}
@@ -1602,7 +1615,7 @@ const satinalmaSiparisFisi = () => {
                             seriKodu: selectedValue.seriKodu,
                             //olcuBirim: selectedValue.olcuBirim,
                             olcuBirimId: selectedValue.olcuBirimId,
-                            miktar: selectedValue.miktar,
+                            miktar: selectedValue.kalanMiktar,
                             istenilenTeslimTarihi: selectedValue.teslimTarihi,
                             projeId: selectedValue.projeId,
                             //proje: selectedValue.proje,
@@ -1704,7 +1717,7 @@ const satinalmaSiparisFisi = () => {
                     />
                   </FloatLabel>
                 </div>
-                <div className="col-md-2 col-sm-6 mt-4">
+                {/* <div className="col-md-2 col-sm-6 mt-4">
                   <FloatLabel>
                     <label htmlFor="miktar">Miktar</label>
 
@@ -1717,7 +1730,7 @@ const satinalmaSiparisFisi = () => {
                       inputStyle={{ textAlign: "right" }}
                     />
                   </FloatLabel>
-                </div>
+                </div> */}
 
                 <div className="col-md-2 col-sm-6 mt-4">
                   <FloatLabel>
@@ -1854,10 +1867,10 @@ const satinalmaSiparisFisi = () => {
                 </div>
                 <div className="col-md-2 col-sm-6 mt-4">
                   <FloatLabel>
-                    <label htmlFor="miktar">Kur</label>
+                    <label htmlFor="kur">Kur</label>
                     <InputNumber
-                      id="miktar"
-                      name="miktar"
+                      id="kur"
+                      name="kur"
                       value={dovizKur}
                       min={0}
                       locale="tr-TR"
@@ -1897,7 +1910,7 @@ const satinalmaSiparisFisi = () => {
                     />
                   </FloatLabel>
                 </div>
-                <div className="col-md-2 col-sm-6 mt-4">
+                {/* <div className="col-md-2 col-sm-6 mt-4">
                   <FloatLabel>
                     <label htmlFor="fiyatNet">fiyatNet</label>
                     <InputNumber
@@ -1912,7 +1925,7 @@ const satinalmaSiparisFisi = () => {
                       inputStyle={{ textAlign: "right" }}
                     />
                   </FloatLabel>
-                </div>
+                </div> */}
                 {/* <div className="col-md-2 col-sm-6 mt-4">
                   <FloatLabel>
                     <label htmlFor="iskontoTL">İskonto Tutar</label>

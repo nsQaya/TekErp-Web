@@ -15,7 +15,7 @@ import { ISapKod } from "../../utils/types/stok/ISapKod";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { IHucre } from "../../utils/types/tanimlamalar/IHucre";
-import { aktarimDurumuDDFilterTemplate, onayliMiDDFilterTemplate } from "../../utils/helpers/dtMultiSelectHelper";
+import { aktarimDurumuDDFilterTemplate } from "../../utils/helpers/dtMultiSelectHelper";
 import { EAktarimDurumu } from "../../utils/types/enums/EAktarimDurumu";
 
 export default () => {

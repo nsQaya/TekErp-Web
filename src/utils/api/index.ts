@@ -103,6 +103,7 @@ import { IStokSayim } from "../types/stok/IStokSayim";
 import sayimYetki from "./stok/sayimYetki";
 import sayimDetay from "./stok/sayimDetay";
 import { IStokSayimDetay } from "../types/stok/IStokSayimDetay";
+import { ITalepStokForSiparis } from "../types/fatura/ITalepStokForSiparis";
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
@@ -251,6 +252,7 @@ const repositories = {
   talepTeklif:talepTeklif(instance) as unknown as ICrudBaseAPI<ITalepTeklif>,
   talepTeklifSave:talepTeklif(instance) as unknown as ICrudBaseAPI<ITalepTeklifSaveData>,
   talepTeklifStokHareket:talepTeklifStokHareket(instance) as unknown as ICrudBaseAPI<ITalepTeklifStokHareket>,
+  talepTeklifStokHareketForSiparis:talepTeklifStokHareket(instance) as unknown as ICrudBaseAPI<ITalepStokForSiparis>,
 
   siparis:siparis(instance) as unknown as ICrudBaseAPI<ISiparis>,
   siparisSave:siparis(instance) as unknown as ICrudBaseAPI<ISiparisSaveData>,

@@ -220,7 +220,7 @@ const satinalmaTalepFisi = () => {
     if (selectedGridItem) {
       setGridData((prevGridData) =>
         prevGridData.map((item) =>
-          item.id === talepStokHareketData?.id
+          item.sira === talepStokHareketData?.sira
             ? {
                 ...item,
                 stokKartiId: talepStokHareketData!.stokKartiId,
@@ -237,7 +237,7 @@ const satinalmaTalepFisi = () => {
                 aciklama1: talepStokHareketData!.aciklama1,
                 aciklama2: talepStokHareketData!.aciklama2,
                 aciklama3: talepStokHareketData!.aciklama3,
-                sira: talepStokHareketData!.sira,
+                //sira: talepStokHareketData!.sira,
                 seriKodu: talepStokHareketData!.seriKodu,
                 teslimTarihi: talepStokHareketData!.teslimTarihi,
                 projeId: talepStokHareketData.projeId,
@@ -250,10 +250,10 @@ const satinalmaTalepFisi = () => {
       );
     } else {
       const maxId =
-        gridData.length > 0 ? Math.max(...gridData.map((item) => item.id!)) : 0;
+        gridData.length > 0 ? Math.max(...gridData.map((item) => item.sira!)) : 0;
 
       const newGridData: ITalepTeklifStokHareket = {
-        id: maxId + 1,
+        id: 0,
         stokKartiId: talepStokHareketData!.stokKartiId,
         stokKarti: talepStokHareketData?.stokKarti,
         //stokAdi: formDataDetay.stokAdi,
@@ -268,7 +268,7 @@ const satinalmaTalepFisi = () => {
         aciklama1: talepStokHareketData!.aciklama1,
         aciklama2: talepStokHareketData!.aciklama2,
         aciklama3: talepStokHareketData!.aciklama3,
-        sira: talepStokHareketData!.sira,
+        sira: maxId + 1,
         seriKodu: talepStokHareketData!.seriKodu,
         teslimTarihi: talepStokHareketData!.teslimTarihi,
         projeId: talepStokHareketData.projeId,
@@ -464,7 +464,7 @@ const satinalmaTalepFisi = () => {
   const deleteItem = useCallback((item: ITalepTeklifStokHareket) => {
     try {
       setGridData((prevGridData) => {
-        const newGridData = prevGridData.filter((i) => i.id !== item.id);
+        const newGridData = prevGridData.filter((i) => i.sira !== item.sira);
         return newGridData;
       });
 
@@ -642,7 +642,7 @@ const satinalmaTalepFisi = () => {
         },
 
         talepTeklif: {
-          id: 0, //updateBelgeId !== 0 ? await getAmbarFisiId(updateBelgeId) : 0,
+          id: talepData.id, //updateBelgeId !== 0 ? await getAmbarFisiId(updateBelgeId) : 0,
           belgeId: isUpdate ? updateBelgeId : 0,
           cariId: talepData.cariId,
         },
@@ -650,7 +650,7 @@ const satinalmaTalepFisi = () => {
         talepTeklifStokHarekets: gridData
           .filter((item) => item.miktar > 0)
           .map((item, index) => ({
-            id: isUpdate? item.id:0,
+            id: item.id,
             belgeId: isUpdate ? updateBelgeId : 0,
             stokKartiId: item.stokKartiId ?? 0,
             miktar: item.miktar,
@@ -803,7 +803,13 @@ const satinalmaTalepFisi = () => {
         }
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Veri alınırken hata oluştu:", error);
+      toast.current?.show({
+        severity: "error",
+        summary: "Hata",
+        detail: "Veri alınırken bir hata oluştu.",
+        life: 3000,
+      });
     }
   };
   //güncelleme işlemleri sonu
@@ -1292,7 +1298,7 @@ const satinalmaTalepFisi = () => {
             value={gridData}
             rows={100}
             //loading={loadingGetir}
-            dataKey="id"
+            dataKey="sira"
             scrollable
             scrollHeight="400px"
             emptyMessage="Kayıt yok."

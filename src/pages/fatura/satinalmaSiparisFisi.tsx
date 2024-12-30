@@ -212,6 +212,7 @@ const satinalmaSiparisFisi = () => {
       proje: undefined,
       uniteId: 0,
       unite: undefined,
+      sira:0
     }));
     setTempStokKodu("");
   };
@@ -2084,7 +2085,7 @@ const satinalmaSiparisFisi = () => {
                   // }}
                   virtualScrollerOptions={{ itemSize: 46 }}
                 >
-                  <Column field="id" header="#" />
+                  <Column field="id" header="#" hidden/>
                   <Column field="stokKartiId" header="Stok Kartı Id" hidden />
                   <Column field="stokKarti.kodu" header="Stok Kodu" />
                   <Column field="stokKarti.adi" header="Stok Adı" />

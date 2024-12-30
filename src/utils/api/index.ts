@@ -82,6 +82,7 @@ import { ITalepTeklifStokHareket } from "../types/fatura/ITalepTeklifStokHareket
 import { INetsisUretimSonuKaydi } from "../types/uretim/INetsisUretimSonuKaydi";
 import siparis from "../api/fatura/siparis";
 import siparisStokHareket from "../api/fatura/siparisHareket";
+import siparisHareketAcKapa from "../api/fatura/siparisHareketAcKapa";
 
 import netsisUretimSonuKaydi from "../api/uretim/netsisUretimSonuKaydi";
 import netsisUretimSonuKaydiIsEmriRecete from "../api/uretim/netsisUretimSonuKaydiIsEmriRecete";
@@ -104,6 +105,7 @@ import sayimYetki from "./stok/sayimYetki";
 import sayimDetay from "./stok/sayimDetay";
 import { IStokSayimDetay } from "../types/stok/IStokSayimDetay";
 import { ITalepStokForSiparis } from "../types/fatura/ITalepStokForSiparis";
+import { ISiparisAcmaKapama } from "../types/fatura/ISiparisAcmaKapama";
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
@@ -257,6 +259,7 @@ const repositories = {
   siparis:siparis(instance) as unknown as ICrudBaseAPI<ISiparis>,
   siparisSave:siparis(instance) as unknown as ICrudBaseAPI<ISiparisSaveData>,
   siparisStokHareket:siparisStokHareket(instance) as unknown as ICrudBaseAPI<ISiparisStokHareket>,
+  siparisStokHareketAcKapa:siparisHareketAcKapa(instance) as unknown as ICrudBaseAPI<ISiparisAcmaKapama>,
 
   netsisUretimSonuKaydi:netsisUretimSonuKaydi(instance) as unknown as ICrudBaseAPI<INetsisUretimSonuKaydi>,
   netsisUretimSonuKaydiIsEmriRecete:netsisUretimSonuKaydiIsEmriRecete(instance) as unknown as INetsisBaseAPI<INetsisUretimSonuKaydiIsEmriRecete>,

@@ -48,10 +48,12 @@ export interface IFormItem {
   rehberComponent?: React.ComponentType<any>;
 }
 
-interface DynamicModalProps<T> {
+interface DynamicModalProps {
   selectedItem?: any;
   title: string;
-  api: ICrudBaseAPI<T>;
+  //api: ICrudBaseAPI<T>;
+  api:any;
+  apiMethodName?:string;
   items: IFormItem[];
   isShownig: boolean;
   classEki?: string;
@@ -61,7 +63,7 @@ interface DynamicModalProps<T> {
   validator?: (formItems: IFormItem[]) => string | null;
 }
 
-function DynamicModal<T>(props: DynamicModalProps<T>) {
+function DynamicModal(props: DynamicModalProps) {
   const [isShowing, setShowing] = useState(false);
   const [formItems, setFormItems] = useState<IFormItem[]>([]);
   const [rehberVisible, setRehberVisible] = useState<{[key: string]: boolean;}>({}); 
@@ -124,12 +126,16 @@ function DynamicModal<T>(props: DynamicModalProps<T>) {
 
     let response: AxiosResponse<IBaseResponseValue<any>, any>;
 
+    if (props.apiMethodName) {
+      response = await props.api[props.apiMethodName](requestItems);
+    } else
+    {
     if (requestItems.id) {
       response = await props.api.update(requestItems);
     } else {
       response = await props.api.create(requestItems);
     }
-
+  }
     if (!response.data.status) {
       const errorMessage = response.data.detail ||
       Object.entries(response.data.errors || {})

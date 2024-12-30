@@ -1,13 +1,13 @@
-import { createRef, useCallback, useState, useRef, useEffect } from "react";
+import { createRef,  useState, useRef } from "react";
 import { ColumnProps } from "primereact/column";
 import { Toast } from "primereact/toast";
-import { ConfirmDialog } from "primereact/confirmdialog";
 import AppTable, { ITableRef } from "../../components/AppTable";
 import api from "../../utils/api";
 import DynamicModal, { FormItemTypes, IFormItem } from "../../modals/DynamicModal";
 import AppBreadcrumb from "../../components/AppBreadcrumb";
 import { ISiparis } from "../../utils/types/fatura/ISiparis";
 import { dateFilterTemplate } from "../../utils/helpers/CalendarHelper";
+import { ISiparisIthalatEkBilgiler } from "../../utils/types/fatura/ISiparisIthalatEkBilgiler";
 
 
 
@@ -15,11 +15,9 @@ import { dateFilterTemplate } from "../../utils/helpers/CalendarHelper";
 export default () => {
   const myTable = createRef<ITableRef<ISiparis>>();
   const [isModalShowing, setModalShowing] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<ISiparis | undefined>();
+  const [selectedItem, setSelectedItem] = useState<ISiparisIthalatEkBilgiler | undefined>();
   const toast = useRef<Toast>(null);
-  const [confirmVisible, setConfirmVisible] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<ISiparis | null>(null);
-  
+ 
 
   const onSuccess = () => {
     if (selectedItem) {
@@ -30,37 +28,6 @@ export default () => {
     myTable.current?.refresh();
     setModalShowing(false);
   };
-
- 
-
-  const confirmDelete = useCallback(async () => {
-    if (itemToDelete) {
-      try {
-        await api.siparis.delete(itemToDelete.id as number);
-        myTable.current?.refresh();
-        toast.current?.show({ severity: "success", summary: "Başarılı", detail: "Başarıyla silindi !" });
-      } catch (error) {
-        console.error("Silme işleminde hata:", error);
-        toast.current?.show({ severity: "error", summary: "Hata", detail: "Silme işleminde hata oluştu !" });
-      } finally {
-        setItemToDelete(null);
-        setConfirmVisible(false);
-      }
-    }
-  }, [itemToDelete]);
-
-  const deleteItem = (item: ISiparis) => {
-    setItemToDelete(item);
-    setConfirmVisible(true);
-  };
-
-  useEffect(() => {
-    if (!confirmVisible && !itemToDelete) {
-      myTable.current?.refresh();
-    }
-  }, [confirmVisible, itemToDelete]);
-
-  
 
   const columns: ColumnProps[] = [
     
@@ -104,12 +71,7 @@ export default () => {
             }}>
               <i className="ti-pencil"></i>
             </button>
-            <button className="btn btn-danger ms-1" onClick={(e) => {
-              e.preventDefault();
-              deleteItem(row);
-            }}>
-              <i className="ti-trash"></i>
-            </button>
+            
           </>
         );
       }
@@ -122,66 +84,7 @@ export default () => {
       type: FormItemTypes.input,
       hidden: true
     },
-    {
-      name: "cariId",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "tip",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "ihracatIthalatTip",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "dovizAraToplam",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "araToplamTL",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "dovizIskonto",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "belgeId",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "dovizKDV",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "dovizNetToplam",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "iskontoTL",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "kdvtl",
-      type: FormItemTypes.input,
-      hidden: true
-    },
-    {
-      name: "netToplamTL",
-      type: FormItemTypes.input,
-      hidden: true
-    },
+    
     {
       name: "cikisEvrakTarihi",
       type: FormItemTypes.date,
@@ -211,21 +114,10 @@ export default () => {
   return (
     <div className="container-fluid">
       <Toast ref={toast} />
-      <ConfirmDialog
-        visible={confirmVisible}
-        onHide={() => setConfirmVisible(false)}
-        message="Silmek istediğinizden emin misiniz?"
-        header="Onay"
-        icon="pi pi-exclamation-triangle"
-        accept={confirmDelete}
-        reject={() => setConfirmVisible(false)}
-        acceptLabel="Evet"
-        rejectLabel="Hayır"
-      />
       <DynamicModal
         isShownig={isModalShowing}
         title="Ekle"
-        api={api.siparis}
+        api={api.siparisIthalatEkBilgiler}
         items={modalItems}
         onDone={onSuccess}
         selectedItem={selectedItem}

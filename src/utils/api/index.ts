@@ -81,6 +81,8 @@ import talepTeklifStokHareket from "../api/fatura/talepTeklifStokHareket";
 import { ITalepTeklifStokHareket } from "../types/fatura/ITalepTeklifStokHareket";
 import { INetsisUretimSonuKaydi } from "../types/uretim/INetsisUretimSonuKaydi";
 import siparis from "../api/fatura/siparis";
+import siparisIthalatEkBilgiler from "../api/fatura/siparisIthalatEkBilgiler";
+
 import siparisStokHareket from "../api/fatura/siparisHareket";
 import siparisHareketAcKapa from "../api/fatura/siparisHareketAcKapa";
 
@@ -106,6 +108,7 @@ import sayimDetay from "./stok/sayimDetay";
 import { IStokSayimDetay } from "../types/stok/IStokSayimDetay";
 import { ITalepStokForSiparis } from "../types/fatura/ITalepStokForSiparis";
 import { ISiparisAcmaKapama } from "../types/fatura/ISiparisAcmaKapama";
+import { ISiparisIthalatEkBilgiler } from "../types/fatura/ISiparisIthalatEkBilgiler";
 
 var instance: AxiosInstance = axios.create({
   baseURL: apiURL,
@@ -257,6 +260,7 @@ const repositories = {
   talepTeklifStokHareketForSiparis:talepTeklifStokHareket(instance) as unknown as ICrudBaseAPI<ITalepStokForSiparis>,
 
   siparis:siparis(instance) as unknown as ICrudBaseAPI<ISiparis>,
+  siparisIthalatEkBilgiler:siparisIthalatEkBilgiler(instance) as unknown as ICrudBaseAPI<ISiparisIthalatEkBilgiler>,
   siparisSave:siparis(instance) as unknown as ICrudBaseAPI<ISiparisSaveData>,
   siparisStokHareket:siparisStokHareket(instance) as unknown as ICrudBaseAPI<ISiparisStokHareket>,
   siparisStokHareketAcKapa:siparisHareketAcKapa(instance) as unknown as ICrudBaseAPI<ISiparisAcmaKapama>,

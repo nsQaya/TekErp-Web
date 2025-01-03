@@ -27,7 +27,7 @@ export default () => {
   const [depoVisible, setDepoVisible] = useState(false);
 
   const [selectedNetsisSirketKodu, setSelectedNetsisSirketKodu] =
-    useState("TEKNOMAK2024");
+    useState("TEKNOMAK2025");
   const [selectedNetsisSirketId, setSelectedNetsisSirketId] = useState(1);
   const [netsisSirketVisible, setNetsisSirketVisible] = useState(false);
 
